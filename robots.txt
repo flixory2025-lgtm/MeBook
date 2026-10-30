@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mebook.mvbds.xyz/sitemap.xml
