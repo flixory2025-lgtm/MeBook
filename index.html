@@ -508,6 +508,7 @@ animation:cardFloat .7s cubic-bezier(.2,.8,.3,1);color:#f3f4f6;
 /* ============ HEADER ============ */
 .mebook-root .mb-header{
 position:fixed;top:0;left:0;right:0;height:60px;z-index:1000;
+transition:transform .35s ease;will-change:transform;
 background:var(--header-bg);
 display:flex;align-items:center;justify-content:space-between;
 padding:0 16px;
@@ -2175,6 +2176,11 @@ opacity:0;transition:opacity .15s,background .15s;
 .mebook-root .mechat-msg-more:hover{background:var(--hover);}
 .mebook-root .mechat-bubble-wrap:hover .mechat-msg-more{opacity:1;}
 @media(hover:none){.mebook-root .mechat-msg-more{opacity:.55;}}
+
+/* Auto-hide header on scroll (mobile) */
+@media(max-width:860px){
+.mebook-root .mb-header.hide{transform:translateY(-100%);box-shadow:none;}
+}
 `;
 function ToastStack({
   toasts,
@@ -3365,6 +3371,31 @@ function MeBookPage() {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, []);
+  const lastScrollYRef = useRef(0);
+  const menuOpenRef = useRef(false);
+  menuOpenRef.current = menuOpen;
+  useEffect(() => {
+    const onScroll = () => {
+      const hd = document.querySelector(".mebook-root .mb-header");
+      if (!hd) return;
+      const y = window.scrollY;
+      const ly = lastScrollYRef.current;
+      if (window.innerWidth <= 860 && !menuOpenRef.current) {
+        if (y > ly + 8 && y > 120) hd.classList.add("hide");
+        else if (y < ly - 8 || y < 60) hd.classList.remove("hide");
+      } else {
+        hd.classList.remove("hide");
+      }
+      lastScrollYRef.current = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  useEffect(() => {
+    const hd = document.querySelector(".mebook-root .mb-header");
+    if (hd) hd.classList.remove("hide");
+    lastScrollYRef.current = window.scrollY;
+  }, [currentView, menuOpen, user]);
   useEffect(() => {
     if (!reactionPicker.open && !postReactionPicker.open && !chatReactionPicker.open) return;
     const handler = () => {
