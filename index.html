@@ -294,6 +294,21 @@ function chatTime(ts) {
   const d = ts.toDate ? ts.toDate() : new Date(ts);
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
+function dayKey(ts) {
+  if (!ts) return "";
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toDateString();
+}
+function dayLabel(ts) {
+  if (!ts) return "";
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  const today = /* @__PURE__ */ new Date();
+  const y = /* @__PURE__ */ new Date();
+  y.setDate(today.getDate() - 1);
+  if (d.toDateString() === today.toDateString()) return "Today";
+  if (d.toDateString() === y.toDateString()) return "Yesterday";
+  return d.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric", year: d.getFullYear() !== today.getFullYear() ? "numeric" : void 0 });
+}
 function monthYear(ts) {
   if (!ts) return "";
   const d = ts.toDate ? ts.toDate() : new Date(ts);
@@ -2181,6 +2196,43 @@ opacity:0;transition:opacity .15s,background .15s;
 @media(max-width:860px){
 .mebook-root .mb-header.hide{transform:translateY(-100%);box-shadow:none;}
 }
+
+/* ============================================================
+   MECHAT FULL-SCREEN MESSENGER SHELL (header hidden, WhatsApp-style desktop)
+   ============================================================ */
+.mebook-root.mc-open .mb-header{display:none;}
+.mebook-root .mc-shell{position:fixed;left:0;top:0;right:0;height:100vh;height:100dvh;z-index:1200;display:flex;background:var(--card);overflow:hidden;}
+.mebook-root .mc-side{display:none;width:380px;max-width:38vw;min-width:300px;border-right:1px solid var(--border);flex-direction:column;background:var(--card);height:100%;}
+.mebook-root .mc-side-head{display:flex;align-items:center;gap:8px;padding:12px 14px 6px;flex-shrink:0;}
+.mebook-root .mc-side-head h2{font-size:22px;font-weight:800;flex:1;color:var(--text);}
+.mebook-root .mc-side-back{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text);}
+.mebook-root .mc-side-back:hover{background:var(--hover);}
+.mebook-root .mc-side-back svg{width:22px;height:22px;fill:currentColor;}
+.mebook-root .mc-side-body{flex:1;min-height:0;overflow-y:auto;padding:0 10px 12px;overscroll-behavior:contain;}
+.mebook-root .mc-side-body .mb-search-box{box-shadow:none;background:var(--input-bg);margin:6px 0 10px;}
+.mebook-root .mc-side-body .msgr-wrap,.mebook-root .mc-list{box-shadow:none;height:auto;min-height:0;border-radius:0;background:transparent;border:none;}
+.mebook-root .mc-list .msgr-list{overflow:visible;width:100%;border:none;}
+.mebook-root .mc-side-body .msgr-item{border-radius:12px;}
+.mebook-root .mc-main{flex:1;min-width:0;display:flex;flex-direction:column;height:100%;}
+.mebook-root .mc-shell .mechat-page{height:100%;flex:1;min-height:0;position:relative;}
+@media(min-width:821px){
+.mebook-root .mc-side{display:flex;}
+.mebook-root .mc-shell .mechat-head-back{display:none;}
+}
+.mebook-root .mechat-date-sep{display:flex;justify-content:center;margin:12px 0 6px;}
+.mebook-root .mechat-date-sep span{font-size:11.5px;font-weight:700;color:var(--text-muted);background:rgba(128,128,128,.16);padding:3px 12px;border-radius:12px;}
+.mebook-root .mechat-scrolldown{position:absolute;right:16px;bottom:88px;width:40px;height:40px;border-radius:50%;background:var(--card);box-shadow:0 4px 16px rgba(0,0,0,.25);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;z-index:6;animation:bubbleIn .2s ease;}
+.mebook-root .mechat-scrolldown svg{width:22px;height:22px;fill:var(--green);}
+.mebook-root .mechat-side-actions{display:flex;gap:2px;align-self:center;opacity:0;transition:opacity .15s;}
+.mebook-root .mechat-bubble-wrap:hover .mechat-side-actions{opacity:1;}
+.mebook-root .mechat-side-actions button{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);}
+.mebook-root .mechat-side-actions button:hover{background:var(--hover);}
+.mebook-root .mechat-side-actions svg{width:16px;height:16px;fill:currentColor;}
+@media(hover:none){.mebook-root .mechat-side-actions{display:none;}}
+.mebook-root .mechat-reply-quote{cursor:pointer;}
+.mebook-root .mechat-bubble-wrap.mc-flash .mechat-bubble{animation:mcFlash 1.4s ease;}
+@keyframes mcFlash{0%,60%{box-shadow:0 0 0 3px rgba(34,197,94,.75);}100%{box-shadow:0 0 0 3px rgba(34,197,94,0);}}
+.mebook-root .mechat-bubble-image img{cursor:zoom-in;}
 `;
 function ToastStack({
   toasts,
@@ -2418,6 +2470,8 @@ function ActionSheet({ items, onClose }) {
 }
 const ICON_EDIT = /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" }));
 const ICON_TRASH = /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" }));
+const ICON_REPLY = /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z" }));
+const ICON_COPY = /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" }));
 const ICON_DOTS = /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" }));
 let ytApiPromise = null;
 function loadYouTubeApi() {
@@ -2897,6 +2951,8 @@ function MeBookPage() {
   const recordTimerRef = useRef(null);
   const recordStartRef = useRef(0);
   const [kbUp, setKbUp] = useState(false);
+  const [vvh, setVvh] = useState(0);
+  const [showScrollDown, setShowScrollDown] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
     const vv = window.visualViewport;
@@ -2904,6 +2960,7 @@ function MeBookPage() {
     const handleResize = () => {
       const isKbOpen = window.innerHeight - vv.height > 120;
       setKbUp(isKbOpen);
+      setVvh(vv.height);
       setTimeout(() => {
         if (chatBodyRef.current) {
           chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
@@ -3371,6 +3428,18 @@ function MeBookPage() {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, []);
+  const mcOpen = currentView === "messages" && !!activeChat;
+  useEffect(() => {
+    if (!mcOpen) return;
+    const prevBody = document.body.style.overflow;
+    const prevHtml = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevBody;
+      document.documentElement.style.overflow = prevHtml;
+    };
+  }, [mcOpen]);
   const lastScrollYRef = useRef(0);
   const menuOpenRef = useRef(false);
   menuOpenRef.current = menuOpen;
@@ -4497,6 +4566,12 @@ function MeBookPage() {
     }
     setPartnerTyping(false);
     setPartnerLastSeenMessageId(null);
+    if (activeChat !== chatId) {
+      setChatMessages([]);
+      setChatReplyTo(null);
+      setChatInput("");
+      setShowScrollDown(false);
+    }
     setActiveChat(chatId);
     setChatPartner({ ...other, uid: otherId });
     setMobileChatWindow(true);
@@ -4513,15 +4588,28 @@ function MeBookPage() {
       fb.collection(fb.db, "chats", chatId, "messages"),
       fb.orderBy("at", "asc")
     );
+    let firstLoad = true;
     chatUnsubRef.current = fb.onSnapshot(q, (snap) => {
       const arr = [];
       snap.forEach((d) => arr.push({ id: d.id, ...d.data() }));
+      const el = chatBodyRef.current;
+      const near = !el || el.scrollHeight - el.scrollTop - el.clientHeight < 180;
+      const lastM = arr[arr.length - 1];
       setChatMessages(arr);
-      setTimeout(() => {
-        if (chatBodyRef.current) {
-          chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
-        }
-      }, 80);
+      if (firstLoad || near || lastM && lastM.from === user.uid) {
+        setTimeout(() => {
+          if (chatBodyRef.current) {
+            chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+          }
+        }, 80);
+      }
+      if (firstLoad) {
+        firstLoad = false;
+        setTimeout(() => {
+          var _a2;
+          if (window.innerWidth > 820) (_a2 = chatInputRef.current) == null ? void 0 : _a2.focus();
+        }, 200);
+      }
     });
   };
   const closeChat = () => {
@@ -4549,6 +4637,24 @@ function MeBookPage() {
       chatUnsubRef.current = null;
     }
   };
+  useEffect(() => {
+    if (!mcOpen) return;
+    const onKey = (e) => {
+      if (e.key !== "Escape") return;
+      if (photoViewer || actionMenu || chatReactionPicker.open) return;
+      if (chatReplyTo) {
+        setChatReplyTo(null);
+        return;
+      }
+      if (editingMsgId) {
+        cancelEditMessage();
+        return;
+      }
+      if (window.innerWidth > 820) closeChat();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
   const handleSendMessage = async () => {
     const text = chatInput.trim();
     if (!text || !activeChat) return;
@@ -4564,6 +4670,10 @@ function MeBookPage() {
     }
     setChatInput("");
     setChatReplyTo(null);
+    if (chatInputRef.current) {
+      chatInputRef.current.style.height = "auto";
+      chatInputRef.current.focus();
+    }
     try {
       const fb = await getFirebase();
       const payload = {
@@ -5100,8 +5210,28 @@ function MeBookPage() {
     return (((_a2 = c.other) == null ? void 0 : _a2.name) || "").toLowerCase().includes(q);
   });
   const searchedUsersForChat = chatSearch.trim() ? allUsers.filter((u) => (u.name || "").toLowerCase().includes(chatSearch.trim().toLowerCase())).slice(0, 6) : [];
-  const rootClass = `mebook-root ${theme === "dark" ? "dark-mode" : ""}`;
+  const rootClass = `mebook-root ${theme === "dark" ? "dark-mode" : ""}${currentView === "messages" && activeChat ? " mc-open" : ""}`;
   const findPost = (postId) => feed.find((p) => p.id === postId) || myPosts.find((p) => p.id === postId) || viewingUserPosts.find((p) => p.id === postId);
+  const renderChatListPanel = (inShell) => /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "mb-search-box" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" })), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      type: "text",
+      placeholder: "Search people or chats",
+      value: chatSearch,
+      onChange: (e) => setChatSearch(e.target.value)
+    }
+  )), searchedUsersForChat.length > 0 && /* @__PURE__ */ React.createElement("div", { className: "msgr-wrap", style: { height: "auto", marginBottom: 16 } }, /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px 8px", fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase" } }, "People"), searchedUsersForChat.map((u) => {
+    const photo = avatarUrl(u);
+    return /* @__PURE__ */ React.createElement("div", { className: "msgr-item", key: u.uid, onClick: () => startChat(u.uid, u.name, photo) }, /* @__PURE__ */ React.createElement("div", { className: "msgr-item-avatar-wrap" }, /* @__PURE__ */ React.createElement("img", { src: photo, alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "msgr-item-dot" })), /* @__PURE__ */ React.createElement("div", { className: "msgr-item-body" }, /* @__PURE__ */ React.createElement("div", { className: "msgr-item-name" }, u.name), /* @__PURE__ */ React.createElement("div", { className: "msgr-item-last" }, "Tap to start chatting")));
+  })), /* @__PURE__ */ React.createElement("div", { className: inShell ? "mc-list" : "msgr-wrap" }, /* @__PURE__ */ React.createElement("div", { className: "msgr-list", style: { width: "100%", borderRight: "none" } }, onlineList.length > 0 && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "msgr-section" }, "Online now"), /* @__PURE__ */ React.createElement("div", { className: "msgr-online-row" }, onlineList.map((u) => {
+    var _a2;
+    const photo = avatarUrl(u);
+    return /* @__PURE__ */ React.createElement("div", { key: u.uid, className: "msgr-online-item", onClick: () => startChat(u.uid, u.name, photo) }, /* @__PURE__ */ React.createElement("div", { className: "msgr-online-avatar-wrap" }, /* @__PURE__ */ React.createElement("img", { src: photo, alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "msgr-online-dot" })), /* @__PURE__ */ React.createElement("div", { className: "msgr-online-name" }, (_a2 = u.name) == null ? void 0 : _a2.split(" ")[0]));
+  }))), /* @__PURE__ */ React.createElement("div", { className: "msgr-section" }, "Recent"), filteredChats.length === 0 ? /* @__PURE__ */ React.createElement("div", { style: { padding: 20, color: "var(--text-muted)", fontSize: 14, textAlign: "center" } }, "No conversations yet. Start one!") : filteredChats.map((c) => {
+    var _a2;
+    const photo = avatarUrl(c.other);
+    return /* @__PURE__ */ React.createElement("div", { className: `msgr-item${c.id === activeChat ? " active" : ""}`, key: c.id, onClick: () => openChat(c.id, c.otherId, c.other) }, /* @__PURE__ */ React.createElement("div", { className: "msgr-item-avatar-wrap" }, /* @__PURE__ */ React.createElement("img", { src: photo, alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "msgr-item-dot" })), /* @__PURE__ */ React.createElement("div", { className: "msgr-item-body" }, /* @__PURE__ */ React.createElement("div", { className: "msgr-item-name" }, c.other.name), /* @__PURE__ */ React.createElement("div", { className: "msgr-item-last" }, ((_a2 = c.last) == null ? void 0 : _a2.text) || "Say hi \u{1F44B}")), /* @__PURE__ */ React.createElement("div", { className: "msgr-item-time" }, c.lastAt ? timeShort(c.lastAt) : ""));
+  }))));
   const renderProfilePage = (u, posts, isOwn, friendsList, friendsLoading) => {
     const photo = avatarUrl(u);
     const profileFriends = isOwn ? myFriends : friendsList || [];
@@ -5297,6 +5427,33 @@ function MeBookPage() {
       const items = [];
       if (m && canEditMsg) {
         items.push({ label: "Edit message", icon: ICON_EDIT, onClick: () => startEditMessage(m) });
+      }
+      if (m) {
+        items.push({
+          label: "Reply",
+          icon: ICON_REPLY,
+          onClick: () => {
+            setChatReplyTo({ id: m.id, from: m.from, text: m.type === "image" ? "\u{1F4F7} Photo" : m.type === "voice" ? "\u{1F3A4} Voice" : m.type === "like" ? "\u{1F44D}" : m.text || "" });
+            setTimeout(() => {
+              var _a2;
+              return (_a2 = chatInputRef.current) == null ? void 0 : _a2.focus();
+            }, 50);
+          }
+        });
+        if (m.text) {
+          items.push({
+            label: "Copy text",
+            icon: ICON_COPY,
+            onClick: async () => {
+              try {
+                await navigator.clipboard.writeText(m.text);
+                showToast("Copied", "", "success");
+              } catch {
+                showToast("Could not copy", "", "error");
+              }
+            }
+          });
+        }
       }
       items.push({ label: "Unsend message", icon: ICON_TRASH, danger: true, onClick: () => handleDeleteMessage(actionMenu.id) });
       return /* @__PURE__ */ React.createElement(ActionSheet, { onClose: close, items });
@@ -5703,28 +5860,18 @@ function MeBookPage() {
       false,
       viewingUserFriends,
       viewingUserFriendsLoading
-    ), /* @__PURE__ */ React.createElement("div", { className: "mb-card-title", style: { fontSize: 18, marginBottom: 10, padding: "0 4px" } }, "Posts (", viewingUserPosts.length, ")"), /* @__PURE__ */ React.createElement("div", null, viewingUserPosts.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "mb-empty" }, /* @__PURE__ */ React.createElement("b", null, "No posts yet"), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 14, marginTop: 4 } }, "This user hasn't posted anything")) : viewingUserPosts.map((p) => renderPost(p)))), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, chatView === "list" || !activeChat && chatView === "window" ? /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("h1", { className: "mb-page-title", style: { marginBottom: 12 } }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.5 2 2 6.14 2 11.25c0 2.88 1.41 5.45 3.62 7.16.12 1.1-.28 2.62-1.05 3.59-.13.16-.02.4.18.38 2.34-.19 4.05-1.25 4.85-1.85.77.16 1.58.25 2.4.25 5.5 0 10-4.14 10-9.25S17.5 2 12 2z" })), "MeChat"), /* @__PURE__ */ React.createElement("div", { className: "mb-search-box" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" })), /* @__PURE__ */ React.createElement(
-      "input",
+    ), /* @__PURE__ */ React.createElement("div", { className: "mb-card-title", style: { fontSize: 18, marginBottom: 10, padding: "0 4px" } }, "Posts (", viewingUserPosts.length, ")"), /* @__PURE__ */ React.createElement("div", null, viewingUserPosts.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "mb-empty" }, /* @__PURE__ */ React.createElement("b", null, "No posts yet"), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 14, marginTop: 4 } }, "This user hasn't posted anything")) : viewingUserPosts.map((p) => renderPost(p)))), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("h1", { className: "mb-page-title", style: { marginBottom: 12 } }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.5 2 2 6.14 2 11.25c0 2.88 1.41 5.45 3.62 7.16.12 1.1-.28 2.62-1.05 3.59-.13.16-.02.4.18.38 2.34-.19 4.05-1.25 4.85-1.85.77.16 1.58.25 2.4.25 5.5 0 10-4.14 10-9.25S17.5 2 12 2z" })), "MeChat"), renderChatListPanel(false)) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", null, "MeChat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true))), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: () => chatPartner && openUserProfile(chatPartner.uid) }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" })), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, chatPartner == null ? void 0 : chatPartner.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "#0084ff" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : "Active now")), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: () => chatPartner && openUserProfile(chatPartner.uid) }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), /* @__PURE__ */ React.createElement(
+      "div",
       {
-        type: "text",
-        placeholder: "Search people or chats",
-        value: chatSearch,
-        onChange: (e) => setChatSearch(e.target.value)
-      }
-    )), searchedUsersForChat.length > 0 && /* @__PURE__ */ React.createElement("div", { className: "msgr-wrap", style: { height: "auto", marginBottom: 16 } }, /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px 8px", fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase" } }, "People"), searchedUsersForChat.map((u) => {
-      const photo = avatarUrl(u);
-      return /* @__PURE__ */ React.createElement("div", { className: "msgr-item", key: u.uid, onClick: () => startChat(u.uid, u.name, photo) }, /* @__PURE__ */ React.createElement("div", { className: "msgr-item-avatar-wrap" }, /* @__PURE__ */ React.createElement("img", { src: photo, alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "msgr-item-dot" })), /* @__PURE__ */ React.createElement("div", { className: "msgr-item-body" }, /* @__PURE__ */ React.createElement("div", { className: "msgr-item-name" }, u.name), /* @__PURE__ */ React.createElement("div", { className: "msgr-item-last" }, "Tap to start chatting")));
-    })), /* @__PURE__ */ React.createElement("div", { className: "msgr-wrap" }, /* @__PURE__ */ React.createElement("div", { className: "msgr-list", style: { width: "100%", borderRight: "none" } }, onlineList.length > 0 && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "msgr-section" }, "Online now"), /* @__PURE__ */ React.createElement("div", { className: "msgr-online-row" }, onlineList.map((u) => {
-      var _a2;
-      const photo = avatarUrl(u);
-      return /* @__PURE__ */ React.createElement("div", { key: u.uid, className: "msgr-online-item", onClick: () => startChat(u.uid, u.name, photo) }, /* @__PURE__ */ React.createElement("div", { className: "msgr-online-avatar-wrap" }, /* @__PURE__ */ React.createElement("img", { src: photo, alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "msgr-online-dot" })), /* @__PURE__ */ React.createElement("div", { className: "msgr-online-name" }, (_a2 = u.name) == null ? void 0 : _a2.split(" ")[0]));
-    }))), /* @__PURE__ */ React.createElement("div", { className: "msgr-section" }, "Recent"), filteredChats.length === 0 ? /* @__PURE__ */ React.createElement("div", { style: { padding: 20, color: "var(--text-muted)", fontSize: 14, textAlign: "center" } }, "No conversations yet. Start one!") : filteredChats.map((c) => {
-      var _a2;
-      const photo = avatarUrl(c.other);
-      return /* @__PURE__ */ React.createElement("div", { className: "msgr-item", key: c.id, onClick: () => openChat(c.id, c.otherId, c.other) }, /* @__PURE__ */ React.createElement("div", { className: "msgr-item-avatar-wrap" }, /* @__PURE__ */ React.createElement("img", { src: photo, alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "msgr-item-dot" })), /* @__PURE__ */ React.createElement("div", { className: "msgr-item-body" }, /* @__PURE__ */ React.createElement("div", { className: "msgr-item-name" }, c.other.name), /* @__PURE__ */ React.createElement("div", { className: "msgr-item-last" }, ((_a2 = c.last) == null ? void 0 : _a2.text) || "Say hi \u{1F44B}")), /* @__PURE__ */ React.createElement("div", { className: "msgr-item-time" }, c.lastAt ? timeShort(c.lastAt) : ""));
-    })))) : (
-      /* MeChat fullpage window */
-      /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: () => chatPartner && openUserProfile(chatPartner.uid) }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" })), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, chatPartner == null ? void 0 : chatPartner.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "#0084ff" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : "Active now")), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: () => chatPartner && openUserProfile(chatPartner.uid) }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), /* @__PURE__ */ React.createElement("div", { className: "mechat-body", ref: chatBodyRef }, chatMessages.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "mechat-empty" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" })), /* @__PURE__ */ React.createElement("b", null, "No messages yet"), /* @__PURE__ */ React.createElement("p", null, "Say hi \u{1F44B}")) : chatMessages.map((m, idx) => {
+        className: "mechat-body",
+        ref: chatBodyRef,
+        onScroll: (e) => {
+          const el = e.currentTarget;
+          const far = el.scrollHeight - el.scrollTop - el.clientHeight > 300;
+          setShowScrollDown((v) => v === far ? v : far);
+        }
+      },
+      chatMessages.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "mechat-empty" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" })), /* @__PURE__ */ React.createElement("b", null, "No messages yet"), /* @__PURE__ */ React.createElement("p", null, "Say hi \u{1F44B}")) : chatMessages.map((m, idx) => {
         const mine = m.from === user.uid;
         const prevMsg = idx > 0 ? chatMessages[idx - 1] : null;
         const showAvatar = !mine && (!prevMsg || prevMsg.from !== m.from);
@@ -5740,6 +5887,9 @@ function MeBookPage() {
         const isLikeMsg = m.type === "like";
         const isImageMsg = m.type === "image";
         const isVoiceMsg = m.type === "voice";
+        const curDay = dayKey(m.at);
+        const prevDay = prevMsg ? dayKey(prevMsg.at) : "";
+        const dateSep = curDay && curDay !== prevDay ? /* @__PURE__ */ React.createElement("div", { className: "mechat-date-sep" }, /* @__PURE__ */ React.createElement("span", null, dayLabel(m.at))) : null;
         let touchStartX = 0;
         let touchCurrentX = 0;
         const onTouchStart = (e) => {
@@ -5774,7 +5924,21 @@ function MeBookPage() {
         };
         let bubbleContent = null;
         if (isImageMsg && m.imageUrl) {
-          bubbleContent = /* @__PURE__ */ React.createElement("div", { className: "mechat-bubble-image" }, /* @__PURE__ */ React.createElement("img", { src: m.imageUrl, alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-image-time" }, chatTime(m.at)));
+          bubbleContent = /* @__PURE__ */ React.createElement("div", { className: "mechat-bubble-image" }, /* @__PURE__ */ React.createElement(
+            "img",
+            {
+              src: m.imageUrl,
+              alt: "",
+              onClick: (e) => {
+                e.stopPropagation();
+                setPhotoViewer({
+                  src: m.imageUrl,
+                  name: mine ? profile.name : chatPartner == null ? void 0 : chatPartner.name,
+                  avatar: mine ? avatarUrl(profile) : chatPartner ? avatarUrl(chatPartner) : ""
+                });
+              }
+            }
+          ), /* @__PURE__ */ React.createElement("span", { className: "mechat-image-time" }, chatTime(m.at)));
         } else if (isVoiceMsg && m.voiceUrl) {
           bubbleContent = /* @__PURE__ */ React.createElement("div", { className: "mechat-voice" }, /* @__PURE__ */ React.createElement(
             "button",
@@ -5803,12 +5967,30 @@ function MeBookPage() {
         } else if (isLikeMsg) {
           bubbleContent = /* @__PURE__ */ React.createElement("div", { style: { fontSize: 40, lineHeight: 1, padding: "2px 4px" } }, "\u{1F44D}");
         } else {
-          bubbleContent = /* @__PURE__ */ React.createElement(React.Fragment, null, m.replyTo && /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-quote" }, /* @__PURE__ */ React.createElement("b", null, m.replyTo.from === user.uid ? "You" : m.replyTo.name), /* @__PURE__ */ React.createElement("span", null, m.replyTo.text)), /* @__PURE__ */ React.createElement("span", null, m.text), /* @__PURE__ */ React.createElement("span", { className: `mechat-bubble-time ${mine ? "me" : "them"}` }, m.edited ? "Edited \xB7 " : "", chatTime(m.at)));
+          bubbleContent = /* @__PURE__ */ React.createElement(React.Fragment, null, m.replyTo && /* @__PURE__ */ React.createElement(
+            "div",
+            {
+              className: "mechat-reply-quote",
+              onClick: (e) => {
+                var _a2;
+                e.stopPropagation();
+                const target = (_a2 = chatBodyRef.current) == null ? void 0 : _a2.querySelector(
+                  `[data-message-id="${m.replyTo.id}"]`
+                );
+                if (target) {
+                  target.scrollIntoView({ behavior: "smooth", block: "center" });
+                  target.classList.add("mc-flash");
+                  setTimeout(() => target.classList.remove("mc-flash"), 1400);
+                }
+              }
+            },
+            /* @__PURE__ */ React.createElement("b", null, m.replyTo.from === user.uid ? "You" : m.replyTo.name),
+            /* @__PURE__ */ React.createElement("span", null, m.replyTo.text)
+          ), /* @__PURE__ */ React.createElement("span", null, m.text), /* @__PURE__ */ React.createElement("span", { className: `mechat-bubble-time ${mine ? "me" : "them"}` }, m.edited ? "Edited \xB7 " : "", chatTime(m.at)));
         }
-        return /* @__PURE__ */ React.createElement(
+        return /* @__PURE__ */ React.createElement(React.Fragment, { key: m.id }, dateSep, /* @__PURE__ */ React.createElement(
           "div",
           {
-            key: m.id,
             "data-mechat-message": "true",
             "data-message-id": String(m.id),
             className: `mechat-bubble-wrap ${mine ? "me" : "them"} ${showAvatar ? "show-avatar" : ""}`,
@@ -5846,6 +6028,46 @@ function MeBookPage() {
             },
             bubbleContent
           ),
+          !mine && !isLikeMsg && /* @__PURE__ */ React.createElement(
+            "div",
+            {
+              className: "mechat-side-actions",
+              onTouchStart: (e) => e.stopPropagation(),
+              onTouchMove: (e) => e.stopPropagation(),
+              onTouchEnd: (e) => e.stopPropagation(),
+              onDoubleClick: (e) => e.stopPropagation()
+            },
+            /* @__PURE__ */ React.createElement(
+              "button",
+              {
+                title: "React",
+                onClick: (e) => {
+                  e.stopPropagation();
+                  openChatReactionPicker(e, m.id);
+                }
+              },
+              /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" }))
+            ),
+            /* @__PURE__ */ React.createElement(
+              "button",
+              {
+                title: "Reply",
+                onClick: (e) => {
+                  e.stopPropagation();
+                  setChatReplyTo({
+                    id: m.id,
+                    from: m.from,
+                    text: isImageMsg ? "\u{1F4F7} Photo" : isVoiceMsg ? "\u{1F3A4} Voice" : m.text || ""
+                  });
+                  setTimeout(() => {
+                    var _a2;
+                    return (_a2 = chatInputRef.current) == null ? void 0 : _a2.focus();
+                  }, 50);
+                }
+              },
+              /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z" }))
+            )
+          ),
           isSeenByPartner && /* @__PURE__ */ React.createElement(
             "img",
             {
@@ -5855,103 +6077,118 @@ function MeBookPage() {
             }
           ),
           reactionEmojis.length > 0 && /* @__PURE__ */ React.createElement("span", { className: "mechat-reaction-badge" }, reactionEmojis.slice(0, 3).join(""), reactionKeys.length > 1 && ` ${reactionKeys.length}`)
-        );
-      })), recording && /* @__PURE__ */ React.createElement("div", { className: "mechat-recording-bar" }, /* @__PURE__ */ React.createElement("span", { className: "mechat-recording-dot" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-recording-time" }, formatVoiceDuration(recordSeconds)), /* @__PURE__ */ React.createElement("span", { className: "mechat-recording-hint" }, "Recording voice message..."), /* @__PURE__ */ React.createElement("button", { className: "mechat-recording-cancel", onClick: cancelVoiceRecording, title: "Cancel" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-recording-send", onClick: sendVoiceRecording, title: "Send" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" })))), editingMsgId && !recording && /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner" }, /* @__PURE__ */ React.createElement("div", { className: "bar" }), /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner-title" }, "Editing message"), /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner-text" }, ((_a = chatMessages.find((x) => x.id === editingMsgId)) == null ? void 0 : _a.text) || "")), /* @__PURE__ */ React.createElement("button", { className: "mechat-reply-banner-close", onClick: cancelEditMessage }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" })))), chatReplyTo && !recording && /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner" }, /* @__PURE__ */ React.createElement("div", { className: "bar" }), /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner-title" }, "Replying to ", chatReplyTo.from === user.uid ? "yourself" : (chatPartner == null ? void 0 : chatPartner.name) || ""), /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner-text" }, chatReplyTo.text)), /* @__PURE__ */ React.createElement("button", { className: "mechat-reply-banner-close", onClick: () => setChatReplyTo(null) }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" })))), !recording && /* @__PURE__ */ React.createElement("div", { className: `mechat-input-bar${kbUp ? " kb-up" : ""}` }, /* @__PURE__ */ React.createElement("div", { className: "mechat-input-actions" }, /* @__PURE__ */ React.createElement(
-        "button",
-        {
-          className: "mechat-input-icon",
-          title: "Add photo",
-          onClick: () => {
-            var _a2;
-            return (_a2 = chatFileInputRef.current) == null ? void 0 : _a2.click();
-          }
-        },
-        /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" }))
-      ), /* @__PURE__ */ React.createElement(
-        "button",
-        {
-          className: "mechat-input-icon",
-          title: "Camera",
-          onClick: () => {
-            var _a2;
-            return (_a2 = chatCameraInputRef.current) == null ? void 0 : _a2.click();
-          }
-        },
-        /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" }))
-      ), /* @__PURE__ */ React.createElement(
-        "button",
-        {
-          className: "mechat-input-icon",
-          title: "Voice",
-          onClick: startVoiceRecording
-        },
-        /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" }))
-      )), /* @__PURE__ */ React.createElement(
-        "textarea",
-        {
-          ref: chatInputRef,
-          className: "mechat-input-field",
-          placeholder: "Aa",
-          rows: 1,
-          value: chatInput,
-          onChange: (e) => handleChatTyping(e.target.value),
-          onKeyDown: (e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleSendMessage();
-            } else if (e.key === "Escape" && editingMsgId) {
-              cancelEditMessage();
-            }
-          }
+        ));
+      })
+    ), showScrollDown && /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        className: "mechat-scrolldown",
+        title: "Latest messages",
+        onClick: () => {
+          const el = chatBodyRef.current;
+          if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
         }
-      ), chatInput.trim() ? /* @__PURE__ */ React.createElement("button", { className: "mechat-send-btn", onClick: handleSendMessage, title: "Send" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" }))) : /* @__PURE__ */ React.createElement(
-        "button",
-        {
-          className: `mechat-like-btn${chatLikeActive ? " my-liked" : ""}`,
-          onClick: handleSendLike,
-          onContextMenu: (e) => {
+      },
+      /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z" }))
+    ), recording && /* @__PURE__ */ React.createElement("div", { className: "mechat-recording-bar" }, /* @__PURE__ */ React.createElement("span", { className: "mechat-recording-dot" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-recording-time" }, formatVoiceDuration(recordSeconds)), /* @__PURE__ */ React.createElement("span", { className: "mechat-recording-hint" }, "Recording voice message..."), /* @__PURE__ */ React.createElement("button", { className: "mechat-recording-cancel", onClick: cancelVoiceRecording, title: "Cancel" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-recording-send", onClick: sendVoiceRecording, title: "Send" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" })))), editingMsgId && !recording && /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner" }, /* @__PURE__ */ React.createElement("div", { className: "bar" }), /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner-title" }, "Editing message"), /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner-text" }, ((_a = chatMessages.find((x) => x.id === editingMsgId)) == null ? void 0 : _a.text) || "")), /* @__PURE__ */ React.createElement("button", { className: "mechat-reply-banner-close", onClick: cancelEditMessage }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" })))), chatReplyTo && !recording && /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner" }, /* @__PURE__ */ React.createElement("div", { className: "bar" }), /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner-title" }, "Replying to ", chatReplyTo.from === user.uid ? "yourself" : (chatPartner == null ? void 0 : chatPartner.name) || ""), /* @__PURE__ */ React.createElement("div", { className: "mechat-reply-banner-text" }, chatReplyTo.text)), /* @__PURE__ */ React.createElement("button", { className: "mechat-reply-banner-close", onClick: () => setChatReplyTo(null) }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" })))), !recording && /* @__PURE__ */ React.createElement("div", { className: `mechat-input-bar${kbUp ? " kb-up" : ""}` }, /* @__PURE__ */ React.createElement("div", { className: "mechat-input-actions" }, /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        className: "mechat-input-icon",
+        title: "Add photo",
+        onClick: () => {
+          var _a2;
+          return (_a2 = chatFileInputRef.current) == null ? void 0 : _a2.click();
+        }
+      },
+      /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" }))
+    ), /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        className: "mechat-input-icon",
+        title: "Camera",
+        onClick: () => {
+          var _a2;
+          return (_a2 = chatCameraInputRef.current) == null ? void 0 : _a2.click();
+        }
+      },
+      /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" }))
+    ), /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        className: "mechat-input-icon",
+        title: "Voice",
+        onClick: startVoiceRecording
+      },
+      /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" }))
+    )), /* @__PURE__ */ React.createElement(
+      "textarea",
+      {
+        ref: chatInputRef,
+        className: "mechat-input-field",
+        placeholder: "Aa",
+        rows: 1,
+        value: chatInput,
+        onChange: (e) => {
+          handleChatTyping(e.target.value);
+          e.target.style.height = "auto";
+          e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+        },
+        onKeyDown: (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            const rect = e.currentTarget.getBoundingClientRect();
-            setChatReactionPicker({
-              open: true,
-              msgId: "__send_reaction__",
-              anchorRect: { x: rect.left + rect.width / 2, y: rect.top, width: rect.width }
-            });
-          },
-          title: "Send like (hold for reactions)"
+            handleSendMessage();
+          } else if (e.key === "Escape" && editingMsgId) {
+            cancelEditMessage();
+          }
+        }
+      }
+    ), chatInput.trim() ? /* @__PURE__ */ React.createElement("button", { className: "mechat-send-btn", onClick: handleSendMessage, title: "Send" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" }))) : /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        className: `mechat-like-btn${chatLikeActive ? " my-liked" : ""}`,
+        onClick: handleSendLike,
+        onContextMenu: (e) => {
+          e.preventDefault();
+          const rect = e.currentTarget.getBoundingClientRect();
+          setChatReactionPicker({
+            open: true,
+            msgId: "__send_reaction__",
+            anchorRect: { x: rect.left + rect.width / 2, y: rect.top, width: rect.width }
+          });
         },
-        /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91z" }))
-      )), /* @__PURE__ */ React.createElement(
-        "input",
-        {
-          ref: chatFileInputRef,
-          type: "file",
-          accept: "image/*",
-          style: { display: "none" },
-          onChange: async (e) => {
-            var _a2;
-            const f = (_a2 = e.target.files) == null ? void 0 : _a2[0];
-            e.target.value = "";
-            if (f) await handleChatImageUpload(f);
-          }
+        title: "Send like (hold for reactions)"
+      },
+      /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91z" }))
+    )), /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        ref: chatFileInputRef,
+        type: "file",
+        accept: "image/*",
+        style: { display: "none" },
+        onChange: async (e) => {
+          var _a2;
+          const f = (_a2 = e.target.files) == null ? void 0 : _a2[0];
+          e.target.value = "";
+          if (f) await handleChatImageUpload(f);
         }
-      ), /* @__PURE__ */ React.createElement(
-        "input",
-        {
-          ref: chatCameraInputRef,
-          type: "file",
-          accept: "image/*",
-          capture: "environment",
-          style: { display: "none" },
-          onChange: async (e) => {
-            var _a2;
-            const f = (_a2 = e.target.files) == null ? void 0 : _a2[0];
-            e.target.value = "";
-            if (f) await handleChatImageUpload(f);
-          }
+      }
+    ), /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        ref: chatCameraInputRef,
+        type: "file",
+        accept: "image/*",
+        capture: "environment",
+        style: { display: "none" },
+        onChange: async (e) => {
+          var _a2;
+          const f = (_a2 = e.target.files) == null ? void 0 : _a2[0];
+          e.target.value = "";
+          if (f) await handleChatImageUpload(f);
         }
-      ))
-    )), currentView === "create-post" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, /* @__PURE__ */ React.createElement("button", { className: "mb-back-btn", onClick: goBack }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" })), "Back"), /* @__PURE__ */ React.createElement("div", { className: "cp-page" }, /* @__PURE__ */ React.createElement("h1", { className: "mb-page-title" }, "Create Post"), /* @__PURE__ */ React.createElement("div", { className: "cp-card" }, /* @__PURE__ */ React.createElement("div", { className: "cp-user" }, /* @__PURE__ */ React.createElement("img", { src: avatarUrl(profile), alt: "You" }), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("b", null, profile.name), /* @__PURE__ */ React.createElement("small", { style: { display: "block" } }, "Public"))), /* @__PURE__ */ React.createElement(
+      }
+    ))))), currentView === "create-post" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, /* @__PURE__ */ React.createElement("button", { className: "mb-back-btn", onClick: goBack }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" })), "Back"), /* @__PURE__ */ React.createElement("div", { className: "cp-page" }, /* @__PURE__ */ React.createElement("h1", { className: "mb-page-title" }, "Create Post"), /* @__PURE__ */ React.createElement("div", { className: "cp-card" }, /* @__PURE__ */ React.createElement("div", { className: "cp-user" }, /* @__PURE__ */ React.createElement("img", { src: avatarUrl(profile), alt: "You" }), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("b", null, profile.name), /* @__PURE__ */ React.createElement("small", { style: { display: "block" } }, "Public"))), /* @__PURE__ */ React.createElement(
       "textarea",
       {
         className: "cp-textarea",
