@@ -452,20 +452,23 @@ function timeAgo(ts) {
   if (s < 604800) return Math.floor(s / 86400) + "d ago";
   return d.toLocaleDateString();
 }
+function time12(d) {
+  return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+}
 function timeShort(ts) {
   if (!ts) return "";
   const d = ts.toDate ? ts.toDate() : new Date(ts);
   const now = /* @__PURE__ */ new Date();
-  const diff = now.getTime() - d.getTime();
-  const day = 864e5;
-  if (diff < day) return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  if (diff < day * 7) return d.toLocaleDateString([], { weekday: "short" });
-  return d.toLocaleDateString([], { month: "short", day: "numeric" });
+  if (d.toDateString() === now.toDateString()) return time12(d);
+  const y = /* @__PURE__ */ new Date();
+  y.setDate(now.getDate() - 1);
+  if (d.toDateString() === y.toDateString()) return "Yesterday";
+  return d.toLocaleDateString("en-US", d.getFullYear() !== now.getFullYear() ? { month: "short", day: "numeric", year: "numeric" } : { month: "short", day: "numeric" });
 }
 function chatTime(ts) {
   if (!ts) return "";
   const d = ts.toDate ? ts.toDate() : new Date(ts);
-  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return time12(d);
 }
 function dayKey(ts) {
   if (!ts) return "";
@@ -480,7 +483,7 @@ function dayLabel(ts) {
   y.setDate(today.getDate() - 1);
   if (d.toDateString() === today.toDateString()) return "Today";
   if (d.toDateString() === y.toDateString()) return "Yesterday";
-  return d.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric", year: d.getFullYear() !== today.getFullYear() ? "numeric" : void 0 });
+  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: d.getFullYear() !== today.getFullYear() ? "numeric" : void 0 });
 }
 function monthYear(ts) {
   if (!ts) return "";
@@ -3723,6 +3726,90 @@ html.mb-native .mebook-root.mb-hdr-off .mb-layout{padding-top:calc(62px + var(--
   filter:drop-shadow(0 1px 0 #2b6e0e) drop-shadow(0 1.5px 1px rgba(0,0,0,.45));
 }
 
+/* ===== MeBook nav: "Me" in MeChat label is plain (white in dark, black in light) ===== */
+.mebook-root .mb-nav-label .me3d{background:none !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;-webkit-text-fill-color:currentColor !important;color:inherit !important;filter:none !important;font-weight:inherit !important;display:inline;}
+
+/* ===== MeChat seen avatar at the very bottom ===== */
+.mebook-root .mechat-like-btn.has-qr svg{display:none;}
+.mebook-root .mechat-like-btn.has-qr::after{content:attr(data-qr);font-size:24px;line-height:1;}
+.mebook-root .mechat-seen-tail{display:flex;justify-content:flex-end;padding:2px 14px 6px;}
+.mebook-root .mechat-seen-tail img{width:16px;height:16px;border-radius:50%;object-fit:cover;animation:mechatSeenIn .2s ease;}
+@keyframes mcFxUp{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(-115vh) rotate(40deg);opacity:0;}}
+
+/* ===== MeChat info / settings pages ===== */
+.mebook-root .mc-info{--mci-bg:#fff;--mci-fg:#050505;--mci-sub:#65676b;--mci-chip:#e4e6eb;--mci-line:#dddfe2;position:fixed;inset:0;z-index:2000;background:var(--mci-bg);color:var(--mci-fg);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;animation:mcFade .18s ease;}
+.mebook-root.dark-mode .mc-info{--mci-bg:#000;--mci-fg:#fff;--mci-sub:#a8abaf;--mci-chip:#1c1c1e;--mci-line:#2a2a2d;}
+.mebook-root .mc-info-in{max-width:620px;margin:0 auto;padding-bottom:48px;position:relative;min-height:100%;}
+.mebook-root .mci-top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:6px;padding:calc(8px + var(--sat,0px)) 10px 8px;background:var(--mci-bg);}
+.mebook-root .mci-top-title{flex:1;font-size:19px;font-weight:700;padding-left:6px;}
+.mebook-root .mci-iconbtn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--mci-fg);flex-shrink:0;}
+.mebook-root .mci-iconbtn:active{background:var(--mci-chip);}
+.mebook-root .mci-hero{display:flex;flex-direction:column;align-items:center;padding:10px 16px 6px;}
+.mebook-root .mci-hero-av{position:relative;width:140px;height:140px;cursor:pointer;}
+.mebook-root .mci-hero-av img{width:140px;height:140px;border-radius:50%;object-fit:cover;background:#222;}
+.mebook-root .mci-hero-av i{position:absolute;right:6px;bottom:8px;width:26px;height:26px;border-radius:50%;background:#22c55e;border:4px solid var(--mci-bg);box-sizing:border-box;}
+.mebook-root .mci-hero-name{margin-top:14px;font-size:24px;font-weight:800;text-align:center;display:flex;align-items:center;justify-content:center;word-break:break-word;}
+.mebook-root .mci-acts{display:flex;justify-content:center;gap:14px;padding:22px 8px 14px;}
+.mebook-root .mci-circ{display:flex;flex-direction:column;align-items:center;gap:8px;width:76px;color:var(--mci-fg);}
+.mebook-root .mci-circ span{width:50px;height:50px;border-radius:50%;background:var(--mci-chip);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;}
+.mebook-root .mci-circ small{font-size:13px;color:var(--mci-fg);}
+.mebook-root .mci-sec{padding:22px 16px 6px;font-size:15px;font-weight:600;color:var(--mci-sub);}
+.mebook-root .mci-row{display:flex;align-items:center;gap:18px;width:100%;padding:13px 16px;text-align:left;color:var(--mci-fg);}
+.mebook-root .mci-row:active,.mebook-root .mci-person:active{background:var(--mci-chip);}
+.mebook-root .mci-row.danger{color:#ff3b4a;}
+.mebook-root .mci-ic{width:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mebook-root .mci-rt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.mebook-root .mci-rt b{font-size:16.5px;font-weight:500;}
+.mebook-root .mci-rt small{font-size:13px;color:var(--mci-sub);}
+.mebook-root .mci-row.danger .mci-rt small{color:var(--mci-sub);}
+.mebook-root .mci-memhead{display:flex;align-items:center;justify-content:space-between;padding:18px 16px 8px;font-size:16px;font-weight:600;}
+.mebook-root .mci-memhead button{color:#4a9eff;font-weight:600;font-size:16px;}
+.mebook-root .mci-members{display:flex;gap:16px;overflow-x:auto;padding:4px 16px 8px;scrollbar-width:none;}
+.mebook-root .mci-members::-webkit-scrollbar{display:none;}
+.mebook-root .mci-mem{flex-shrink:0;width:76px;text-align:center;cursor:pointer;}
+.mebook-root .mci-mem-av img{width:72px;height:72px;border-radius:50%;object-fit:cover;background:#222;}
+.mebook-root .mci-mem span{display:block;margin-top:6px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mebook-root .mci-collage{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 16px 10px;cursor:pointer;}
+.mebook-root .mci-collage img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:6px;background:#222;}
+.mebook-root .mci-collage img.big{grid-column:1/3;aspect-ratio:16/10;border-radius:16px 16px 6px 6px;}
+.mebook-root .mci-tabs{display:flex;gap:8px;padding:8px 14px 12px;overflow-x:auto;scrollbar-width:none;}
+.mebook-root .mci-tabs button{padding:11px 18px;border-radius:999px;font-size:15px;font-weight:600;color:var(--mci-sub);white-space:nowrap;}
+.mebook-root .mci-tabs button.on{background:var(--mci-chip);color:var(--mci-fg);}
+.mebook-root .mci-themes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px 14px;padding:8px 16px 24px;}
+.mebook-root .mci-theme{display:flex;flex-direction:column;gap:10px;text-align:left;color:var(--mci-fg);}
+.mebook-root .mci-theme span{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mebook-root .mci-theme-prev{position:relative;width:100%;aspect-ratio:9/16;border-radius:18px;background:#111;display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid transparent;box-sizing:border-box;}
+.mebook-root .mci-theme-prev.up{background:var(--mci-chip);}
+.mebook-root .mci-theme.on .mci-theme-prev{border-color:#22c55e;}
+.mebook-root .mci-theme-prev i{position:absolute;right:8px;top:8px;width:26px;height:26px;border-radius:50%;background:#22c55e;color:#fff;display:flex;align-items:center;justify-content:center;font-style:normal;}
+.mebook-root .mci-hint{padding:4px 18px 14px;font-size:14px;color:var(--mci-sub);}
+.mebook-root .mci-emojis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 16px 24px;}
+.mebook-root .mci-emojis button{font-size:34px;padding:12px 0;border-radius:16px;background:var(--mci-chip);border:2px solid transparent;}
+.mebook-root .mci-emojis button.on{border-color:#22c55e;}
+.mebook-root .mci-sw{width:46px;height:28px;border-radius:999px;background:var(--mci-chip);position:relative;flex-shrink:0;border:1px solid var(--mci-line);transition:background .2s;}
+.mebook-root .mci-sw i{position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#8a8d91;transition:all .2s;}
+.mebook-root .mci-sw.on{background:#16a34a;border-color:#16a34a;}
+.mebook-root .mci-sw.on i{left:21px;background:#fff;}
+.mebook-root .mci-person{display:flex;align-items:center;gap:14px;width:100%;padding:10px 16px;text-align:left;color:var(--mci-fg);}
+.mebook-root .mci-person img{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#222;flex-shrink:0;}
+.mebook-root .mci-person span{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.mebook-root .mci-person b{font-size:16px;font-weight:600;}
+.mebook-root .mci-person small{font-size:13px;color:var(--mci-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mebook-root .mci-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:0 3px;}
+.mebook-root .mci-grid img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#222;}
+.mebook-root .mci-link{display:block;padding:12px 16px;color:#4a9eff;word-break:break-all;border-bottom:1px solid var(--mci-line);}
+.mebook-root .mci-empty{padding:40px 24px;text-align:center;color:var(--mci-sub);font-size:15px;}
+.mebook-root .mci-pin{display:flex;align-items:center;gap:6px;padding:6px 10px 6px 16px;border-bottom:1px solid var(--mci-line);}
+.mebook-root .mci-pin>button:first-child{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;text-align:left;color:var(--mci-fg);padding:8px 0;}
+.mebook-root .mci-pin span{font-size:14px;color:var(--mci-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mebook-root .mci-search{flex:1;min-width:0;height:40px;border-radius:999px;background:var(--mci-chip);color:var(--mci-fg);border:none;outline:none;padding:0 16px;font-size:16px;}
+.mebook-root .mci-input{width:100%;box-sizing:border-box;margin:6px 0 14px;padding:11px 14px;border-radius:12px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-size:16px;outline:none;}
+.mebook-root .mci-menu-ov{position:fixed;inset:0;z-index:10;}
+.mebook-root .mci-menu{position:absolute;right:12px;top:calc(54px + var(--sat,0px));min-width:250px;background:#2f3033;color:#fff;border-radius:18px;padding:8px 0;box-shadow:0 12px 32px rgba(0,0,0,.45);}
+.mebook-root:not(.dark-mode) .mci-menu{background:#fff;color:#050505;box-shadow:0 12px 32px rgba(0,0,0,.22);}
+.mebook-root .mci-menu button{display:block;width:100%;text-align:left;padding:14px 22px;font-size:16.5px;color:inherit;}
+.mebook-root .mci-menu button:active{background:rgba(128,128,128,.25);}
+
 `;
 function ToastStack({
   toasts,
@@ -4819,7 +4906,7 @@ function fbPhotoTime(ts) {
   if (!ts) return "";
   const d = ts.toDate ? ts.toDate() : new Date(ts);
   if (isNaN(d.getTime())) return "";
-  const t = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  const t = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
   const now = /* @__PURE__ */ new Date();
   const dayStart = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
   const days = Math.round((dayStart(now) - dayStart(d)) / 864e5);
@@ -8036,6 +8123,616 @@ function McAddMembers(props) {
     )
   );
 }
+/* ===== MeChat: chat info / settings pages (Messenger-style) ===== */
+const MC_THEMES = [
+  { id: "default", name: "Default", bg: null, prev: "#000" },
+  { id: "midnight", name: "Midnight", bg: "linear-gradient(180deg,#0b1026 0%,#1b2a5a 100%)" },
+  { id: "aurora", name: "Aurora", bg: "linear-gradient(160deg,#021b1a 0%,#0f766e 55%,#22c55e 100%)" },
+  { id: "sunset", name: "Sunset", bg: "linear-gradient(170deg,#2b1055 0%,#c2410c 60%,#fbbf24 100%)" },
+  { id: "ocean", name: "Ocean", bg: "linear-gradient(180deg,#02182b 0%,#0369a1 60%,#38bdf8 100%)" },
+  { id: "forest", name: "Forest", bg: "linear-gradient(180deg,#052e16 0%,#166534 70%,#4d7c0f 100%)" },
+  { id: "rose", name: "Rose", bg: "linear-gradient(170deg,#3b0a24 0%,#be185d 65%,#fda4af 100%)" },
+  { id: "neon", name: "Neon", bg: "linear-gradient(160deg,#0a0a0a 0%,#4c1d95 50%,#06b6d4 100%)" },
+  { id: "lava", name: "Lava", bg: "linear-gradient(180deg,#1a0000 0%,#991b1b 60%,#f97316 100%)" },
+  { id: "lavender", name: "Lavender", bg: "linear-gradient(180deg,#1e1b4b 0%,#6d28d9 60%,#c4b5fd 100%)" },
+  { id: "slate", name: "Slate", bg: "linear-gradient(180deg,#0f172a 0%,#334155 100%)" },
+  { id: "sand", name: "Sand", bg: "linear-gradient(180deg,#f5ebe0 0%,#e3d5ca 60%,#d5bdaf 100%)" }
+];
+const MC_QR = ["\u{1F44D}", "\u2764\uFE0F", "\u{1F602}", "\u{1F62E}", "\u{1F622}", "\u{1F525}", "\u{1F60D}", "\u{1F389}", "\u{1F64F}", "\u{1F4AF}", "\u{1F60E}", "\u{1F919}"];
+const MC_WFX = [
+  { k: "congrats", label: "Congratulations", emoji: "\u{1F389}", words: ["congrats", "congratulations", "\u0985\u09AD\u09BF\u09A8\u09A8\u09CD\u09A6\u09A8"] },
+  { k: "love", label: "Love", emoji: "\u2764\uFE0F", words: ["love you", "i love", "\u09AD\u09BE\u09B2\u09CB\u09AC\u09BE\u09B8\u09BF"] },
+  { k: "haha", label: "Haha", emoji: "\u{1F602}", words: ["haha", "hahaha", "lol"] },
+  { k: "bday", label: "Happy birthday", emoji: "\u{1F382}", words: ["happy birthday", "hbd"] },
+  { k: "fire", label: "Fire", emoji: "\u{1F525}", words: ["fire", "lit"] }
+];
+function mcThemeStyle(t) {
+  if (!t || t.id === "default" && !t.img) return void 0;
+  if (t.img) return { background: "center / cover no-repeat url(" + t.img + ")" };
+  const th = MC_THEMES.find((x) => x.id === t.id);
+  return th && th.bg ? { background: th.bg } : void 0;
+}
+function mcVisibleMsgs(msgs, prefs, id) {
+  const ms = prefs && prefs.disap && prefs.disap[id];
+  if (!ms) return msgs;
+  const now = Date.now();
+  return msgs.filter((m) => {
+    const t = m.at && (m.at.toMillis ? m.at.toMillis() : m.at.seconds ? m.at.seconds * 1e3 : 0);
+    return !t || now - t < ms;
+  });
+}
+function mcBurst(emoji) {
+  try {
+    const box = document.createElement("div");
+    box.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:99999;overflow:hidden";
+    for (let i = 0; i < 26; i++) {
+      const s = document.createElement("span");
+      s.textContent = emoji;
+      s.style.cssText = "position:absolute;left:" + Math.random() * 100 + "%;bottom:-40px;font-size:" + (18 + Math.random() * 24) + "px;animation:mcFxUp " + (1.6 + Math.random() * 1.6) + "s ease-out forwards;animation-delay:" + Math.random() * 0.5 + "s";
+      box.appendChild(s);
+    }
+    document.body.appendChild(box);
+    setTimeout(() => box.remove(), 3800);
+  } catch (e) {
+  }
+}
+function mcWordFx(text, prefs, chatId) {
+  if (!text) return;
+  const t = String(text).toLowerCase();
+  for (const f of MC_WFX) {
+    if (prefs && prefs.wfxOff && prefs.wfxOff[chatId + ":" + f.k]) continue;
+    if (f.words.some((w) => t.includes(w))) {
+      mcBurst(f.emoji);
+      return;
+    }
+  }
+}
+function mcResizeImg(file, max, cb) {
+  const r = new FileReader();
+  r.onload = () => {
+    const im = new Image();
+    im.onload = () => {
+      const sc = Math.min(1, max / Math.max(im.width, im.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(im.width * sc);
+      c.height = Math.round(im.height * sc);
+      c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+      cb(c.toDataURL("image/jpeg", 0.72));
+    };
+    im.src = r.result;
+  };
+  r.readAsDataURL(file);
+}
+const MCI = {
+  back: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z",
+  dots: "M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z",
+  search: "M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z",
+  palette: "M12 3a9 9 0 000 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z",
+  person: "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z",
+  link: "M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z",
+  speaker: "M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z",
+  group: "M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z",
+  eye: "M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z",
+  typing: "M4 7h16a3 3 0 013 3v4a3 3 0 01-3 3H4a3 3 0 01-3-3v-4a3 3 0 013-3zm4 3.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm4 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm4 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z",
+  block: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z",
+  warn: "M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z",
+  image: "M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z",
+  download: "M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z",
+  share: "M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z",
+  timer: "M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42A8.962 8.962 0 0012 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z",
+  shield: "M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 6.2l1.5 3.1 3.4.5-2.45 2.4.58 3.4L12 14.9l-3.03 1.7.58-3.4L8.1 10.8l3.4-.5L12 7.2z",
+  lock: "M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z",
+  addUser: "M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z",
+  pin: "M16 9V4h1c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z",
+  bell: "M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z",
+  bellOff: "M20 18.69L7.84 6.14 5.27 3.49 4 4.76l2.8 2.8v.01c-.52.99-.8 2.16-.8 3.42v5l-2 2v1h13.73l2 2L21 19.72l-1-1.03zM12 22c1.11 0 2-.89 2-2h-4c0 1.11.89 2 2 2zm6-7.32V11c0-3.08-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68c-.15.03-.29.08-.42.12-.1.03-.2.07-.3.11h-.01c-.01 0-.01 0-.02.01-.23.09-.46.2-.68.31 0 0-.01 0-.01.01L18 14.68z",
+  head: "M9 3a6 6 0 100 12A6 6 0 009 3zm8.5 6.2A7.97 7.97 0 0117 12.9 8 8 0 019.1 20c-.3 0-.6 0-.9-.1A6 6 0 0018 15.9a6 6 0 00-.5-6.7z",
+  leave: "M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z",
+  trash: "M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z",
+  restrict: "M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2z",
+  camera: "M12 15.2a3.2 3.2 0 100-6.4 3.2 3.2 0 000 6.4zM9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z",
+  check: "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z",
+  x: "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+};
+function McInfoPage(props) {
+  const E = React.createElement;
+  const chat = props.chat;
+  const isGroup = !!chat.isGroup;
+  const id = chat.id;
+  const prefs = props.prefs;
+  const me = props.me;
+  const [page, setPage] = React.useState("main");
+  const [menu, setMenu] = React.useState(false);
+  const [tab, setTab] = React.useState("themes");
+  const [mtab, setMtab] = React.useState("media");
+  const [q, setQ] = React.useState("");
+  const [dlg, setDlg] = React.useState(null);
+  const [val, setVal] = React.useState("");
+  const photoRef = React.useRef(null);
+  const themeRef = React.useRef(null);
+  const nickMap = prefs.nick && prefs.nick[id] || {};
+  const flag = (k) => !!(prefs[k] && prefs[k][id]);
+  const toggleFlag = (k) => props.updatePrefs((p) => {
+    p[k] = p[k] || {};
+    if (p[k][id]) delete p[k][id];
+    else p[k][id] = 1;
+    return p;
+  });
+  const userOf = (uid) => uid === me.uid ? me : !isGroup && uid === chat.otherId ? Object.assign({ uid }, chat.other) : props.allUsers.find((u) => u.uid === uid) || { uid, name: "User" };
+  const dispName = (uid) => nickMap[uid] || (uid === me.uid ? "You" : userOf(uid).name || "User");
+  const name = isGroup ? chat.other.name : nickMap[chat.otherId] || chat.other.name;
+  const avatar = isGroup ? chat.other.photoURL ? chat.other.photoURL : props.avatarOf({ name: chat.other.name }) : props.avatarOf(chat.other);
+  const memberIds = isGroup ? (chat.members || []).slice() : [me.uid, chat.otherId];
+  const members = memberIds.map((u) => userOf(u));
+  const muted = !!(prefs.muted && prefs.muted[id]);
+  const msgs = props.messages || [];
+  const images = msgs.filter((m) => m.type === "image" && m.imageUrl).slice().reverse();
+  const links = [];
+  msgs.forEach((m) => {
+    if (m.text) (String(m.text).match(/https?:\/\/[^\s]+/g) || []).forEach((u) => links.push({ u, m }));
+  });
+  const pinIds = prefs.pinMsgs && prefs.pinMsgs[id] || [];
+  const pinned = msgs.filter((m) => pinIds.includes(m.id));
+  const theme = prefs.themes && prefs.themes[id] || { id: "default" };
+  const qr = prefs.qr && prefs.qr[id] || "\u{1F44D}";
+  const disap = prefs.disap && prefs.disap[id] || 0;
+  const ico = (d, s) => E("svg", { viewBox: "0 0 24 24", width: s || 26, height: s || 26, fill: "currentColor" }, E("path", { d, fillRule: d === MCI.typing ? "evenodd" : void 0 }));
+  const onOff = (b) => b ? "On" : "Off";
+  const row = (d, label, sub, onClick, danger) => E(
+    "button",
+    { className: "mci-row" + (danger ? " danger" : ""), key: label, onClick },
+    E("span", { className: "mci-ic" }, d ? ico(d) : null),
+    E("span", { className: "mci-rt" }, E("b", null, label), sub ? E("small", null, sub) : null)
+  );
+  const circ = (content, label, onClick) => E(
+    "button",
+    { className: "mci-circ", key: label, onClick },
+    E("span", null, content),
+    E("small", null, label)
+  );
+  const sec = (t) => E("div", { className: "mci-sec", key: "s" + t }, t);
+  const top = (title, onBack, right) => E(
+    "div",
+    { className: "mci-top" },
+    E("button", { className: "mci-iconbtn", onClick: onBack }, ico(MCI.back, 24)),
+    title ? E("div", { className: "mci-top-title" }, title) : E("div", { style: { flex: 1 } }),
+    right || E("span", { style: { width: 40 } })
+  );
+  const jump = (mid) => {
+    props.onClose();
+    setTimeout(() => {
+      const el = document.querySelector('[data-message-id="' + mid + '"]');
+      if (el) {
+        el.scrollIntoView({ block: "center", behavior: "smooth" });
+        const w = el.closest(".mechat-bubble-wrap") || el;
+        w.classList.add("mc-flash");
+        setTimeout(() => w.classList.remove("mc-flash"), 1500);
+      }
+    }, 120);
+  };
+  const shareContact = async () => {
+    const text = name + " on MeBook";
+    try {
+      if (navigator.share) await navigator.share({ title: name, text, url: location.origin });
+      else {
+        await navigator.clipboard.writeText(text + " - " + location.origin);
+        props.toast("Copied", "Contact copied", "success");
+      }
+    } catch (e) {
+    }
+  };
+  const inviteLink = location.origin + location.pathname + "#joinchat-" + id;
+  const doReport = (kind) => {
+    setMenu(false);
+    props.onReport(kind);
+  };
+  let body = null;
+  if (page === "main") {
+    const head = E(
+      "div",
+      { className: "mci-hero" },
+      E("div", { className: "mci-hero-av", onClick: isGroup ? () => photoRef.current && photoRef.current.click() : () => props.onProfile(chat.otherId) }, E("img", { src: avatar, alt: "" }), E("i", null)),
+      E("div", { className: "mci-hero-name" }, name, props.verified && !isGroup ? E("svg", { width: 18, height: 18, viewBox: "0 0 24 24", fill: "url(#mbTickGrad)", style: { marginLeft: 6 } }, E("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" })) : null)
+    );
+    const acts = E(
+      "div",
+      { className: "mci-acts" },
+      isGroup ? circ(ico(MCI.addUser, 26), "Invite", props.onInvite) : circ(ico(MCI.person, 26), "Profile", () => props.onProfile(chat.otherId)),
+      circ("Aa", "Nicknames", () => setPage("nick")),
+      circ(ico(MCI.search, 26), "Search", () => {
+        setQ("");
+        setPage("search");
+      }),
+      circ(ico(MCI.palette, 26), "Customise", () => {
+        setTab("themes");
+        setPage("custom");
+      })
+    );
+    const membersBlock = isGroup ? E(
+      "div",
+      { key: "mem" },
+      E("div", { className: "mci-memhead" }, E("span", null, members.length + " members"), E("button", { onClick: () => setPage("members") }, "See all")),
+      E(
+        "div",
+        { className: "mci-members" },
+        members.slice(0, 12).map((u) => E(
+          "div",
+          { className: "mci-mem", key: u.uid, onClick: () => u.uid !== me.uid && props.onProfile(u.uid) },
+          E("div", { className: "mci-mem-av" }, E("img", { src: props.avatarOf(u), alt: "" })),
+          E("span", null, (dispName(u.uid) || "").split(" ")[0])
+        ))
+      )
+    ) : null;
+    const collage = images.length ? E(
+      "div",
+      { className: "mci-collage", onClick: () => {
+        setMtab("media");
+        setPage("media");
+      } },
+      images.slice(0, 5).map((m, i) => E("img", { key: m.id, className: i === 0 ? "big" : "", src: m.imageUrl, alt: "" }))
+    ) : null;
+    const chatInfoRows = [
+      row(MCI.image, isGroup ? "View all media, files and links" : "View media, files and links", null, () => {
+        setMtab("media");
+        setPage("media");
+      }),
+      row(MCI.pin, "Pinned messages", pinned.length ? pinned.length + " pinned" : null, () => setPage("pinned"))
+    ];
+    if (isGroup) chatInfoRows.push(row(MCI.link, "Invitation link", "On", () => setDlg({ k: "link" })));
+    const actionRows = [
+      row(muted ? MCI.bellOff : MCI.bell, (muted ? "Unmute " : "Mute ") + name, null, () => props.onAction("mute")),
+      row(MCI.speaker, "Notifications & sounds", onOff(!flag("soundOff")), () => toggleFlag("soundOff")),
+      row(MCI.head, "Open chat head", null, () => props.onAction("chatHead")),
+      isGroup ? row(MCI.group, "Create a new group chat", null, props.onNewGroup) : row(MCI.group, "Create group chat with " + (name || "").split(" ")[0], null, props.onInvite)
+    ];
+    if (!isGroup) {
+      actionRows.push(row(MCI.download, "Auto-save photos", onOff(flag("autoSave")), () => toggleFlag("autoSave")));
+      actionRows.push(row(MCI.share, "Share contact", null, shareContact));
+    }
+    const privRows = [];
+    if (!isGroup) privRows.push(row(MCI.timer, "Disappearing messages", disap ? disap === 864e5 ? "24 hours" : "7 days" : "Off", () => setDlg({ k: "disap" })));
+    privRows.push(row(MCI.eye, "Read receipts", onOff(!flag("readOff")), () => toggleFlag("readOff")));
+    privRows.push(row(MCI.typing, "Typing indicator", onOff(!flag("typingOff")), () => toggleFlag("typingOff")));
+    if (!isGroup) {
+      privRows.push(row(MCI.shield, "Message permissions", prefs.perm && prefs.perm[id] === "friends" ? "Friends only" : "Everyone", () => setDlg({ k: "perm" })));
+      privRows.push(row(MCI.lock, "Encryption", "Secured in transit and at rest", () => setDlg({ k: "enc" })));
+      privRows.push(row(MCI.block, "Block", null, () => props.onBlock(chat.otherId)));
+      privRows.push(row(MCI.restrict, "Restrict", onOff(flag("restricted")), () => {
+        toggleFlag("restricted");
+        props.toast(flag("restricted") ? "Unrestricted" : "Restricted", name, "success");
+      }));
+      privRows.push(row(MCI.warn, "Report", "Give feedback and report conversation", () => props.onReport("conversation")));
+      privRows.push(row(MCI.trash, "Delete chat", null, () => props.onAction("delete"), true));
+    } else {
+      privRows.push(row(MCI.block, "Block a member", null, () => setDlg({ k: "block" })));
+      privRows.push(row(MCI.warn, "Report", "Give feedback and report conversation", () => props.onReport("conversation")));
+      privRows.push(row(MCI.leave, "Leave chat", null, () => props.onAction("leave"), true));
+    }
+    body = E(
+      React.Fragment,
+      null,
+      top(null, props.onClose, E("button", { className: "mci-iconbtn", onClick: () => setMenu((v) => !v) }, ico(MCI.dots, 24))),
+      head,
+      acts,
+      membersBlock,
+      sec("Chat info"),
+      collage,
+      chatInfoRows,
+      sec("Actions"),
+      actionRows,
+      sec("Privacy & support"),
+      privRows
+    );
+  } else if (page === "custom") {
+    let content = null;
+    if (tab === "themes") {
+      const cards = [E(
+        "button",
+        { className: "mci-theme", key: "up", onClick: () => themeRef.current && themeRef.current.click() },
+        E("div", { className: "mci-theme-prev up" }, ico(MCI.image, 38)),
+        E("span", null, "Upload an image")
+      )].concat(MC_THEMES.map((t) => {
+        const on = !theme.img && (theme.id || "default") === t.id;
+        return E(
+          "button",
+          { className: "mci-theme" + (on ? " on" : ""), key: t.id, onClick: () => {
+            props.updatePrefs((p) => {
+              p.themes = p.themes || {};
+              if (t.id === "default") delete p.themes[id];
+              else p.themes[id] = { id: t.id };
+              return p;
+            });
+            props.toast("Theme changed", t.name, "success");
+          } },
+          E("div", { className: "mci-theme-prev", style: { background: t.bg || "#000" } }, on ? E("i", null, ico(MCI.check, 22)) : null),
+          E("span", null, t.name)
+        );
+      }));
+      if (theme.img) cards.splice(1, 0, E(
+        "button",
+        { className: "mci-theme on", key: "mine", onClick: () => {
+        } },
+        E("div", { className: "mci-theme-prev", style: { background: "center / cover no-repeat url(" + theme.img + ")" } }, E("i", null, ico(MCI.check, 22))),
+        E("span", null, "Your image")
+      ));
+      content = E("div", { className: "mci-themes" }, cards);
+    } else if (tab === "reaction") {
+      content = E(
+        "div",
+        null,
+        E("div", { className: "mci-hint" }, "Choose the quick reaction for this chat. It replaces the like button."),
+        E("div", { className: "mci-emojis" }, MC_QR.map((em) => E("button", { key: em, className: em === qr ? "on" : "", onClick: () => {
+          props.updatePrefs((p) => {
+            p.qr = p.qr || {};
+            if (em === "\u{1F44D}") delete p.qr[id];
+            else p.qr[id] = em;
+            return p;
+          });
+        } }, em)))
+      );
+    } else {
+      content = E(
+        "div",
+        null,
+        E("div", { className: "mci-hint" }, "Word effects play an animation when a message contains these words."),
+        MC_WFX.map((f) => {
+          const k = id + ":" + f.k;
+          const on = !(prefs.wfxOff && prefs.wfxOff[k]);
+          return E(
+            "button",
+            { className: "mci-row", key: f.k, onClick: () => props.updatePrefs((p) => {
+              p.wfxOff = p.wfxOff || {};
+              if (p.wfxOff[k]) delete p.wfxOff[k];
+              else p.wfxOff[k] = 1;
+              return p;
+            }) },
+            E("span", { className: "mci-ic", style: { fontSize: 24 } }, f.emoji),
+            E("span", { className: "mci-rt" }, E("b", null, f.label), E("small", null, f.words.slice(0, 2).join(", "))),
+            E("span", { className: "mci-sw" + (on ? " on" : "") }, E("i", null))
+          );
+        }),
+        E("button", { className: "mci-row", onClick: () => mcBurst("\u2728") }, E("span", { className: "mci-ic", style: { fontSize: 24 } }, "\u2728"), E("span", { className: "mci-rt" }, E("b", null, "Preview effect")))
+      );
+    }
+    body = E(
+      React.Fragment,
+      null,
+      top("Customise", () => setPage("main")),
+      E(
+        "div",
+        { className: "mci-tabs" },
+        [["themes", "Themes"], ["reaction", "Quick reaction"], ["words", "Word effects"]].map((t) => E("button", { key: t[0], className: tab === t[0] ? "on" : "", onClick: () => setTab(t[0]) }, t[1]))
+      ),
+      content
+    );
+  } else if (page === "members") {
+    body = E(
+      React.Fragment,
+      null,
+      top(members.length + " members", () => setPage("main"), E("button", { className: "mci-iconbtn", onClick: props.onInvite }, ico(MCI.addUser, 24))),
+      members.map((u) => E(
+        "button",
+        { className: "mci-person", key: u.uid, onClick: () => u.uid !== me.uid && props.onProfile(u.uid) },
+        E("img", { src: props.avatarOf(u), alt: "" }),
+        E("span", null, E("b", null, dispName(u.uid)), u.uid === chat.createdBy ? E("small", null, "Admin") : null)
+      ))
+    );
+  } else if (page === "nick") {
+    body = E(
+      React.Fragment,
+      null,
+      top("Nicknames", () => setPage("main")),
+      members.map((u) => E(
+        "button",
+        { className: "mci-person", key: u.uid, onClick: () => {
+          setVal(nickMap[u.uid] || "");
+          setDlg({ k: "nick", uid: u.uid });
+        } },
+        E("img", { src: props.avatarOf(u), alt: "" }),
+        E("span", null, E("b", null, nickMap[u.uid] || (u.uid === me.uid ? "You" : u.name)), E("small", null, nickMap[u.uid] ? u.name : "Set nickname"))
+      ))
+    );
+  } else if (page === "media") {
+    const list = mtab === "media" ? E(
+      "div",
+      { className: "mci-grid" },
+      images.length ? images.map((m) => E("a", { key: m.id, href: m.imageUrl, target: "_blank", rel: "noreferrer" }, E("img", { src: m.imageUrl, alt: "" }))) : E("div", { className: "mci-empty" }, "No media yet")
+    ) : E(
+      "div",
+      null,
+      links.length ? links.slice().reverse().map((l, i) => E("a", { key: i, className: "mci-link", href: l.u, target: "_blank", rel: "noreferrer" }, l.u)) : E("div", { className: "mci-empty" }, "No links yet")
+    );
+    body = E(
+      React.Fragment,
+      null,
+      top("Media, files and links", () => setPage("main")),
+      E("div", { className: "mci-tabs" }, [["media", "Media"], ["links", "Links"]].map((t) => E("button", { key: t[0], className: mtab === t[0] ? "on" : "", onClick: () => setMtab(t[0]) }, t[1]))),
+      list
+    );
+  } else if (page === "pinned") {
+    body = E(
+      React.Fragment,
+      null,
+      top("Pinned messages", () => setPage("main")),
+      pinned.length ? pinned.map((m) => E(
+        "div",
+        { className: "mci-pin", key: m.id },
+        E("button", { onClick: () => jump(m.id) }, E("b", null, m.from === me.uid ? "You" : dispName(m.from)), E("span", null, m.type === "image" ? "\u{1F4F7} Photo" : m.type === "voice" ? "\u{1F3A4} Voice" : m.text || "\u{1F44D}")),
+        E("button", { className: "mci-iconbtn", title: "Unpin", onClick: () => props.updatePrefs((p) => {
+          p.pinMsgs = p.pinMsgs || {};
+          p.pinMsgs[id] = (p.pinMsgs[id] || []).filter((x) => x !== m.id);
+          return p;
+        }) }, ico(MCI.x, 20))
+      )) : E("div", { className: "mci-empty" }, "No pinned messages. Open a message's menu and choose Pin message.")
+    );
+  } else if (page === "search") {
+    const ql = q.trim().toLowerCase();
+    const res = ql ? msgs.filter((m) => m.text && String(m.text).toLowerCase().includes(ql)).slice().reverse().slice(0, 80) : [];
+    body = E(
+      React.Fragment,
+      null,
+      E(
+        "div",
+        { className: "mci-top" },
+        E("button", { className: "mci-iconbtn", onClick: () => setPage("main") }, ico(MCI.back, 24)),
+        E("input", { className: "mci-search", autoFocus: true, placeholder: "Search in conversation", value: q, onChange: (e) => setQ(e.target.value) })
+      ),
+      res.map((m) => E(
+        "button",
+        { className: "mci-person", key: m.id, onClick: () => jump(m.id) },
+        E("img", { src: props.avatarOf(userOf(m.from)), alt: "" }),
+        E("span", null, E("b", null, m.from === me.uid ? "You" : dispName(m.from)), E("small", null, m.text))
+      )),
+      ql && !res.length ? E("div", { className: "mci-empty" }, "No results") : null
+    );
+  }
+  const menuItems = isGroup ? [["Open chat head", () => props.onAction("chatHead")], ["Change group photo", () => photoRef.current && photoRef.current.click()], ["Change name", () => {
+    setVal(chat.other.name || "");
+    setDlg({ k: "name" });
+  }], ["Delete conversation", () => props.onAction("delete")], ["Leave group", () => props.onAction("leave")], ["Report technical problem", () => doReport("technical")]] : [["Open chat head", () => props.onAction("chatHead")], ["Delete conversation", () => props.onAction("delete")], ["Block", () => props.onBlock(chat.otherId)], ["Report technical problem", () => doReport("technical")]];
+  const sheetRow = (label, on, fn) => E("button", { key: label, className: "mc-sheet-row", onClick: fn }, E("span", { style: { flex: 1 } }, label), on ? ico(MCI.check, 22) : null);
+  let dialog = null;
+  if (dlg) {
+    const close = () => setDlg(null);
+    if (dlg.k === "name" || dlg.k === "nick") {
+      const isName = dlg.k === "name";
+      dialog = E(
+        "div",
+        { className: "mc-sheet-overlay mc-center", onClick: close },
+        E(
+          "div",
+          { className: "mc-dialog", onClick: (e) => e.stopPropagation() },
+          E("h3", null, isName ? "Change group name" : "Set nickname"),
+          E("input", { className: "mci-input", autoFocus: true, maxLength: 60, value: val, placeholder: isName ? "Group name" : "Nickname", onChange: (e) => setVal(e.target.value) }),
+          E(
+            "div",
+            { className: "mc-dialog-actions" },
+            E("button", { onClick: close }, "Cancel"),
+            E("button", { onClick: () => {
+              const v = val.trim();
+              if (isName) {
+                if (v) props.onRename(v);
+              } else {
+                props.updatePrefs((p) => {
+                  p.nick = p.nick || {};
+                  p.nick[id] = p.nick[id] || {};
+                  if (v) p.nick[id][dlg.uid] = v;
+                  else delete p.nick[id][dlg.uid];
+                  return p;
+                });
+              }
+              close();
+            } }, "Save")
+          )
+        )
+      );
+    } else if (dlg.k === "link") {
+      dialog = E(
+        "div",
+        { className: "mc-sheet-overlay mc-center", onClick: close },
+        E(
+          "div",
+          { className: "mc-dialog", onClick: (e) => e.stopPropagation() },
+          E("h3", null, "Invitation link"),
+          E("p", { style: { wordBreak: "break-all" } }, inviteLink),
+          E("p", null, "Anyone who opens this link while logged in to MeBook can join this group."),
+          E(
+            "div",
+            { className: "mc-dialog-actions" },
+            E("button", { onClick: close }, "Close"),
+            E("button", { onClick: async () => {
+              try {
+                await navigator.clipboard.writeText(inviteLink);
+                props.toast("Copied", "Invitation link copied", "success");
+              } catch (e) {
+                props.toast("Could not copy", "", "error");
+              }
+              close();
+            } }, "Copy link")
+          )
+        )
+      );
+    } else if (dlg.k === "enc") {
+      dialog = E(
+        "div",
+        { className: "mc-sheet-overlay mc-center", onClick: close },
+        E("div", { className: "mc-dialog", onClick: (e) => e.stopPropagation() }, E("h3", null, "Encryption"), E("p", null, "Messages are protected in transit and stored securely on MeBook servers."), E("div", { className: "mc-dialog-actions" }, E("button", { onClick: close }, "OK")))
+      );
+    } else if (dlg.k === "block") {
+      dialog = E(
+        "div",
+        { className: "mc-sheet-overlay", onClick: close },
+        E("div", { className: "mc-sheet", onClick: (e) => e.stopPropagation() }, E("div", { className: "mc-sheet-handle" }), E("div", { className: "mc-add-title" }, "Block a member"), members.filter((u) => u.uid !== me.uid).map((u) => E("button", { key: u.uid, className: "mc-sheet-row", onClick: () => {
+          close();
+          props.onBlock(u.uid);
+        } }, E("img", { src: props.avatarOf(u), alt: "", style: { width: 34, height: 34, borderRadius: "50%", objectFit: "cover" } }), E("span", null, u.name))))
+      );
+    } else if (dlg.k === "disap") {
+      const set = (ms) => {
+        props.updatePrefs((p) => {
+          p.disap = p.disap || {};
+          if (ms) p.disap[id] = ms;
+          else delete p.disap[id];
+          return p;
+        });
+        close();
+      };
+      dialog = E(
+        "div",
+        { className: "mc-sheet-overlay", onClick: close },
+        E("div", { className: "mc-sheet", onClick: (e) => e.stopPropagation() }, E("div", { className: "mc-sheet-handle" }), E("div", { className: "mc-add-title" }, "Disappearing messages"), sheetRow("Off", !disap, () => set(0)), sheetRow("24 hours", disap === 864e5, () => set(864e5)), sheetRow("7 days", disap === 6048e5, () => set(6048e5)))
+      );
+    } else if (dlg.k === "perm") {
+      const cur = prefs.perm && prefs.perm[id] === "friends" ? "friends" : "everyone";
+      const set = (v) => {
+        props.updatePrefs((p) => {
+          p.perm = p.perm || {};
+          p.perm[id] = v;
+          return p;
+        });
+        close();
+      };
+      dialog = E(
+        "div",
+        { className: "mc-sheet-overlay", onClick: close },
+        E("div", { className: "mc-sheet", onClick: (e) => e.stopPropagation() }, E("div", { className: "mc-sheet-handle" }), E("div", { className: "mc-add-title" }, "Message permissions"), sheetRow("Everyone", cur === "everyone", () => set("everyone")), sheetRow("Friends only", cur === "friends", () => set("friends")))
+      );
+    }
+  }
+  return E(
+    "div",
+    { className: "mc-info" },
+    E(
+      "div",
+      { className: "mc-info-in" },
+      body,
+      menu ? E("div", { className: "mci-menu-ov", onClick: () => setMenu(false) }, E("div", { className: "mci-menu", onClick: (e) => e.stopPropagation() }, menuItems.map((it) => E("button", { key: it[0], onClick: () => {
+        setMenu(false);
+        it[1]();
+      } }, it[0])))) : null
+    ),
+    E("input", { ref: photoRef, type: "file", accept: "image/*", style: { display: "none" }, onChange: (e) => {
+      const f = e.target.files && e.target.files[0];
+      e.target.value = "";
+      if (f) props.onGroupPhoto(f);
+    } }),
+    E("input", { ref: themeRef, type: "file", accept: "image/*", style: { display: "none" }, onChange: (e) => {
+      const f = e.target.files && e.target.files[0];
+      e.target.value = "";
+      if (!f) return;
+      mcResizeImg(f, 900, (data) => {
+        props.updatePrefs((p) => {
+          p.themes = p.themes || {};
+          p.themes[id] = { id: "custom", img: data };
+          return p;
+        });
+        props.toast("Theme changed", "Your image", "success");
+      });
+    } }),
+    dialog
+  );
+}
+
 function McChatHead(props) {
   const [pos, setPos] = React.useState({
     x: Math.max(0, window.innerWidth - 70),
@@ -8579,11 +9276,47 @@ function MeBookPage({ onExit }) {
   const [chatMenu, setChatMenu] = useState(null);
   const [chatConfirm, setChatConfirm] = useState(null);
   const [addMembersFor, setAddMembersFor] = useState(null);
+  const [chatInfoOpen, setChatInfoOpen] = useState(false);
+  const lastFxRef = useRef(null);
+  const fxChatRef = useRef(null);
   const [chatHeads, setChatHeads] = useState([]);
   const [chatListMode, setChatListMode] = useState("main");
   const lpTimerRef = useRef(null);
   const lpFiredRef = useRef(false);
   const lpStartRef = useRef({ x: 0, y: 0 });
+  useEffect(() => {
+    if (!user || !user.uid) return;
+    const jm = /joinchat-([A-Za-z0-9]+)/.exec(window.location.hash || "");
+    if (!jm) return;
+    (async () => {
+      try {
+        const fb = await getFirebase();
+        await fb.updateDoc(fb.doc(fb.db, "chats", jm[1]), { members: fb.arrayUnion(user.uid) });
+        showToast("Joined group", "You joined the group chat", "success");
+      } catch (e) {
+        showToast("Could not join", e.message, "error");
+      }
+      try {
+        history.replaceState(null, "", location.pathname + location.search);
+      } catch (e) {
+      }
+    })();
+  }, [user?.uid]);
+  useEffect(() => {
+    if (fxChatRef.current !== activeChat) {
+      fxChatRef.current = activeChat;
+      lastFxRef.current = null;
+    }
+    const last = chatMessages[chatMessages.length - 1];
+    if (!last || !last.id || lastFxRef.current === last.id) return;
+    const first = lastFxRef.current === null;
+    lastFxRef.current = last.id;
+    if (first) return;
+    try {
+      mcWordFx(last.text, chatPrefsRef.current, activeChat);
+    } catch (e) {
+    }
+  }, [chatMessages, activeChat]);
   useEffect(() => {
     if (!user || !user.uid) return;
     const p = mcLoadPrefs(user.uid);
@@ -8706,12 +9439,12 @@ function MeBookPage({ onExit }) {
         await fb.updateDoc(fb.doc(fb.db, "chats", c.id), { members: fb.arrayUnion(...uids) });
         showToast("Members added", uids.length + " added to " + c.other.name, "success");
       } else {
-        const names = [c.other.name].concat(uids.map((u) => {
+        const names = [c.other.name].filter(Boolean).concat(uids.map((u) => {
           const f = allUsers.find((x) => x.uid === u);
           return f && f.name ? f.name.split(" ")[0] : "User";
         }));
         const gname = names.join(", ").slice(0, 60);
-        const members = [user.uid, c.otherId].concat(uids);
+        const members = Array.from(new Set([user.uid, c.otherId].concat(uids)));
         const ref = await fb.addDoc(fb.collection(fb.db, "chats"), {
           members,
           isGroup: true,
@@ -8733,12 +9466,67 @@ function MeBookPage({ onExit }) {
   };
   const openPartnerOrGroup = () => {
     if (!chatPartner) return;
-    if (chatPartner.isGroup) {
-      const gc = chats.find((x) => x.id === activeChat);
-      if (gc) setAddMembersFor(gc);
-      return;
-    }
-    openUserProfile(chatPartner.uid);
+    setChatInfoOpen(true);
+  };
+  const mcNickOf = (uid) => {
+    const n = chatPrefs.nick && chatPrefs.nick[activeChat];
+    return n && n[uid] ? n[uid] : null;
+  };
+  const renderMcInfo = () => {
+    if (!chatInfoOpen || !activeChat || !chatPartner) return null;
+    const c0 = chats.find((x) => x.id === activeChat);
+    const chat = c0 || { id: activeChat, otherId: chatPartner.uid, other: chatPartner, isGroup: !!chatPartner.isGroup, members: [user.uid, chatPartner.uid] };
+    return React.createElement(McInfoPage, {
+      key: activeChat,
+      chat,
+      me: { uid: user.uid, name: profile && profile.name || "You", photoURL: avatarUrl(profile) },
+      prefs: chatPrefs,
+      updatePrefs: updateChatPrefs,
+      allUsers,
+      avatarOf: avatarUrl,
+      verified: isVerified(chatPartner),
+      messages: chatMessages,
+      toast: showToast,
+      onClose: () => setChatInfoOpen(false),
+      onAction: (k) => chatAction(k, chat),
+      onInvite: () => setAddMembersFor(chat),
+      onNewGroup: () => setMcGroupOpen(true),
+      onProfile: (uid) => {
+        setChatInfoOpen(false);
+        openUserProfile(uid);
+      },
+      onBlock: (uid) => handleBlockUser(uid),
+      onReport: async (kind) => {
+        try {
+          const fb = await getFirebase();
+          await fb.addDoc(fb.collection(fb.db, "reports"), { kind, chatId: activeChat, by: user.uid, at: fb.serverTimestamp() });
+        } catch (e) {
+        }
+        showToast("Report sent", "Thanks for your feedback", "success");
+      },
+      onRename: async (nm) => {
+        try {
+          const fb = await getFirebase();
+          await fb.updateDoc(fb.doc(fb.db, "chats", activeChat), { name: nm });
+          setChatPartner((p) => p ? Object.assign({}, p, { name: nm }) : p);
+          showToast("Group name changed", nm, "success");
+        } catch (e) {
+          showToast("Error", e.message, "error");
+        }
+      },
+      onGroupPhoto: async (file) => {
+        try {
+          showToast("Uploading...", "Group photo", "info");
+          const url = await cloudinaryUpload(file);
+          const fb = await getFirebase();
+          await fb.updateDoc(fb.doc(fb.db, "chats", activeChat), { photoURL: url });
+          setChatPartner((p) => p ? Object.assign({}, p, { photoURL: url }) : p);
+          showToast("Group photo changed", "", "success");
+        } catch (e) {
+          showToast("Failed", e.message, "error");
+        }
+      }
+    });
   };
   const mcSenderAvatar = (m) => {
     if (chatPartner && chatPartner.isGroup) {
@@ -8748,6 +9536,8 @@ function MeBookPage({ onExit }) {
     return chatPartner ? avatarUrl(chatPartner) : "";
   };
   const mcSenderName = (m) => {
+    const nk = mcNickOf(m.from);
+    if (nk) return nk;
     const f = allUsers.find((u) => u.uid === m.from);
     return f && f.name ? f.name : "User";
   };
@@ -8804,6 +9594,20 @@ function MeBookPage({ onExit }) {
   const [chatInput, setChatInput] = useState("");
   const [partnerTyping, setPartnerTyping] = useState(false);
   const [partnerLastSeenMessageId, setPartnerLastSeenMessageId] = useState(null);
+  const seenTailMode = (() => {
+    try {
+      if (!partnerLastSeenMessageId || !chatMessages.length || !user) return false;
+      if (chatPartner && chatPartner.isGroup) return false;
+      const lastM = chatMessages[chatMessages.length - 1];
+      if (!lastM || lastM.from === user.uid) return false;
+      for (let i = chatMessages.length - 1; i >= 0; i--) {
+        if (chatMessages[i].from === user.uid) return String(chatMessages[i].id) === String(partnerLastSeenMessageId);
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  })();
   const typingTimeoutRef = useRef(null);
   const lastMarkedSeenRef = useRef(null);
   const [postReactionPicker, setPostReactionPicker] = useState({ open: false, postId: null, anchorRect: null });
@@ -8880,6 +9684,7 @@ function MeBookPage({ onExit }) {
   const chatInputRef = useRef(null);
   const updateTypingState = async (chatId, isTyping) => {
     if (!chatId || !user?.uid) return;
+    if (isTyping && chatPrefsRef.current.typingOff && chatPrefsRef.current.typingOff[chatId]) return;
     try {
       const fb = await getFirebase();
       await fb.setDoc(
@@ -9038,6 +9843,7 @@ function MeBookPage({ onExit }) {
         if (!latestVisiblePartnerMessage?.id) return;
         const messageId = String(latestVisiblePartnerMessage.id);
         if (lastMarkedSeenRef.current === messageId) return;
+        if (chatPrefsRef.current.readOff && chatPrefsRef.current.readOff[activeChat]) return;
         lastMarkedSeenRef.current = messageId;
         void (async () => {
           try {
@@ -11297,6 +12103,7 @@ ${buildShareUrl(post.id)}`;
     });
   };
   const closeChat = () => {
+    setChatInfoOpen(false);
     if (activeChat) {
       void updateTypingState(activeChat, false);
     }
@@ -11549,14 +12356,16 @@ ${buildShareUrl(post.id)}`;
     if (!activeChat) return;
     try {
       const fb = await getFirebase();
+      const qrE = chatPrefsRef.current.qr && chatPrefsRef.current.qr[activeChat] || "\u{1F44D}";
       await fb.addDoc(fb.collection(fb.db, "chats", activeChat, "messages"), {
         from: user.uid,
         text: "",
         type: "like",
+        emoji: qrE,
         at: fb.serverTimestamp()
       });
       await fb.updateDoc(fb.doc(fb.db, "chats", activeChat), {
-        lastMessage: { text: "\u{1F44D}", from: user.uid },
+        lastMessage: { text: qrE, from: user.uid },
         lastAt: fb.serverTimestamp()
       });
     } catch (e) {
@@ -12517,6 +13326,7 @@ ${buildShareUrl(post.id)}`;
       onNo: () => setChatConfirm(null),
       onYes: runChatConfirm
     }) : null,
+    renderMcInfo(),
     mcGroupOpen ? React.createElement(McAddMembers, {
       chat: { isGroup: false, other: { name: "" }, members: [], otherId: "__none" },
       title: "New group", confirmLabel: "Create group",
@@ -13508,6 +14318,27 @@ ${buildShareUrl(post.id)}`;
           });
         }
       }
+      {
+        const pinList = chatPrefs.pinMsgs && chatPrefs.pinMsgs[activeChat] || [];
+        const isPin = pinList.includes(m.id);
+        items.push({
+          label: isPin ? "Unpin message" : "Pin message",
+          icon: ICON_COPY,
+          onClick: () => {
+            if (!isPin && pinList.length >= 5) {
+              showToast("Pin limit", "You can pin up to 5 messages", "info");
+              return;
+            }
+            updateChatPrefs((p) => {
+              p.pinMsgs = p.pinMsgs || {};
+              const arr = p.pinMsgs[activeChat] || [];
+              p.pinMsgs[activeChat] = isPin ? arr.filter((x) => x !== m.id) : arr.concat([m.id]);
+              return p;
+            });
+            showToast(isPin ? "Unpinned" : "Message pinned", "", "success");
+          }
+        });
+      }
       items.push({ label: "Unsend message", icon: ICON_TRASH, danger: true, onClick: () => handleDeleteMessage(actionMenu.id) });
       return /* @__PURE__ */ React.createElement(ActionSheet, { onClose: close, items });
     })(),
@@ -13992,10 +14823,11 @@ ${buildShareUrl(post.id)}`;
           )
         );
       }))));
-    })(), currentView === "user-profile" && viewingUser && renderFbProfile(), currentView === "fb-profile-menu" && renderFbMenu(), currentView === "fb-own-menu" && renderFbOwnMenu(), currentView === "fb-settings" && renderFbSettings(), currentView === "fb-view-as" && renderFbProfileCore("preview", profile, myPosts, myFriends, false), currentView === "fb-activity" && renderFbActivity(), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement("div", { className: "mc-listpage" }, mcListPageContent()) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true)), mcBackBtn("in-side")), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" })), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, chatPartner?.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "url(#mbTickGrad)" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : "Active now")), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), /* @__PURE__ */ React.createElement(
+    })(), currentView === "user-profile" && viewingUser && renderFbProfile(), currentView === "fb-profile-menu" && renderFbMenu(), currentView === "fb-own-menu" && renderFbOwnMenu(), currentView === "fb-settings" && renderFbSettings(), currentView === "fb-view-as" && renderFbProfileCore("preview", profile, myPosts, myFriends, false), currentView === "fb-activity" && renderFbActivity(), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement("div", { className: "mc-listpage" }, mcListPageContent()) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true)), mcBackBtn("in-side")), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" })), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info", onClick: openPartnerOrGroup, style: { cursor: "pointer" } }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, mcNickOf(chatPartner?.uid) || chatPartner?.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "url(#mbTickGrad)" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : "Active now")), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), /* @__PURE__ */ React.createElement(
       "div",
       {
         className: "mechat-body",
+        style: mcThemeStyle(chatPrefs.themes && chatPrefs.themes[activeChat]),
         ref: chatBodyRef,
         onScroll: (e) => {
           const el = e.currentTarget;
@@ -14003,11 +14835,11 @@ ${buildShareUrl(post.id)}`;
           setShowScrollDown((v) => v === far ? v : far);
         }
       },
-      chatMessages.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "mechat-empty" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" })), /* @__PURE__ */ React.createElement("b", null, "No messages yet"), /* @__PURE__ */ React.createElement("p", null, "Say hi \u{1F44B}")) : chatMessages.map((m, idx) => {
+      chatMessages.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "mechat-empty" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" })), /* @__PURE__ */ React.createElement("b", null, "No messages yet"), /* @__PURE__ */ React.createElement("p", null, "Say hi \u{1F44B}")) : mcVisibleMsgs(chatMessages, chatPrefs, activeChat).map((m, idx, visArr) => {
         const mine = m.from === user.uid;
-        const prevMsg = idx > 0 ? chatMessages[idx - 1] : null;
+        const prevMsg = idx > 0 ? visArr[idx - 1] : null;
         const showAvatar = !mine && (!prevMsg || prevMsg.from !== m.from);
-        const isSeenByPartner = mine && String(m.id) === String(partnerLastSeenMessageId || "");
+        const isSeenByPartner = mine && !seenTailMode && String(m.id) === String(partnerLastSeenMessageId || "");
         const reactions = m.reactions || {};
         const reactionKeys = Object.values(reactions);
         const uniqueReactions = Array.from(new Set(reactionKeys));
@@ -14095,7 +14927,7 @@ ${buildShareUrl(post.id)}`;
             }
           ))), /* @__PURE__ */ React.createElement("span", { className: "mechat-voice-duration" }, formatVoiceDuration(m.duration || 0)));
         } else if (isLikeMsg) {
-          bubbleContent = /* @__PURE__ */ React.createElement("div", { style: { fontSize: 40, lineHeight: 1, padding: "2px 4px" } }, "\u{1F44D}");
+          bubbleContent = /* @__PURE__ */ React.createElement("div", { style: { fontSize: 40, lineHeight: 1, padding: "2px 4px" } }, m.emoji || "\u{1F44D}");
         } else {
           bubbleContent = /* @__PURE__ */ React.createElement(React.Fragment, null, m.replyTo && /* @__PURE__ */ React.createElement(
             "div",
@@ -14205,7 +15037,8 @@ ${buildShareUrl(post.id)}`;
           ),
           reactionEmojis.length > 0 && /* @__PURE__ */ React.createElement("span", { className: "mechat-reaction-badge" }, reactionEmojis.slice(0, 3).join(""), reactionKeys.length > 1 && ` ${reactionKeys.length}`)
         ));
-      })
+      }),
+      seenTailMode && /* @__PURE__ */ React.createElement("div", { className: "mechat-seen-tail" }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }))
     ), showScrollDown && /* @__PURE__ */ React.createElement(
       "button",
       {
@@ -14266,7 +15099,8 @@ ${buildShareUrl(post.id)}`;
     ), chatInput.trim() ? /* @__PURE__ */ React.createElement("button", { className: "mechat-send-btn", onClick: handleSendMessage, title: "Send" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" }))) : /* @__PURE__ */ React.createElement(
       "button",
       {
-        className: `mechat-like-btn${chatLikeActive ? " my-liked" : ""}`,
+        className: `mechat-like-btn${chatLikeActive ? " my-liked" : ""}${chatPrefs.qr && chatPrefs.qr[activeChat] ? " has-qr" : ""}`,
+        "data-qr": chatPrefs.qr && chatPrefs.qr[activeChat] || void 0,
         onClick: handleSendLike,
         onContextMenu: (e) => {
           e.preventDefault();
