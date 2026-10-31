@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#000000" />
-<title>MeBook – MVBDS Movie Social App</title>
+<title>MeBook | MVBD Movie Social App</title>
 <meta name="description" content="MeBook হলো MVBDS এর movie social app। Movie post, reels, comment ও community এক জায়গায়। MeBook – MVBDS." />
 <meta name="robots" content="index, follow" />
 <link rel="canonical" href="https://mebook.mvbds.xyz/" />
@@ -3396,6 +3396,96 @@ transition:transform .15s ease,box-shadow .15s ease;-webkit-tap-highlight-color:
 .mebook-root.dark-mode .mc-tab.active{background:#1c1c1e;color:#2d88ff;}
 .mebook-root .mc-tab-badge{position:absolute;top:8px;left:calc(50% + 8px);width:12px;height:12px;border-radius:50%;background:#ef4444;border:2px solid #fff;}
 .mebook-root.dark-mode .mc-tab-badge{border-color:#000;}
+
+
+/* ---- Header hides on every page except Home (Facebook style) ---- */
+@media(max-width:860px){
+.mebook-root.mb-hdr-off .mb-header{transform:translateY(-100%);box-shadow:none;}
+.mebook-root.mb-hdr-off .mb-navbar{top:0;}
+.mebook-root.mb-hdr-off .mb-layout{padding-top:62px;}
+html.mb-native .mebook-root.mb-hdr-off .mb-navbar{top:var(--sat);}
+html.mb-native .mebook-root.mb-hdr-off .mb-layout{padding-top:calc(62px + var(--sat));}
+}
+
+/* ---- Friends page (Facebook style) ---- */
+.mebook-root .frx-page{padding:0 0 24px;}
+.mebook-root .frx-top{display:flex;align-items:center;justify-content:space-between;padding:6px 4px 4px;}
+.mebook-root .frx-title{font-size:26px;font-weight:800;margin:0;color:var(--text);letter-spacing:-.4px;}
+.mebook-root .frx-search-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--text);cursor:pointer;}
+.mebook-root .frx-search-btn svg{width:24px;height:24px;fill:currentColor;}
+.mebook-root .frx-searchbox{margin:2px 0 8px;}
+.mebook-root .frx-searchbox input{width:100%;box-sizing:border-box;height:40px;border-radius:999px;border:none;outline:none;padding:0 16px;font-size:15px;background:var(--input-bg);color:var(--text);}
+.mebook-root .frx-chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:none;}
+.mebook-root .frx-chips::-webkit-scrollbar{display:none;}
+.mebook-root .frx-chip{flex:0 0 auto;height:36px;padding:0 16px;border-radius:999px;border:none;background:#e4e6eb;color:#050505;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+.mebook-root.dark-mode .frx-chip{background:#262729;color:#e4e6eb;}
+.mebook-root .frx-chip.on{background:rgba(8,102,255,.14);color:#0866ff;}
+.mebook-root.dark-mode .frx-chip.on{background:rgba(45,136,255,.2);color:#4599ff;}
+.mebook-root .frx-sec{padding:4px 0 6px;}
+.mebook-root .frx-sec.frx-sep{border-top:1px solid var(--border);margin-top:6px;padding-top:12px;}
+.mebook-root .frx-sec-head{display:flex;align-items:center;justify-content:space-between;}
+.mebook-root .frx-sec-title{font-size:18px;font-weight:800;color:var(--text);margin:4px 0 10px;}
+.mebook-root .frx-count{color:#e41e3f;margin-left:4px;}
+.mebook-root .frx-seeall{background:none;border:none;color:#0866ff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;}
+.mebook-root.dark-mode .frx-seeall{color:#4599ff;}
+.mebook-root .frx-row{display:flex;gap:12px;align-items:flex-start;padding:8px 0 10px;}
+.mebook-root .frx-row-s{align-items:center;gap:12px;padding:6px 0;}
+.mebook-root .frx-av{width:84px;height:84px;border-radius:50%;object-fit:cover;background:#cbd5e1;flex:0 0 auto;cursor:pointer;}
+.mebook-root .frx-av-s{width:52px;height:52px;}
+.mebook-root .frx-main{flex:1;min-width:0;}
+.mebook-root .frx-main-s{display:flex;align-items:center;}
+.mebook-root .frx-name{font-size:16px;font-weight:700;color:var(--text);line-height:1.25;display:flex;align-items:center;gap:2px;cursor:pointer;word-break:break-word;}
+.mebook-root .frx-sub{font-size:13px;color:var(--text-muted);margin-top:2px;line-height:1.3;}
+.mebook-root .frx-btns{display:flex;gap:8px;margin-top:8px;}
+.mebook-root .frx-btn{flex:1;height:36px;border-radius:8px;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;padding:0 8px;white-space:nowrap;}
+.mebook-root .frx-btn:active{transform:scale(.97);}
+.mebook-root .frx-btn:disabled{opacity:.6;}
+.mebook-root .frx-btn.pri{background:#0866ff;color:#fff;}
+.mebook-root .frx-btn.sec{background:#e4e6eb;color:#050505;}
+.mebook-root.dark-mode .frx-btn.sec{background:#2a2b2d;color:#e4e6eb;}
+.mebook-root .frx-btn.frx-sm{flex:0 0 auto;height:32px;padding:0 14px;font-size:13px;}
+.mebook-root .frx-more{width:34px;height:34px;border-radius:50%;background:none;border:none;color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto;}
+.mebook-root .frx-more svg{width:22px;height:22px;fill:currentColor;}
+.mebook-root .frx-empty{padding:28px 10px;text-align:center;color:var(--text-muted);font-size:14.5px;}
+
+/* ---- MeChat: smaller, mobile-friendly sizes ---- */
+.mebook-root .mc-listpage .mc-title{font-size:26px;letter-spacing:-.8px;}
+.mebook-root .mc-listpage-head{padding:calc(6px + max(env(safe-area-inset-top,0px),var(--sat,0px))) 14px 2px;}
+.mebook-root .mc-lp-btn{width:36px;height:36px;}
+.mebook-root .mc-lp-btn svg{width:22px;height:22px;}
+.mebook-root .mc-lp-logo img{width:26px;height:26px;}
+.mebook-root .mc-listpage .mb-search-box{margin:4px 12px 6px;padding:7px 12px;}
+.mebook-root .mc-listpage .mb-search-box input{font-size:14.5px;}
+.mebook-root .mc-listpage .msgr-online-row{padding:2px 8px 8px;}
+.mebook-root .mc-listpage .msgr-online-item{width:64px;}
+.mebook-root .mc-listpage .msgr-online-avatar-wrap{width:52px;height:52px;}
+.mebook-root .mc-listpage .msgr-online-avatar-wrap img{width:52px;height:52px;}
+.mebook-root .mc-listpage .msgr-online-dot{width:14px;height:14px;border-width:2.5px;}
+.mebook-root .mc-listpage .msgr-online-name{font-size:11.5px;margin-top:3px;}
+.mebook-root .mc-listpage .msgr-item{gap:12px;padding:7px 14px;}
+.mebook-root .mc-listpage .msgr-item-avatar-wrap{width:50px;height:50px;}
+.mebook-root .mc-listpage .msgr-item-avatar-wrap img{width:50px;height:50px;}
+.mebook-root .mc-listpage .msgr-item-dot{width:14px;height:14px;border-width:2.5px;}
+.mebook-root .mc-listpage .msgr-item-name{font-size:15.5px;}
+.mebook-root .mc-listpage .msgr-item-last{font-size:13.5px;}
+.mebook-root .mc-listpage .msgr-item-time{font-size:12px;}
+.mebook-root .mc-listpage .mc-unread-dot{width:10px;height:10px;}
+.mebook-root .mc-tabbar{padding:5px 10px calc(5px + env(safe-area-inset-bottom,0px));gap:6px;}
+.mebook-root .mc-tab{height:42px;border-radius:21px;}
+.mebook-root .mc-tab svg{width:23px;height:23px;}
+.mebook-root .mc-tab-badge{top:7px;width:9px;height:9px;left:calc(50% + 6px);}
+.mebook-root .mc-listpage .msgr-wrap.mc-plain{padding-bottom:calc(70px + env(safe-area-inset-bottom,0px));}
+.mebook-root .mechat-head{padding:6px 10px;gap:8px;}
+.mebook-root .mechat-head-name{font-size:15px;}
+.mebook-root .mechat-head-status{font-size:11.5px;}
+.mebook-root .mechat-head-btn{width:34px;height:34px;}
+.mebook-root .mechat-head-btn svg{width:20px;height:20px;}
+.mebook-root .mechat-bubble{font-size:14px;padding:6px 11px 5px;border-radius:17px;}
+.mebook-root .mechat-bubble-avatar{width:24px;height:24px;}
+.mebook-root .mechat-input-bar{padding:6px 10px 8px;gap:6px;}
+.mebook-root .mechat-input-icon{width:34px;height:34px;}
+.mebook-root .mechat-input-icon svg{width:20px;height:20px;}
+.mebook-root .mechat-input-field{font-size:14.5px;padding:8px 14px;min-height:36px;}
 
 `;
 function ToastStack({
@@ -8433,6 +8523,11 @@ function MeBookPage({ onExit }) {
   const [suEmail, setSuEmail] = useState("");
   const [suPass, setSuPass] = useState("");
   const [friendSearch, setFriendSearch] = useState("");
+  const [frRemoved, setFrRemoved] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("mb-fr-removed") || "[]"); } catch (e) { return []; }
+  });
+  const [frSeeAll, setFrSeeAll] = useState(false);
+  const [frSearchOpen, setFrSearchOpen] = useState(false);
   const [chatSearch, setChatSearch] = useState("");
   const [chatInput, setChatInput] = useState("");
   const [partnerTyping, setPartnerTyping] = useState(false);
@@ -11712,7 +11807,7 @@ ${buildShareUrl(post.id)}`;
   }).slice().sort((a, b) => (mcPrefs.pinned[b.id] || 0) - (mcPrefs.pinned[a.id] || 0));
   const searchedUsersForChat = chatSearch.trim() ? allUsers.filter((u) => (u.name || "").toLowerCase().includes(chatSearch.trim().toLowerCase())).slice(0, 6) : [];
   const fbFull = ["profile", "user-profile", "fb-profile-menu", "fb-own-menu", "fb-view-as", "fb-activity"].includes(currentView);
-  const rootClass = `mebook-root ${theme === "dark" ? "dark-mode" : ""}${fbFull ? " fbp-full" : ""}${currentView === "messages" ? " mc-open" : ""}${currentView === "search" ? " sr-open" : ""}`;
+  const rootClass = `mebook-root ${theme === "dark" ? "dark-mode" : ""}${fbFull ? " fbp-full" : ""}${currentView !== "home" ? " mb-hdr-off" : ""}${currentView === "messages" ? " mc-open" : ""}${currentView === "search" ? " sr-open" : ""}`;
   const findPost = (postId) => feed.find((p) => p.id === postId) || myPosts.find((p) => p.id === postId) || viewingUserPosts.find((p) => p.id === postId) || extraPosts.find((p) => p.id === postId);
   const mcPress = (c) => ({
     onTouchStart: (e) => {
@@ -11843,6 +11938,88 @@ ${buildShareUrl(post.id)}`;
     React.createElement("button", { className: "mc-tab", onClick: () => goTo("notifications"), "aria-label": "Notifications" }, mcSvg("M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z", 28), unreadNotifCount > 0 ? React.createElement("span", { className: "mc-tab-badge" }) : null),
     React.createElement("button", { className: "mc-tab", onClick: () => goTo("home"), "aria-label": "Back to MeBook" }, mcSvg("M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z", 28))
   );
+  const renderFriendsPage = () => {
+    const E = React.createElement;
+    const q = friendSearch.trim().toLowerCase();
+    const byName = (u) => !q || (u.name || "").toLowerCase().includes(q);
+    const pendingSent = sentFriendRequests.filter((r) => r.status === "pending");
+    const sentTo = (uid) => pendingSent.some((r) => r.to === uid);
+    const requestFrom = new Set(requests.map((r) => r.from));
+    const friendIds = new Set(myFriends.map((f) => f.uid));
+    const people = friends.filter((u) => u && u.uid && u.uid !== user.uid && typeof u.photoURL === "string" && u.photoURL.trim() && !friendIds.has(u.uid) && !requestFrom.has(u.uid) && !frRemoved.includes(u.uid) && byName(u));
+    const reqList = requests.filter((r) => byName(r.fromUser || {}));
+    const reqShown = frSeeAll ? reqList : reqList.slice(0, 3);
+    const tab = friendsTab === "all" || friendsTab === "sent" ? friendsTab : "home";
+    const removePerson = (uid) => setFrRemoved((l) => {
+      const n = l.includes(uid) ? l : [...l, uid];
+      try { localStorage.setItem("mb-fr-removed", JSON.stringify(n)); } catch (e) {}
+      return n;
+    });
+    const row = (key, u, uid, sub, btns) => E(
+      "div", { className: "frx-row", key },
+      E("img", { className: "frx-av", src: avatarUrl(u), alt: "", onClick: () => openUserProfile(uid) }),
+      E("div", { className: "frx-main" },
+        E("div", { className: "frx-name", onClick: () => openUserProfile(uid) }, u.name || "User", isVerified(u) ? mcVerifiedBadge(14) : null),
+        sub ? E("div", { className: "frx-sub" }, sub) : null,
+        E("div", { className: "frx-btns" }, btns)
+      )
+    );
+    const btn = (label, kind, onClick, disabled) => E("button", { className: "frx-btn " + kind, onClick, disabled: !!disabled }, label);
+    const chip = (id, label, count) => E("button", { className: "frx-chip" + (tab === id ? " on" : ""), onClick: () => setFriendsTab(id) }, label, count > 0 ? " " + count : "");
+    let body;
+    if (tab === "all") {
+      const list = myFriends.filter(byName);
+      body = list.length === 0 ? E("div", { className: "frx-empty" }, myFriends.length === 0 ? "No friends yet \u2014 send some friend requests!" : "No friends found") : E(
+        "div", { className: "frx-sec" },
+        E("div", { className: "frx-sec-title" }, list.length + " friends"),
+        list.map((f) => E(
+          "div", { className: "frx-row frx-row-s", key: f.uid },
+          E("img", { className: "frx-av frx-av-s", src: avatarUrl(f), alt: "", onClick: () => openUserProfile(f.uid) }),
+          E("div", { className: "frx-main frx-main-s" }, E("div", { className: "frx-name", onClick: () => openUserProfile(f.uid) }, f.name || "User", isVerified(f) ? mcVerifiedBadge(14) : null)),
+          E("button", { className: "frx-btn sec frx-sm", onClick: () => startChat(f.uid, f.name, avatarUrl(f)) }, "Message"),
+          E("button", { className: "frx-more", onClick: () => setActionSheetFriend(f), "aria-label": "More" }, E("svg", { viewBox: "0 0 24 24" }, E("path", { d: "M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" })))
+        ))
+      );
+    } else if (tab === "sent") {
+      const list = pendingSent.map((r) => ({ r, u: r.toUser || {} })).filter((x) => byName(x.u));
+      body = list.length === 0 ? E("div", { className: "frx-empty" }, "No sent requests") : E(
+        "div", { className: "frx-sec" },
+        E("div", { className: "frx-sec-title" }, "Sent requests"),
+        list.map(({ r, u }) => row(r.id, u, r.to, "Request sent", [btn("Cancel request", "sec", () => handleCancelRequest(r.to))]))
+      );
+    } else {
+      body = E(
+        React.Fragment, null,
+        reqList.length > 0 ? E(
+          "div", { className: "frx-sec" },
+          E("div", { className: "frx-sec-head" }, E("div", { className: "frx-sec-title" }, "Friend Requests ", E("span", { className: "frx-count" }, reqList.length)), reqList.length > 3 ? E("button", { className: "frx-seeall", onClick: () => setFrSeeAll((v) => !v) }, frSeeAll ? "Show less" : "See all") : null),
+          reqShown.map((r) => row(r.id, r.fromUser || {}, r.from, "Wants to be your friend", [btn("Confirm", "pri", () => handleAcceptRequest(r.id, r.from)), btn("Delete", "sec", () => handleDeclineRequest(r.id))]))
+        ) : null,
+        E(
+          "div", { className: "frx-sec" + (reqList.length > 0 ? " frx-sep" : "") },
+          E("div", { className: "frx-sec-title" }, "People you may know"),
+          people.length === 0 ? E("div", { className: "frx-empty" }, "No suggestions right now") : people.map((u) => {
+            const sent = sentTo(u.uid);
+            const sending = sentRequests[u.uid] === "sending";
+            return row(u.uid, u, u.uid, u.location || "MeBook member", [
+              sent ? btn("Cancel", "sec", () => handleCancelRequest(u.uid)) : btn(sending ? "Sending..." : "Add friend", "pri", () => handleSendRequest(u.uid), sending),
+              btn("Remove", "sec", () => removePerson(u.uid))
+            ]);
+          })
+        )
+      );
+    }
+    return E(
+      "div", { className: "mb-view active frx-page" },
+      E("div", { className: "frx-top" },
+        E("h1", { className: "frx-title" }, "Friends"),
+        E("button", { className: "frx-search-btn", onClick: () => { setFrSearchOpen((v) => !v); if (frSearchOpen) setFriendSearch(""); }, "aria-label": "Search" }, E("svg", { viewBox: "0 0 24 24" }, E("path", { d: "M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" })))
+      ),
+      frSearchOpen ? E("div", { className: "frx-searchbox" }, E("input", { autoFocus: true, type: "text", placeholder: "Search people", value: friendSearch, onChange: (e) => setFriendSearch(e.target.value) })) : null,
+      E("div", { className: "frx-chips" }, chip("home", "Suggestions", 0), chip("all", "Your friends", myFriends.length), chip("sent", "Sent", pendingSent.length)),
+      body
+    );
+  };
   const mcOverlays = React.createElement(
     React.Fragment,
     null,
@@ -13135,110 +13312,7 @@ ${buildShareUrl(post.id)}`;
         onCopy: (p) => copyLink(p),
         onOpenProfile: (uid) => openUserProfile(uid)
       }
-    ), currentView === "friends" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, /* @__PURE__ */ React.createElement("h1", { className: "mb-page-title" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" })), "Friends"), /* @__PURE__ */ React.createElement("div", { className: "fr-page" }, /* @__PURE__ */ React.createElement("div", { className: "fr-tabs" }, /* @__PURE__ */ React.createElement("button", { className: `fr-tab${friendsTab === "requests" ? " active" : ""}`, onClick: () => setFriendsTab("requests") }, "Requests", requests.length > 0 && /* @__PURE__ */ React.createElement("span", { className: "fr-tab-badge" }, requests.length)), /* @__PURE__ */ React.createElement("button", { className: `fr-tab${friendsTab === "sent" ? " active" : ""}`, onClick: () => setFriendsTab("sent") }, "Sent"), /* @__PURE__ */ React.createElement("button", { className: `fr-tab${friendsTab === "all" ? " active" : ""}`, onClick: () => setFriendsTab("all") }, "My Friends (", myFriends.length, ")"), /* @__PURE__ */ React.createElement("button", { className: `fr-tab${friendsTab === "mutual" ? " active" : ""}`, onClick: () => setFriendsTab("mutual") }, "Find Friends")), /* @__PURE__ */ React.createElement("div", { className: "fr-body" }, friendsTab === "requests" && /* @__PURE__ */ React.createElement(React.Fragment, null, requests.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "mb-empty" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" })), /* @__PURE__ */ React.createElement("b", null, "No pending friend requests"), /* @__PURE__ */ React.createElement("p", null, "When someone sends you a request, it'll show up here.")) : requests.map((r) => {
-      const photo = avatarUrl(r.fromUser);
-      return /* @__PURE__ */ React.createElement("div", { className: "fr-request-row", key: r.id }, /* @__PURE__ */ React.createElement("img", { src: photo, alt: "", onClick: () => openUserProfile(r.from) }), /* @__PURE__ */ React.createElement("div", { className: "fr-request-info" }, /* @__PURE__ */ React.createElement("div", { className: "fr-request-name", onClick: () => openUserProfile(r.from) }, r.fromUser.name), /* @__PURE__ */ React.createElement("div", { className: "fr-request-mutual" }, "Wants to be your friend")), /* @__PURE__ */ React.createElement("div", { className: "fr-request-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mb-btn mb-btn-primary", onClick: () => handleAcceptRequest(r.id, r.from) }, "Confirm"), /* @__PURE__ */ React.createElement("button", { className: "mb-btn mb-btn-secondary", onClick: () => handleDeclineRequest(r.id) }, "Delete")));
-    })), friendsTab === "sent" && /* @__PURE__ */ React.createElement(React.Fragment, null, sentFriendRequests.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "mb-empty" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" })), /* @__PURE__ */ React.createElement("b", null, "No sent requests"), /* @__PURE__ */ React.createElement("p", null, "Requests you send will appear here.")) : sentFriendRequests.map((r) => {
-      const photo = avatarUrl(r.toUser);
-      return /* @__PURE__ */ React.createElement("div", { className: "fr-request-row", key: r.id }, /* @__PURE__ */ React.createElement("img", { src: photo, alt: "", onClick: () => openUserProfile(r.to) }), /* @__PURE__ */ React.createElement("div", { className: "fr-request-info" }, /* @__PURE__ */ React.createElement("div", { className: "fr-request-name", onClick: () => openUserProfile(r.to) }, r.toUser.name), /* @__PURE__ */ React.createElement("div", { className: "fr-request-mutual" }, "Status: ", r.status === "pending" ? "Pending" : r.status === "accepted" ? "Accepted \u2713" : "Declined")), /* @__PURE__ */ React.createElement("div", { className: "fr-request-actions" }, r.status === "pending" && /* @__PURE__ */ React.createElement("button", { className: "mb-btn mb-btn-secondary", onClick: () => handleCancelRequest(r.to) }, "Cancel")));
-    })), friendsTab === "all" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "fl-page" }, /* @__PURE__ */ React.createElement("div", { className: "fl-search" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" })), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        type: "text",
-        placeholder: "Search friends",
-        value: friendSearch,
-        onChange: (e) => setFriendSearch(e.target.value)
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "fl-stats-row" }, /* @__PURE__ */ React.createElement("div", { className: "fl-stats-left" }, /* @__PURE__ */ React.createElement("div", { className: "fl-stats-title" }, myFriends.length, " friends"), /* @__PURE__ */ React.createElement("div", { className: "fl-stats-sub" }, Math.min(myFriends.length, 20), " online")), /* @__PURE__ */ React.createElement("button", { className: "fl-sort" }, "Sort")), myFriends.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "fl-empty" }, "No friends yet \u2014 start sending friend requests!") : /* @__PURE__ */ React.createElement("div", { className: "fl-list" }, myFriends.filter((f) => {
-      const q = friendSearch.trim().toLowerCase();
-      if (!q) return true;
-      return (f.name || "").toLowerCase().includes(q);
-    }).map((f, idx) => {
-      const fPhoto = avatarUrl(f);
-      return /* @__PURE__ */ React.createElement(
-        "div",
-        {
-          className: "fl-item",
-          key: f.uid,
-          onClick: () => openUserProfile(f.uid)
-        },
-        /* @__PURE__ */ React.createElement("div", { className: "fl-avatar-wrap" }, /* @__PURE__ */ React.createElement("img", { src: fPhoto, alt: f.name }), idx % 5 === 0 && /* @__PURE__ */ React.createElement("div", { className: "fl-avatar-ring" }), idx % 3 === 0 && /* @__PURE__ */ React.createElement("span", { className: "fl-online-dot" })),
-        /* @__PURE__ */ React.createElement("div", { className: "fl-info" }, /* @__PURE__ */ React.createElement("div", { className: "fl-name" }, f.name, isVerified(f) ? " \u2713" : ""), /* @__PURE__ */ React.createElement("div", { className: "fl-mutual" }, Math.max(1, idx * 7 % 50 + 1), " mutual friends")),
-        /* @__PURE__ */ React.createElement(
-          "button",
-          {
-            className: "fl-more",
-            onClick: (e) => {
-              e.stopPropagation();
-              setActionSheetFriend(f);
-            },
-            title: "More options"
-          },
-          /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" }))
-        )
-      );
-    })))), friendsTab === "mutual" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "fl-page" }, /* @__PURE__ */ React.createElement("div", { className: "fl-search" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" })), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        type: "text",
-        placeholder: "Search all MeBook users",
-        value: friendSearch,
-        onChange: (e) => setFriendSearch(e.target.value)
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "fl-stats-row" }, /* @__PURE__ */ React.createElement("div", { className: "fl-stats-left" }, /* @__PURE__ */ React.createElement("div", { className: "fl-stats-title" }, filteredFriends.length, " people"), /* @__PURE__ */ React.createElement("div", { className: "fl-stats-sub" }, filteredFriends.filter((_, i) => i % 3 === 0).length, " online")), /* @__PURE__ */ React.createElement("button", { className: "fl-sort" }, "Sort")), filteredFriends.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "fl-empty" }, "No users found") : /* @__PURE__ */ React.createElement("div", { className: "fl-list" }, filteredFriends.map((u, idx) => {
-      const photo = avatarUrl(u);
-      const isFriend = myFriends.some((f) => f.uid === u.uid);
-      const hasPendingSent = sentFriendRequests.some(
-        (r) => r.to === u.uid && r.status === "pending"
-      );
-      const isOnline = idx % 3 === 0;
-      const showRing = idx % 5 === 0;
-      return /* @__PURE__ */ React.createElement(
-        "div",
-        {
-          className: "fl-item",
-          key: u.uid,
-          onClick: () => openUserProfile(u.uid)
-        },
-        /* @__PURE__ */ React.createElement("div", { className: "fl-avatar-wrap" }, /* @__PURE__ */ React.createElement("img", { src: photo, alt: u.name }), showRing && /* @__PURE__ */ React.createElement("div", { className: "fl-avatar-ring" }), isOnline && /* @__PURE__ */ React.createElement("span", { className: "fl-online-dot" })),
-        /* @__PURE__ */ React.createElement("div", { className: "fl-info" }, /* @__PURE__ */ React.createElement("div", { className: "fl-name" }, u.name, isVerified(u) ? " \u2713" : ""), /* @__PURE__ */ React.createElement("div", { className: "fl-mutual" }, isFriend ? "Already friends" : hasPendingSent ? "Request pending" : `${Math.max(1, idx * 7 % 50 + 1)} mutual friends`)),
-        isFriend ? /* @__PURE__ */ React.createElement(
-          "button",
-          {
-            className: "fl-more",
-            onClick: (e) => {
-              e.stopPropagation();
-              startChat(u.uid, u.name, photo);
-            },
-            title: "Message"
-          },
-          /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" }))
-        ) : hasPendingSent ? /* @__PURE__ */ React.createElement(
-          "button",
-          {
-            className: "fl-more",
-            onClick: (e) => {
-              e.stopPropagation();
-              handleCancelRequest(u.uid);
-            },
-            title: "Cancel request"
-          },
-          /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" }))
-        ) : /* @__PURE__ */ React.createElement(
-          "button",
-          {
-            className: "fl-more",
-            style: { color: "#22c55e" },
-            onClick: (e) => {
-              e.stopPropagation();
-              handleSendRequest(u.uid);
-            },
-            title: "Add friend"
-          },
-          /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" }))
-        )
-      );
-    }))))))), currentView === "friends-list" && (() => {
+    ), currentView === "friends" && renderFriendsPage(), currentView === "friends-list" && (() => {
       const targetUid = currentParams.uid || user.uid;
       const targetName = currentParams.name || profile.name;
       const isOwnList = targetUid === user.uid;
