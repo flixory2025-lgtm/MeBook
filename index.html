@@ -47,13 +47,26 @@ html,body{margin:0;padding:0;background:#000;}
     var P=C.Plugins||{};
     function sb(){return P.StatusBar;}
     window.__mbSyncStatusBar=function(dark){
-      try{
-        var S=sb(); if(!S)return;
-        S.setOverlaysWebView&&S.setOverlaysWebView({overlay:true});
-        S.setBackgroundColor&&S.setBackgroundColor({color:dark?"#000000":"#ffffff"});
-        S.setStyle&&S.setStyle({style:dark?"DARK":"LIGHT"});
-      }catch(e){}
+      window.__mbSBDark=dark;
+      var apply=function(){
+        try{
+          var d=window.__mbSBDark;
+          var tc=document.querySelector('meta[name="theme-color"]');
+          if(tc)tc.setAttribute("content",d?"#000000":"#ffffff");
+          var S=sb(); if(!S)return;
+          S.setOverlaysWebView&&S.setOverlaysWebView({overlay:true});
+          S.setBackgroundColor&&S.setBackgroundColor({color:d?"#000000":"#ffffff"});
+          /* DARK = light icons (for dark bg), LIGHT = dark icons (for light bg) */
+          S.setStyle&&S.setStyle({style:d?"DARK":"LIGHT"});
+        }catch(e){}
+      };
+      apply();
+      /* re-apply a few times: the native shell can overwrite the style right after page load */
+      [250,900,2500].forEach(function(t){setTimeout(apply,t);});
     };
+    document.addEventListener("visibilitychange",function(){
+      if(!document.hidden&&window.__mbSBDark!==undefined&&window.__mbSyncStatusBar)window.__mbSyncStatusBar(window.__mbSBDark);
+    });
     window.__mbSyncStatusBar(true);
     /* fallback: if no inset value arrives from the shell, assume a standard 32px status bar */
     function chk(){
@@ -3306,6 +3319,14 @@ transition:transform .15s ease,box-shadow .15s ease;-webkit-tap-highlight-color:
 .mebook-root:not(.dark-mode) .mb-header .mb-icon-btn:hover{background:rgba(0,0,0,.12);}
 .mebook-root:not(.dark-mode) .mb-header .mb-icon-btn.active{background:rgba(22,163,74,.16);color:#16a34a;}
 .mebook-root.dark-mode .mb-header .mb-logo-text .book{color:#ffffff;}
+
+
+/* ---- Light mode: Facebook-style separated white posts ---- */
+.mebook-root:not(.dark-mode) .mb-post,.mebook-root:not(.dark-mode) .mb-card{background:#ffffff;}
+@media(max-width:820px){
+.mebook-root:not(.dark-mode):not(.fbp-full) .mb-post{margin:0 -10px 0;border-radius:0;box-shadow:none;border-top:1px solid #dadde1;border-bottom:8px solid #e4e6eb;}
+.mebook-root:not(.dark-mode):not(.fbp-full) .mb-mini{margin:0 -10px 8px;border-radius:0;box-shadow:none;border-bottom:1px solid #dadde1;}
+}
 
 `;
 function ToastStack({
