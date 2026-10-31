@@ -46,23 +46,36 @@ html,body{margin:0;padding:0;background:#000;}
     de.classList.add("mb-native");
     var P=C.Plugins||{};
     function sb(){return P.StatusBar;}
+    function plug(n){
+      try{
+        var c=window.Capacitor||C;
+        var pl=c.Plugins||P||{};
+        if(pl[n])return pl[n];
+        if(c.registerPlugin)return c.registerPlugin(n);
+      }catch(e){}
+      return null;
+    }
+    function safe(fn){ try{ var r=fn(); if(r&&r.catch)r.catch(function(){}); }catch(e){} }
     window.__mbSyncStatusBar=function(dark){
       window.__mbSBDark=dark;
       var apply=function(){
-        try{
-          var d=window.__mbSBDark;
+        var d=window.__mbSBDark;
+        var st=d?"DARK":"LIGHT"; /* DARK = white icons (dark bg) · LIGHT = black icons (light bg) */
+        safe(function(){
           var tc=document.querySelector('meta[name="theme-color"]');
           if(tc)tc.setAttribute("content",d?"#000000":"#ffffff");
-          var S=sb(); if(!S)return;
-          S.setOverlaysWebView&&S.setOverlaysWebView({overlay:true});
-          S.setBackgroundColor&&S.setBackgroundColor({color:d?"#000000":"#ffffff"});
-          /* DARK = light icons (for dark bg), LIGHT = dark icons (for light bg) */
-          S.setStyle&&S.setStyle({style:d?"DARK":"LIGHT"});
-        }catch(e){}
+        });
+        var SB=plug("SystemBars");   /* Capacitor 7+ (edge-to-edge) */
+        if(SB&&SB.setStyle){ safe(function(){return SB.setStyle({style:st});}); safe(function(){return SB.setStyle({style:st,bar:"StatusBar"});}); }
+        var S=plug("StatusBar");     /* older Capacitor */
+        if(S){
+          if(S.setOverlaysWebView)safe(function(){return S.setOverlaysWebView({overlay:true});});
+          if(S.setBackgroundColor)safe(function(){return S.setBackgroundColor({color:d?"#000000":"#ffffff"});});
+          if(S.setStyle)safe(function(){return S.setStyle({style:st});});
+        }
       };
       apply();
-      /* re-apply a few times: the native shell can overwrite the style right after page load */
-      [250,900,2500].forEach(function(t){setTimeout(apply,t);});
+      [150,500,1200,3000,6000].forEach(function(t){setTimeout(apply,t);});
     };
     document.addEventListener("visibilitychange",function(){
       if(!document.hidden&&window.__mbSBDark!==undefined&&window.__mbSyncStatusBar)window.__mbSyncStatusBar(window.__mbSBDark);
@@ -3327,6 +3340,55 @@ transition:transform .15s ease,box-shadow .15s ease;-webkit-tap-highlight-color:
 .mebook-root:not(.dark-mode):not(.fbp-full) .mb-post{margin:0 -10px 0;border-radius:0;box-shadow:none;border-top:1px solid #dadde1;border-bottom:8px solid #e4e6eb;}
 .mebook-root:not(.dark-mode):not(.fbp-full) .mb-mini{margin:0 -10px 8px;border-radius:0;box-shadow:none;border-bottom:1px solid #dadde1;}
 }
+
+
+/* ---- MeChat list page: Messenger-style (light + dark) ---- */
+.mebook-root .mc-listpage{--mcl-bg:#ffffff;--mcl-fg:#050505;--mcl-sub:#65676b;--mcl-line:#e4e6eb;--mcl-input:#f0f2f5;--mcl-tab:#65676b;background:var(--mcl-bg);color:var(--mcl-fg);}
+.mebook-root.dark-mode .mc-listpage{--mcl-bg:#000000;--mcl-fg:#ffffff;--mcl-sub:#a8abaf;--mcl-line:#1c1c1e;--mcl-input:#1c1c1e;--mcl-tab:#b0b3b8;}
+.mebook-root .mc-listpage-head{justify-content:space-between;gap:8px;padding:calc(10px + max(env(safe-area-inset-top,0px),var(--sat,0px))) 16px 6px;background:var(--mcl-bg);box-shadow:none;border:none;}
+.mebook-root .mc-listpage .mc-title{font-size:34px;font-weight:800;letter-spacing:-1.2px;line-height:1.1;color:var(--mcl-fg);}
+.mebook-root .mc-listpage .mc-title span{color:#22c55e;}
+.mebook-root .mc-lp-actions{display:flex;align-items:center;gap:2px;}
+.mebook-root .mc-lp-btn{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--mcl-fg);cursor:pointer;padding:0;}
+.mebook-root .mc-lp-btn:active{background:rgba(128,128,128,.18);}
+.mebook-root .mc-lp-btn svg{width:26px;height:26px;fill:currentColor;}
+.mebook-root .mc-lp-logo img{width:30px;height:30px;object-fit:contain;}
+.mebook-root .mc-listpage-body{padding:4px 0 0;max-width:none;}
+.mebook-root .mc-listpage .mb-search-box{margin:4px 14px 8px;padding:9px 14px;box-shadow:none;border:none;border-radius:999px;background:var(--mcl-input);}
+.mebook-root .mc-listpage .mb-search-box svg{fill:var(--mcl-sub);}
+.mebook-root .mc-listpage .mb-search-box input{color:var(--mcl-fg);font-size:16px;}
+.mebook-root .mc-listpage .msgr-section{display:none;}
+.mebook-root .mc-listpage .msgr-wrap{background:transparent;border:none;box-shadow:none;}
+.mebook-root .mc-listpage .msgr-online-row{display:flex;gap:6px;overflow-x:auto;padding:4px 10px 10px;scrollbar-width:none;}
+.mebook-root .mc-listpage .msgr-online-item{width:76px;}
+.mebook-root .mc-listpage .msgr-online-avatar-wrap{width:64px;height:64px;}
+.mebook-root .mc-listpage .msgr-online-avatar-wrap img{width:64px;height:64px;}
+.mebook-root .mc-listpage .msgr-online-dot{width:17px;height:17px;right:0;bottom:0;border:3px solid var(--mcl-bg);}
+.mebook-root .mc-listpage .msgr-online-name{font-size:13px;margin-top:5px;color:var(--mcl-sub);}
+.mebook-root .mc-listpage .msgr-item{align-items:center;gap:14px;padding:9px 16px;border-radius:0;}
+.mebook-root .mc-listpage .msgr-item:hover{background:transparent;}
+.mebook-root .mc-listpage .msgr-item:active{background:rgba(128,128,128,.12);}
+.mebook-root .mc-listpage .msgr-item-avatar-wrap{width:58px;height:58px;}
+.mebook-root .mc-listpage .msgr-item-avatar-wrap img{width:58px;height:58px;}
+.mebook-root .mc-listpage .msgr-item-dot{width:17px;height:17px;right:0;bottom:0;border:3px solid var(--mcl-bg);}
+.mebook-root .mc-listpage .msgr-item-name{font-size:17px;font-weight:500;color:var(--mcl-fg);margin-bottom:2px;}
+.mebook-root .mc-listpage .msgr-item-name.mc-unread{font-weight:700;}
+.mebook-root .mc-listpage .msgr-item-last{font-size:15px;color:var(--mcl-sub);}
+.mebook-root .mc-listpage .msgr-item-last.unread{color:var(--mcl-fg);font-weight:600;}
+.mebook-root .mc-listpage .msgr-item-time{font-size:13px;color:var(--mcl-sub);}
+.mebook-root .mc-listpage .mc-item-meta{align-self:flex-start;padding-top:2px;gap:10px;}
+.mebook-root .mc-listpage .mc-unread-dot{width:12px;height:12px;background:#0866ff;}
+.mebook-root .mc-listpage .mc-folder-row{color:var(--mcl-fg);padding:12px 16px;}
+.mebook-root .mc-listpage .msgr-wrap.mc-plain{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px));}
+.mebook-root .mc-tabbar{position:fixed;left:0;right:0;bottom:0;z-index:1300;display:flex;align-items:center;gap:8px;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));background:#ffffff;border-top:1px solid #e4e6eb;}
+.mebook-root.dark-mode .mc-tabbar{background:#000000;border-top-color:#1c1c1e;}
+.mebook-root .mc-tab{position:relative;flex:1;height:52px;border-radius:26px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:#65676b;cursor:pointer;padding:0;}
+.mebook-root.dark-mode .mc-tab{color:#b0b3b8;}
+.mebook-root .mc-tab svg{width:28px;height:28px;fill:currentColor;}
+.mebook-root .mc-tab.active{background:rgba(8,102,255,.10);color:#0866ff;}
+.mebook-root.dark-mode .mc-tab.active{background:#1c1c1e;color:#2d88ff;}
+.mebook-root .mc-tab-badge{position:absolute;top:8px;left:calc(50% + 8px);width:12px;height:12px;border-radius:50%;background:#ef4444;border:2px solid #fff;}
+.mebook-root.dark-mode .mc-tab-badge{border-color:#000;}
 
 `;
 function ToastStack({
@@ -11747,6 +11809,33 @@ ${buildShareUrl(post.id)}`;
     mcIcon(MC_IC.back, 20),
     React.createElement("span", null, "Back to MeBook")
   );
+  const mcSvg = (d, size) => React.createElement("svg", { viewBox: "0 0 24 24", width: size, height: size, fill: "currentColor" }, React.createElement("path", { d }));
+  const mcFocusSearch = () => {
+    try {
+      const el = document.querySelector(".mc-listpage .mb-search-box input");
+      if (el) { el.focus(); el.scrollIntoView({ block: "nearest" }); }
+    } catch (e) {}
+  };
+  const mcListHead = () => React.createElement(
+    "div",
+    { className: "mc-listpage-head" },
+    React.createElement("h1", { className: "mc-title" }, React.createElement("span", null, "Me"), "Chat"),
+    React.createElement(
+      "div",
+      { className: "mc-lp-actions" },
+      React.createElement("button", { className: "mc-lp-btn", onClick: mcFocusSearch, "aria-label": "New message" }, mcSvg("M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z", 24)),
+      React.createElement("button", { className: "mc-lp-btn", onClick: mcFocusSearch, "aria-label": "Search" }, mcSvg("M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z", 26)),
+      React.createElement("button", { className: "mc-lp-btn mc-lp-logo", onClick: () => goTo("home"), "aria-label": "Back to MeBook" }, React.createElement("img", { src: "https://i.postimg.cc/rsBBsQWF/17832-removebg-preview.png", alt: "MeBook" }))
+    )
+  );
+  const mcTabBar = () => React.createElement(
+    "nav",
+    { className: "mc-tabbar" },
+    React.createElement("button", { className: "mc-tab active", "aria-label": "Chats" }, mcSvg("M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z", 28)),
+    React.createElement("button", { className: "mc-tab", onClick: () => goTo("friends"), "aria-label": "Friends" }, mcSvg("M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z", 28)),
+    React.createElement("button", { className: "mc-tab", onClick: () => goTo("notifications"), "aria-label": "Notifications" }, mcSvg("M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z", 28), unreadNotifCount > 0 ? React.createElement("span", { className: "mc-tab-badge" }) : null),
+    React.createElement("button", { className: "mc-tab", onClick: () => goTo("home"), "aria-label": "Back to MeBook" }, mcSvg("M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z", 28))
+  );
   const mcOverlays = React.createElement(
     React.Fragment,
     null,
@@ -13192,7 +13281,7 @@ ${buildShareUrl(post.id)}`;
           )
         );
       }))));
-    })(), currentView === "user-profile" && viewingUser && renderFbProfile(), currentView === "fb-profile-menu" && renderFbMenu(), currentView === "fb-own-menu" && renderFbOwnMenu(), currentView === "fb-view-as" && renderFbProfileCore("preview", profile, myPosts, myFriends, false), currentView === "fb-activity" && renderFbActivity(), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement("div", { className: "mc-listpage" }, /* @__PURE__ */ React.createElement("div", { className: "mc-listpage-head" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.5 2 2 6.14 2 11.25c0 2.88 1.41 5.45 3.62 7.16.12 1.1-.28 2.62-1.05 3.59-.13.16-.02.4.18.38 2.34-.19 4.05-1.25 4.85-1.85.77.16 1.58.25 2.4.25 5.5 0 10-4.14 10-9.25S17.5 2 12 2z" })), /* @__PURE__ */ React.createElement("h1", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-listpage-body" }, renderChatListPanel(false)), mcBackBtn("")) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true)), mcBackBtn("in-side")), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" })), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, chatPartner?.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "#0084ff" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : "Active now")), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), /* @__PURE__ */ React.createElement(
+    })(), currentView === "user-profile" && viewingUser && renderFbProfile(), currentView === "fb-profile-menu" && renderFbMenu(), currentView === "fb-own-menu" && renderFbOwnMenu(), currentView === "fb-view-as" && renderFbProfileCore("preview", profile, myPosts, myFriends, false), currentView === "fb-activity" && renderFbActivity(), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement("div", { className: "mc-listpage" }, mcListHead(), /* @__PURE__ */ React.createElement("div", { className: "mc-listpage-body" }, renderChatListPanel(false)), mcTabBar()) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true)), mcBackBtn("in-side")), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" })), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, chatPartner?.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "#0084ff" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : "Active now")), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), /* @__PURE__ */ React.createElement(
       "div",
       {
         className: "mechat-body",
