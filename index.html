@@ -50,8 +50,8 @@ html,body{margin:0;padding:0;background:#000;}
       try{
         var S=sb(); if(!S)return;
         S.setOverlaysWebView&&S.setOverlaysWebView({overlay:true});
-        S.setBackgroundColor&&S.setBackgroundColor({color:dark?"#000000":"#16a34a"});
-        S.setStyle&&S.setStyle({style:"DARK"});
+        S.setBackgroundColor&&S.setBackgroundColor({color:dark?"#000000":"#ffffff"});
+        S.setStyle&&S.setStyle({style:dark?"DARK":"LIGHT"});
       }catch(e){}
     };
     window.__mbSyncStatusBar(true);
@@ -113,6 +113,7 @@ html.mb-native input,html.mb-native textarea,html.mb-native [contenteditable]{-w
 #boot .mbs-from .from-name{font-size:14px;font-weight:800;letter-spacing:.05em;background:linear-gradient(135deg,#22c55e 0%,#86efac 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 15px rgba(34,197,94,.35);}
 html.mb-native .mebook-root::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sat);background:var(--header-bg);z-index:1001;pointer-events:none;}
 html.mb-native .mebook-root.dark-mode::before{background:#000;}
+html.mb-native .mebook-root:not(.dark-mode)::before{background:#ffffff;}
 html.mb-native .mebook-root .mb-header{height:calc(60px + var(--sat));padding-top:var(--sat);box-sizing:border-box;}
 html.mb-native .mebook-root .mb-navbar{top:calc(60px + var(--sat));}
 html.mb-native .mebook-root .mb-layout{padding-top:calc(128px + var(--sat));}
@@ -3296,6 +3297,15 @@ transition:transform .15s ease,box-shadow .15s ease;-webkit-tap-highlight-color:
 .mebook-root .cp2 .st-sheet-title{font-size:16px;}
 .mebook-root .cp2 .st-row:active,.mebook-root .cp2 .st-trk:active{background:rgba(128,128,128,.15);}
 .mebook-root .cp2 .st-emojis button{font-size:26px;}
+
+
+/* ---- Header: light mode = white header, dark Book text; dark mode unchanged ---- */
+.mebook-root:not(.dark-mode) .mb-header{background:#ffffff;box-shadow:0 1px 0 #e4e6eb,0 2px 8px rgba(0,0,0,.06);}
+.mebook-root:not(.dark-mode) .mb-header .mb-logo-text .book{color:#050505;}
+.mebook-root:not(.dark-mode) .mb-header .mb-icon-btn{background:rgba(0,0,0,.06);color:#050505;}
+.mebook-root:not(.dark-mode) .mb-header .mb-icon-btn:hover{background:rgba(0,0,0,.12);}
+.mebook-root:not(.dark-mode) .mb-header .mb-icon-btn.active{background:rgba(22,163,74,.16);color:#16a34a;}
+.mebook-root.dark-mode .mb-header .mb-logo-text .book{color:#ffffff;}
 
 `;
 function ToastStack({
@@ -8658,6 +8668,9 @@ function MeBookPage({ onExit }) {
     const isDark = saved ? saved === "dark" : false;
     setTheme(isDark ? "dark" : "light");
   }, []);
+  useEffect(() => {
+    try { if (window.__mbSyncStatusBar) window.__mbSyncStatusBar(theme === "dark"); } catch (e) {}
+  }, [theme]);
   const toggleTheme = (isDark) => {
     const pos = popupPointRef.current;
     setThemeRipple({
