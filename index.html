@@ -3063,6 +3063,81 @@ transition:transform .15s ease,box-shadow .15s ease;-webkit-tap-highlight-color:
 .mebook-root .fbp-viewas{margin:8px 10px;}
 }
 
+/* ===== Profile layout (cover + avatar like reference) ===== */
+.mebook-root .fbp-cover{height:250px;}
+.mebook-root .fbp-body{margin-top:-34px;border-radius:34px 34px 0 0;}
+.mebook-root .fbp-av-wrap{width:160px;margin:-106px auto 0;}
+.mebook-root .fbp-av{width:160px;height:160px;}
+.mebook-root .fbp-cam-cover{bottom:48px;right:16px;}
+.mebook-root .fbp-top-btn svg{filter:drop-shadow(0 1px 3px rgba(0,0,0,.6));}
+.mebook-root .fbp-top.solid .fbp-top-btn svg{filter:none;}
+/* ===== Side navigation (Facebook style) ===== */
+@keyframes snIn{from{transform:translateX(-100%)}to{transform:none}}
+.mebook-root .sn-bg{position:fixed;inset:0;z-index:99990;background:rgba(0,0,0,.5);animation:srFade .2s ease;}
+.mebook-root .sn-panel{position:absolute;left:0;top:0;bottom:0;width:min(88vw,420px);background:var(--bg);color:var(--text);overflow-y:auto;overscroll-behavior:contain;padding:calc(14px + env(safe-area-inset-top,0px)) 0 calc(18px + env(safe-area-inset-bottom,0px));animation:snIn .25s ease;box-shadow:6px 0 30px rgba(0,0,0,.35);scrollbar-width:none;}
+.mebook-root .sn-panel::-webkit-scrollbar{display:none;}
+.mebook-root .sn-card{margin:0 14px;background:var(--card);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border);}
+.mebook-root .sn-acc{display:flex;align-items:center;gap:14px;padding:16px;cursor:pointer;}
+.mebook-root .sn-acc img{width:56px;height:56px;border-radius:50%;object-fit:cover;flex:none;}
+.mebook-root .sn-acc b{flex:1;min-width:0;font-size:19px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mebook-root .sn-chev{width:44px;height:44px;border-radius:50%;background:var(--input-bg);display:flex;align-items:center;justify-content:center;flex:none;}
+.mebook-root .sn-hr{height:1px;background:var(--border);}
+.mebook-root .sn-create{display:flex;align-items:center;gap:14px;padding:14px 20px;width:100%;background:none;border:none;color:var(--text-muted);font-size:17px;font-weight:600;cursor:pointer;text-align:left;}
+.mebook-root .sn-plus{width:40px;height:40px;border-radius:50%;background:#4b4f56;color:#fff;display:flex;align-items:center;justify-content:center;flex:none;}
+.mebook-root .sn-h{font-size:18px;font-weight:800;margin:22px 16px 12px;}
+.mebook-root .sn-short{display:flex;gap:14px;overflow-x:auto;padding:0 16px 4px;scrollbar-width:none;}
+.mebook-root .sn-short::-webkit-scrollbar{display:none;}
+.mebook-root .sn-short button{flex:0 0 86px;background:none;border:none;color:var(--text);text-align:center;font-size:13px;padding:0;cursor:pointer;}
+.mebook-root .sn-short img{width:86px;height:86px;border-radius:14px;object-fit:cover;display:block;margin-bottom:6px;}
+.mebook-root .sn-short span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mebook-root .sn-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px;margin-top:18px;}
+.mebook-root .sn-tile{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:14px;padding:14px;border-radius:16px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);color:var(--text);font-size:15.5px;font-weight:600;text-align:left;cursor:pointer;min-height:92px;}
+.mebook-root .sn-tile:active{transform:scale(.97);}
+.mebook-root .sn-more{margin:16px 14px;width:calc(100% - 28px);padding:15px;border-radius:12px;background:var(--input-bg);color:var(--text);font-weight:700;font-size:16px;border:none;cursor:pointer;}
+.mebook-root .sn-sec{border-top:1px solid var(--border);background:var(--card);}
+.mebook-root .sn-sec-head{display:flex;align-items:center;gap:14px;width:100%;padding:18px 16px;background:none;border:none;color:var(--text);font-size:18px;font-weight:700;text-align:left;cursor:pointer;}
+.mebook-root .sn-sec-t{flex:1;}
+.mebook-root .sn-row{display:flex;align-items:center;gap:18px;width:100%;padding:14px 20px;background:none;border:none;color:var(--text);font-size:16.5px;font-weight:600;text-align:left;cursor:pointer;}
+.mebook-root .sn-row:active,.mebook-root .sn-sec-head:active{background:var(--hover);}
+.mebook-root .sn-row-ico{width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex:none;}
+.mebook-root .sn-logout{margin:0;width:100%;padding:15px;border-radius:12px;background:var(--input-bg);color:var(--text);font-weight:700;font-size:16px;border:none;cursor:pointer;}
+.mebook-root .sn-foot{padding:14px;background:var(--card);border-top:1px solid var(--border);}
+/* ===== Settings & privacy page ===== */
+.mebook-root .fbs-wrap{background:var(--card);min-height:100vh;color:var(--text);padding-bottom:40px;}
+.mebook-root .fbs-head{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:calc(8px + env(safe-area-inset-top,0px)) 6px 8px;background:var(--card);border-bottom:1px solid var(--border);}
+.mebook-root .fbs-head b{font-size:18px;font-weight:700;}
+.mebook-root .fbs-ib{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--text);cursor:pointer;}
+.mebook-root .fbs-search{display:block;margin:14px 14px 6px;background:var(--input-bg);border-radius:26px;padding:14px 22px;border:none;width:calc(100% - 28px);font-size:17px;color:var(--text);outline:none;}
+.mebook-root .fbs-sec-t{font-size:20px;font-weight:800;margin:26px 16px 4px;}
+.mebook-root .fbs-sec-s{color:var(--text-muted);font-size:15px;margin:0 16px 8px;}
+.mebook-root .fbs-item{display:flex;gap:16px;align-items:flex-start;width:100%;padding:13px 16px;background:none;border:none;color:var(--text);text-align:left;cursor:pointer;}
+.mebook-root .fbs-item:active{background:var(--hover);}
+.mebook-root .fbs-ico{width:32px;flex:none;display:flex;justify-content:center;padding-top:1px;}
+.mebook-root .fbs-item b{display:block;font-size:17px;font-weight:600;}
+.mebook-root .fbs-item small{display:block;color:var(--text-muted);font-size:14.5px;margin-top:2px;line-height:1.35;}
+/* ===== MeBook Account sheet ===== */
+.mebook-root .ma-bg{position:fixed;inset:0;z-index:99995;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;animation:srFade .2s ease;}
+.mebook-root .ma-sheet{width:100%;height:calc(100% - 14px);background:var(--card);color:var(--text);border-radius:30px 30px 0 0;overflow-y:auto;padding:16px 14px 30px;animation:srUp .25s ease;}
+.mebook-root .ma-top{display:flex;align-items:center;justify-content:center;position:relative;height:48px;margin-bottom:10px;}
+.mebook-root .ma-top .x{position:absolute;left:0;top:0;width:48px;height:48px;background:none;border:none;color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.mebook-root .ma-brand{display:flex;align-items:center;gap:8px;font-size:26px;font-weight:700;}
+.mebook-root .ma-banner{display:flex;gap:14px;align-items:flex-start;padding:16px;border-radius:24px;background:rgba(22,163,74,.12);margin-bottom:26px;}
+.mebook-root .ma-banner b{display:block;font-size:19px;font-weight:600;}
+.mebook-root .ma-banner span{display:block;color:var(--text-muted);font-size:18px;line-height:1.3;margin-top:2px;}
+.mebook-root .ma-banner .cl{background:none;border:none;color:var(--text-muted);cursor:pointer;margin-left:auto;}
+.mebook-root .ma-h{font-size:36px;font-weight:600;text-align:center;margin:0 0 12px;}
+.mebook-root .ma-p{text-align:center;font-size:19px;line-height:1.35;margin:0 6px 22px;}
+.mebook-root .ma-link{color:#16a34a;font-weight:700;cursor:pointer;}
+.mebook-root .ma-email{display:flex;align-items:center;gap:14px;padding:16px;border-radius:26px;background:var(--input-bg);margin-bottom:16px;cursor:pointer;}
+.mebook-root .ma-email>div{flex:1;min-width:0;}
+.mebook-root .ma-email b{display:block;font-size:20px;font-weight:600;overflow:hidden;text-overflow:ellipsis;}
+.mebook-root .ma-email small{display:block;color:var(--text-muted);font-size:20px;}
+.mebook-root .ma-email img.av{width:56px;height:56px;border-radius:50%;object-fit:cover;}
+.mebook-root .ma-list{border:1.5px solid var(--border);border-radius:26px;overflow:hidden;margin-bottom:16px;}
+.mebook-root .ma-item{display:flex;align-items:center;gap:16px;width:100%;padding:20px 16px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:20px;text-align:left;cursor:pointer;}
+.mebook-root .ma-item:last-child{border-bottom:none;}
+.mebook-root .ma-item span{flex:1;}
+
 /* ===================== STORIES ===================== */
 .mebook-root .st-bar{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;margin:0 0 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
 .mebook-root .st-bar::-webkit-scrollbar{display:none;}
@@ -8266,6 +8341,12 @@ function MeBookPage({ onExit }) {
   const currentPage = pageStack[pageStack.length - 1];
   const currentView = currentPage.view;
   const currentParams = currentPage.params || {};
+  const [sideNav, setSideNav] = useState(false);
+  const [snExp, setSnExp] = useState({});
+  const [unavail, setUnavail] = useState(null);
+  const [acctSheet, setAcctSheet] = useState(false);
+  const [acctBanner, setAcctBanner] = useState(true);
+  const [stQ, setStQ] = useState("");
   const scrollMemRef = useRef({});
   const skCounterRef = useRef(1);
   const scrollKeyOf = (stack) => {
@@ -11087,6 +11168,9 @@ ${buildShareUrl(post.id)}`;
     hasShareSheet: !!shareSheetPostId,
     hasFriendSheet: !!actionSheetFriend,
     hasFbSheet: !!fbSheetUser || !!fbInfo || fbHlOpen || !!photoSheet,
+    hasSideNav: sideNav,
+    hasAcct: acctSheet,
+    hasUnavail: !!unavail,
     hasActionMenu: !!actionMenu,
     hasChatMenu: !!chatMenu,
     hasChatConfirm: !!chatConfirm,
@@ -11124,6 +11208,18 @@ ${buildShareUrl(post.id)}`;
       const s = backRef.current;
       if (s.exitConfirmOpen) {
         setExitConfirmOpen(false);
+        return true;
+      }
+      if (s.hasUnavail) {
+        setUnavail(null);
+        return true;
+      }
+      if (s.hasAcct) {
+        setAcctSheet(false);
+        return true;
+      }
+      if (s.hasSideNav) {
+        setSideNav(false);
         return true;
       }
       const bs = w.__mbBackStack || [];
@@ -11842,7 +11938,7 @@ ${buildShareUrl(post.id)}`;
     return (c.other && c.other.name || "").toLowerCase().includes(q);
   }).slice().sort((a, b) => (mcPrefs.pinned[b.id] || 0) - (mcPrefs.pinned[a.id] || 0));
   const searchedUsersForChat = chatSearch.trim() ? allUsers.filter((u) => (u.name || "").toLowerCase().includes(chatSearch.trim().toLowerCase())).slice(0, 6) : [];
-  const fbFull = ["profile", "user-profile", "fb-profile-menu", "fb-own-menu", "fb-view-as", "fb-activity"].includes(currentView);
+  const fbFull = ["profile", "user-profile", "fb-profile-menu", "fb-own-menu", "fb-view-as", "fb-activity", "fb-settings"].includes(currentView);
   const rootClass = `mebook-root ${theme === "dark" ? "dark-mode" : ""}${fbFull ? " fbp-full" : ""}${currentView !== "home" ? " mb-hdr-off" : ""}${currentView === "messages" ? " mc-open" : ""}${currentView === "search" ? " sr-open" : ""}`;
   const findPost = (postId) => feed.find((p) => p.id === postId) || myPosts.find((p) => p.id === postId) || viewingUserPosts.find((p) => p.id === postId) || extraPosts.find((p) => p.id === postId);
   const mcPress = (c) => ({
@@ -12286,11 +12382,11 @@ ${buildShareUrl(post.id)}`;
     };
     const tabs = isOwnMode ? ["all", "reels", "photos", "events"] : ["all", "reels", "photos"];
     const postList = (list) => list.map((p) => renderPost(p, isOwnMode));
-    return /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, isPreview && /* @__PURE__ */ React.createElement("div", { className: "fbp-viewas" }, /* @__PURE__ */ React.createElement("span", null, "Viewing your profile as the public"), /* @__PURE__ */ React.createElement("button", { onClick: goBack }, "Exit")), /* @__PURE__ */ React.createElement("div", { className: "fbp fbp-prof" }, /* @__PURE__ */ React.createElement("div", { className: `fbp-top${fbpScrolled ? " solid" : ""}`, onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("button", { className: "fbp-top-btn", onClick: goBack, "aria-label": "Back" }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.back, size: 26 })), /* @__PURE__ */ React.createElement("div", { className: "fbp-top-title" }, u.name), /* @__PURE__ */ React.createElement("div", { className: "fbp-top-right" }, isOwnMode && /* @__PURE__ */ React.createElement("button", { className: "fbp-top-btn", onClick: () => setDrawerOpen(true), "aria-label": "Menu" }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.menu, size: 26 })), isOwnMode && /* @__PURE__ */ React.createElement("button", { className: "fbp-top-btn", onClick: openEditProfile, "aria-label": "Edit" }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.edit, size: 24 })), /* @__PURE__ */ React.createElement("button", { className: "fbp-top-btn", onClick: isPreview ? noop : openSearch, "aria-label": "Search" }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.search, size: 26 })), /* @__PURE__ */ React.createElement(
+    return /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, isPreview && /* @__PURE__ */ React.createElement("div", { className: "fbp-viewas" }, /* @__PURE__ */ React.createElement("span", null, "Viewing your profile as the public"), /* @__PURE__ */ React.createElement("button", { onClick: goBack }, "Exit")), /* @__PURE__ */ React.createElement("div", { className: "fbp fbp-prof" }, /* @__PURE__ */ React.createElement("div", { className: `fbp-top${fbpScrolled ? " solid" : ""}`, onClick: (e) => e.stopPropagation() }, (!isOwnMode || pageStack.length > 1) && /* @__PURE__ */ React.createElement("button", { className: "fbp-top-btn", onClick: goBack, "aria-label": "Back" }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.back, size: 26 })), isOwnMode && /* @__PURE__ */ React.createElement("button", { className: "fbp-top-btn", onClick: () => setSideNav(true), "aria-label": "Menu" }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.menu, size: 26 })), /* @__PURE__ */ React.createElement("div", { className: "fbp-top-title" }, u.name), /* @__PURE__ */ React.createElement("div", { className: "fbp-top-right" }, isOwnMode && /* @__PURE__ */ React.createElement("button", { className: "fbp-top-btn", onClick: openEditProfile, "aria-label": "Edit" }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.edit, size: 24 })), /* @__PURE__ */ React.createElement("button", { className: "fbp-top-btn", onClick: isPreview ? noop : openSearch, "aria-label": "Search" }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.search, size: 26 })), /* @__PURE__ */ React.createElement(
       "button",
       {
         className: "fbp-top-btn",
-        onClick: () => isPreview ? noop() : isOwnMode ? pushPage("fb-own-menu") : pushPage("fb-profile-menu", { uid: u.uid }),
+        onClick: () => isPreview ? noop() : isOwnMode ? setSideNav(true) : pushPage("fb-profile-menu", { uid: u.uid }),
         "aria-label": "More"
       },
       /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.dots, size: 26 })
@@ -12346,6 +12442,147 @@ ${buildShareUrl(post.id)}`;
     ))), fbPhotoSub === "profile" ? u.photoURL ? /* @__PURE__ */ React.createElement(Grid, { items: [{ src: u.photoURL, onClick: openProfilePic }] }) : /* @__PURE__ */ React.createElement("div", { className: "fbp-empty" }, "No profile pictures") : fbPhotoSub === "cover" ? u.coverURL ? /* @__PURE__ */ React.createElement(Grid, { items: [{ src: u.coverURL, onClick: openCoverPic }] }) : /* @__PURE__ */ React.createElement("div", { className: "fbp-empty" }, "No cover photos") : fbPhotoSub === "albums" ? /* @__PURE__ */ React.createElement("div", { className: "fbp-albums" }, /* @__PURE__ */ React.createElement("div", { className: "fbp-album", onClick: () => setFbPhotoSub("") }, /* @__PURE__ */ React.createElement("div", { className: "fbp-album-th" }, photoPosts[0] ? /* @__PURE__ */ React.createElement("img", { src: photoPosts[0].image, alt: "" }) : null), /* @__PURE__ */ React.createElement("b", null, "Timeline photos"), /* @__PURE__ */ React.createElement("small", null, photoPosts.length, " items")), /* @__PURE__ */ React.createElement("div", { className: "fbp-album", onClick: () => setFbPhotoSub("profile") }, /* @__PURE__ */ React.createElement("div", { className: "fbp-album-th" }, u.photoURL ? /* @__PURE__ */ React.createElement("img", { src: u.photoURL, alt: "" }) : null), /* @__PURE__ */ React.createElement("b", null, "Profile pictures"), /* @__PURE__ */ React.createElement("small", null, u.photoURL ? 1 : 0, " items")), /* @__PURE__ */ React.createElement("div", { className: "fbp-album", onClick: () => setFbPhotoSub("cover") }, /* @__PURE__ */ React.createElement("div", { className: "fbp-album-th" }, u.coverURL ? /* @__PURE__ */ React.createElement("img", { src: u.coverURL, alt: "" }) : null), /* @__PURE__ */ React.createElement("b", null, "Cover photos"), /* @__PURE__ */ React.createElement("small", null, u.coverURL ? 1 : 0, " items"))) : /* @__PURE__ */ React.createElement(Grid, { items: photoPosts.map((p) => ({ src: p.image, onClick: () => openPostPhoto(p) })) }))));
   };
   const renderFbProfile = () => renderFbProfileCore("other", viewingUser, viewingUserPosts, viewingUserFriends, viewingUserFriendsLoading);
+  const WA_PATH = "M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.48-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.65-1.58-.9-2.16-.24-.57-.48-.5-.66-.5-.17 0-.37-.02-.56-.02-.2 0-.5.07-.77.37-.27.3-1.02 1-1.02 2.42 0 1.43 1.04 2.81 1.19 3 .15.2 2.05 3.13 4.97 4.38.7.3 1.24.48 1.66.62.7.22 1.33.19 1.83.11.56-.08 1.75-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.56-.35zM12 0C5.4 0 0 5.4 0 12c0 2.11.55 4.11 1.51 5.84L0 24l6.32-1.66C8.02 23.15 9.96 24 12 24c6.6 0 12-5.4 12-12S18.6 0 12 0z";
+  const TG_PATH = "M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z";
+
+  const SN_I = {
+    friends: '<circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3 2.7-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.3"/><path d="M16.5 14c2.8 0 4.5 1.5 4.5 4"/>',
+    plus: '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><path d="M12 8v8M8 12h8"/>',
+    groups: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.5 18.5c1-2.3 3-3.5 5.5-3.5s4.5 1.2 5.5 3.5"/>',
+    memories: '<path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5"/><path d="M3.5 4v4.5H8"/><path d="M12 7.5V12l3 2"/>',
+    saved: '<path d="M7 3h10a1 1 0 0 1 1 1v17l-6-4-6 4V4a1 1 0 0 1 1-1z"/>',
+    reels: '<rect x="3" y="3" width="18" height="18" rx="4.5"/><path d="M3 9h18M9 3l3 6M15 3l3 6"/><path d="M10.5 12.5v5l4.5-2.5z"/>',
+    market: '<path d="M3.5 9.5L5 4h14l1.5 5.5M4 9.5C4 10.9 5.1 12 6.5 12S9 10.9 9 9.5c0 1.4 1.1 2.5 3 2.5s3-1.1 3-2.5c0 1.4 1.1 2.5 2.5 2.5S20 10.9 20 9.5M5 12v8h14v-8M10 20v-4h4v4"/>',
+    feeds: '<path d="M5 12a7 7 0 0 1 7 7M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.5" fill="currentColor"/>',
+    help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/>',
+    gear: '<circle cx="12" cy="12" r="3"/><path d="M12 3l1.5 2.2 2.6-.6.9 2.5 2.5.9-.6 2.6L21 12l-2.1 1.5.6 2.6-2.5.9-.9 2.5-2.6-.6L12 21l-1.5-2.1-2.6.6-.9-2.5-2.5-.9.6-2.6L3 12l2.1-1.5-.6-2.6 2.5-.9.9-2.5 2.6.6z"/>',
+    grid: '<rect x="4" y="4" width="4.5" height="4.5" rx="1"/><rect x="9.75" y="4" width="4.5" height="4.5" rx="1"/><rect x="15.5" y="4" width="4.5" height="4.5" rx="1"/><rect x="4" y="9.75" width="4.5" height="4.5" rx="1"/><rect x="9.75" y="9.75" width="4.5" height="4.5" rx="1"/><rect x="15.5" y="9.75" width="4.5" height="4.5" rx="1"/><rect x="4" y="15.5" width="4.5" height="4.5" rx="1"/><rect x="9.75" y="15.5" width="4.5" height="4.5" rx="1"/><rect x="15.5" y="15.5" width="4.5" height="4.5" rx="1"/>',
+    down: '<path d="M6 9l6 6 6-6"/>',
+    up: '<path d="M6 15l6-6 6 6"/>',
+    right: '<path d="M9 6l6 6-6 6"/>',
+    ai: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18 16l.8 2.2L21 19l-2.2.8L18 22l-.8-2.2L15 19l2.2-.8z"/>',
+    scam: '<path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6z"/><circle cx="12" cy="11" r="2.5"/><path d="M14 13l2.2 2.2"/>',
+    support: '<path d="M12 3l8 6v11H4V9z"/><path d="M12 17s-3.5-2.2-3.5-4.5a2 2 0 0 1 3.5-1.3 2 2 0 0 1 3.5 1.3C15.5 14.8 12 17 12 17z"/>',
+    report: '<rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 8v5M12 16h.01"/>',
+    terms: '<path d="M6 3h12v14H6a2 2 0 0 0-2 2V5a2 2 0 0 1 2-2zM6 17h12v4H6a2 2 0 0 1 0-4z"/>',
+    usergear: '<circle cx="10" cy="8" r="3.5"/><path d="M3.5 20c0-3.5 2.8-6 6.5-6"/><circle cx="17" cy="17" r="2.2"/><path d="M17 13.8v1M17 19.2v1M13.8 17h1M19.2 17h1"/>',
+    lock: '<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    device: '<path d="M12 3l8 6v11H4V9z"/><path d="M9 14l2 2 4-4"/>',
+    ads: '<rect x="3" y="4" width="18" height="13" rx="3"/><path d="M8 21h8M12 17v4"/>',
+    pay: '<rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10.5h18"/>',
+    link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+    moon: '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/>',
+    globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+    warn: '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
+    x: '<path d="M6 6l12 12M18 6L6 18"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+    back: '<path d="M15 5l-7 7 7 7"/>'
+  };
+  const SnI = (n, sz = 26) => React.createElement("svg", { viewBox: "0 0 24 24", width: sz, height: sz, fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round", dangerouslySetInnerHTML: { __html: SN_I[n] || "" } });
+  const MB_LOGO = "https://i.postimg.cc/rsBBsQWF/17832-removebg-preview.png";
+  const MbLogo = (sz = 28) => React.createElement("img", { src: MB_LOGO, width: sz, height: sz, alt: "MeBook", style: { objectFit: "contain", display: "block" } });
+  const BrandIco = (k) => {
+    const sv = (inner) => React.createElement("svg", { viewBox: "0 0 24 24", width: 30, height: 30, dangerouslySetInnerHTML: { __html: inner } });
+    if (k === "ig") return sv('<defs><linearGradient id="snIg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#fdc468"/><stop offset=".4" stop-color="#e1306c"/><stop offset="1" stop-color="#5b51d8"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#snIg)"/><circle cx="12" cy="12" r="4.3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="17.2" cy="6.8" r="1.2" fill="#fff"/>');
+    if (k === "th") return sv('<rect x="2" y="2" width="20" height="20" rx="6" fill="#000"/><text x="12" y="17" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" font-family="Arial,sans-serif">@</text>');
+    if (k === "ms") return sv('<defs><linearGradient id="snMs" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#00b2ff"/><stop offset="1" stop-color="#006aff"/></linearGradient></defs><path d="M12 2C6.5 2 2 6.1 2 11.2c0 2.9 1.4 5.4 3.6 7.1.1 1.1-.3 2.6-1 3.6 2.3-.2 4-1.2 4.9-1.9.8.2 1.6.3 2.5.3 5.5 0 10-4.1 10-9.1S17.5 2 12 2z" fill="url(#snMs)"/><path d="M5.8 14.4l3.9-5.1 2.9 2.7 4.9-2.7-4.2 5.4-2.8-2.8z" fill="#fff"/>');
+    if (k === "wa") return sv('<circle cx="12" cy="12" r="11" fill="#25d366"/><path fill="#fff" transform="translate(3.6 3.6) scale(.7)" d="' + WA_PATH + '"/>');
+    if (k === "yt") return sv('<rect x="1.5" y="5" width="21" height="14" rx="4.2" fill="#ff0000"/><path d="M10 9l5.5 3-5.5 3z" fill="#fff"/>');
+    if (k === "tg") return sv('<circle cx="12" cy="12" r="11" fill="#229ed9"/><path fill="#fff" transform="translate(4 4.4) scale(.67)" d="' + TG_PATH + '"/>');
+    if (k === "ed") return sv('<defs><linearGradient id="snEd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d6e"/><stop offset=".5" stop-color="#a855f7"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="#000"/><rect x="5" y="5" width="14" height="14" rx="4.5" fill="none" stroke="url(#snEd)" stroke-width="1.8"/><path d="M12 7.5v9" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>');
+    return null;
+  };
+  const renderSideNavLayer = () => {
+    const h = React.createElement;
+    const closeNav = () => setSideNav(false);
+    const go = (fn) => () => {
+      setSideNav(false);
+      fn();
+    };
+    const un = (n) => () => setUnavail(n);
+    const Tile = (ico, label, onClick) => h("button", { className: "sn-tile", onClick }, SnI(ico, 30), h("span", null, label));
+    const Row = (ico, label, onClick) => h("button", { className: "sn-row", onClick }, h("span", { className: "sn-row-ico" }, ico), h("span", null, label));
+    const Sec = (key, ico, title, kids) => h("div", { className: "sn-sec" }, h("button", { className: "sn-sec-head", onClick: () => setSnExp((e) => ({ ...e, [key]: !e[key] })) }, h("span", { className: "sn-row-ico" }, ico), h("span", { className: "sn-sec-t" }, title), SnI(snExp[key] ? "up" : "down", 22)), snExp[key] && h("div", null, kids));
+    const frs = (myFriends || []).slice(0, 8);
+    const nav = sideNav && profile && h("div", { className: "sn-bg", onClick: closeNav }, h("aside", { className: "sn-panel", onClick: (e) => e.stopPropagation() }, h("div", { className: "sn-card" }, h("div", { className: "sn-acc", onClick: go(() => goTo("profile")) }, h("img", { src: avatarUrl(profile), alt: "" }), h("b", null, profile.name), h("span", { className: "sn-chev" }, SnI("down", 24))), h("div", { className: "sn-hr" }), h("button", { className: "sn-create", onClick: un("Create MeBook Page") }, h("span", { className: "sn-plus" }, SnI("plus", 22)), "Create MeBook Page")), frs.length > 0 && h(React.Fragment, null, h("div", { className: "sn-h" }, "Your shortcuts"), h("div", { className: "sn-short" }, frs.map((f) => h("button", { key: f.uid, onClick: go(() => openUserProfile(f.uid)) }, h("img", { src: avatarUrl(f), alt: "" }), h("span", null, f.name))))), h("div", { className: "sn-grid" }, Tile("friends", "Friends (" + (myFriends || []).length + ")", go(() => goTo("friends"))), Tile("plus", "Create +", go(() => openCreatePost())), Tile("groups", "Groups", un("Groups")), Tile("memories", "Memories", un("Memories")), Tile("saved", "Saved", un("Saved")), Tile("reels", "Reels", go(() => goTo("shorts"))), Tile("market", "Marketplace", un("Marketplace")), Tile("feeds", "Feeds", go(() => goTo("home")))), h("button", { className: "sn-more", onClick: un("See more") }, "See more"), Sec("help", SnI("help", 28), "Help and support", [
+      Row(SnI("ai", 26), "MeBook AI support assistant", un("MeBook AI support assistant")),
+      Row(SnI("scam", 26), "Scam Protection Centre", un("Scam Protection Centre")),
+      Row(SnI("support", 26), "Support", un("Support")),
+      Row(SnI("report", 26), "Report a problem", un("Report a problem")),
+      Row(SnI("terms", 26), "Terms and Policies", un("Terms and Policies"))
+    ].map((x, i) => h(React.Fragment, { key: i }, x))), Sec("set", SnI("gear", 28), "Settings and privacy", [
+      Row(SnI("usergear", 26), "Settings", go(() => pushPage("fb-settings"))),
+      Row(SnI("lock", 26), "Privacy Centre", go(() => pushPage("settings"))),
+      Row(SnI("clock", 26), "Time management", un("Time management")),
+      Row(SnI("device", 26), "Device requests", un("Device requests")),
+      Row(SnI("ads", 26), "Your ad activity", un("Your ad activity")),
+      Row(SnI("pay", 26), "Orders and payments", un("Orders and payments")),
+      Row(SnI("link", 26), "Link history", un("Link history")),
+      Row(SnI("moon", 26), theme === "dark" ? "Light mode" : "Dark mode", () => toggleTheme(theme !== "dark")),
+      Row(SnI("globe", 26), "Language", un("Language"))
+    ].map((x, i) => h(React.Fragment, { key: i }, x))), Sec("also", SnI("grid", 28), "Also from ELIX industry", [
+      ["ed", "Edits"],
+      ["th", "Threads"],
+      ["ig", "Instagram"],
+      ["ms", "Messenger"],
+      ["wa", "WhatsApp"],
+      ["yt", "YouTube"],
+      ["tg", "Telegram"]
+    ].map(([k, n]) => h(React.Fragment, { key: k }, Row(BrandIco(k), n, un(n))))), h("div", { className: "sn-foot" }, h("button", { className: "sn-logout", onClick: go(() => handleSignOut()) }, "Log Out"))));
+    const acctRow = (ico, label, fn) => h("button", { className: "ma-item", onClick: fn }, SnI(ico, 30), h("span", null, label), SnI("right", 22));
+    const acct = acctSheet && profile && h("div", { className: "ma-bg", onClick: () => setAcctSheet(false) }, h("div", { className: "ma-sheet", onClick: (e) => e.stopPropagation() }, h("div", { className: "ma-top" }, h("button", { className: "x", onClick: () => setAcctSheet(false), "aria-label": "Close" }, SnI("x", 30)), h("div", { className: "ma-brand" }, MbLogo(34), "MeBook")), acctBanner && h("div", { className: "ma-banner" }, MbLogo(46), h("div", null, h("b", null, "About your MeBook Account"), h("span", null, "Learn what's new and what's staying the same.")), h("button", { className: "cl", onClick: () => setAcctBanner(false), "aria-label": "Dismiss" }, SnI("x", 22))), h("h2", { className: "ma-h" }, "MeBook Account"), h("p", { className: "ma-p" }, "Control how your account works across MeBook apps and devices. ", h("span", { className: "ma-link", onClick: () => setUnavail("Learn more") }, "Learn more")), h("div", { className: "ma-email", onClick: () => setUnavail("Account centre") }, MbLogo(40), h("div", null, h("b", null, profile.email || "your account"), h("small", null, "1 profile")), h("img", { className: "av", src: avatarUrl(profile), alt: "" }), SnI("right", 22)), h("div", { className: "ma-list" }, acctRow("lock", "Login and security", () => {
+      setAcctSheet(false);
+      pushPage("settings");
+    }), acctRow("friends", "Cross-profile experiences", () => setUnavail("Cross-profile experiences")), acctRow("terms", "Your information and permissions", () => setUnavail("Your information and permissions")), acctRow("ads", "Ad preferences", () => setUnavail("Ad preferences")), acctRow("pay", "MeBook Pay", () => setUnavail("MeBook Pay")), acctRow("pay", "Subscriptions", () => setUnavail("Subscriptions")), acctRow("feeds", "Your media gallery", () => setUnavail("Your media gallery"))), h("div", { className: "ma-list" }, acctRow("usergear", "Manage account", () => setUnavail("Manage account")))));
+    const pop = unavail && h("div", { className: "mb-exit-overlay", onClick: () => setUnavail(null) }, h("div", { className: "mb-exit-dialog", role: "dialog", "aria-modal": "true", onClick: (e) => e.stopPropagation() }, h("div", { className: "mb-exit-icon", style: { background: "rgba(245,158,11,.15)", color: "#f59e0b" } }, SnI("warn", 30)), h("div", { className: "mb-exit-title" }, "Unavailable"), h("div", { className: "mb-exit-text" }, "This feature is currently unavailable for you."), h("div", { className: "mb-exit-actions" }, h("button", { className: "mb-exit-btn cancel", onClick: () => setUnavail(null) }, "OK"))));
+    return h(React.Fragment, null, nav, acct, pop);
+  };
+  const renderFbSettings = () => {
+    const h = React.createElement;
+    const un = (n) => () => setUnavail(n);
+    const ic = (k) => h("span", { className: "fbs-ico" }, h(FbIco, { d: FBP_ICON[k] || FBP_ICON.info, size: 26 }));
+    const bell = "M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4a1.5 1.5 0 0 0-3 0v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z";
+    const sections = [
+      { t: "Your account", items: [{ l: "MeBook Account", s: "Password, security, personal details, cross-profile experiences, ad preferences, verification", ico: h("span", { className: "fbs-ico" }, MbLogo(30)), on: () => setAcctSheet(true) }] },
+      { t: "Subscriptions", items: [{ l: "MeBook One", ico: ic("star"), on: un("MeBook One") }] },
+      { t: "Tools and resources", sub: "Our tools help you control and manage your privacy.", items: [
+        { l: "Privacy Checkup", ico: ic("lock"), on: un("Privacy Checkup") },
+        { l: "Family Centre", ico: ic("people"), on: un("Family Centre") },
+        { l: "Default audience settings", ico: ic("eye"), on: un("Default audience settings") }
+      ] },
+      { t: "Preferences", sub: "Customise your experience on MeBook.", items: [
+        { l: "Content preferences", ico: ic("list"), on: un("Content preferences") },
+        { l: "Reaction preferences", ico: ic("heart"), on: un("Reaction preferences") },
+        { l: "Notifications", ico: h("span", { className: "fbs-ico" }, h(FbIco, { d: bell, size: 26 })), on: un("Notifications") },
+        { l: "Accessibility", ico: ic("info"), on: un("Accessibility") },
+        { l: "Tab bar", ico: ic("action"), on: un("Tab bar") },
+        { l: "Camera roll sharing suggestions", ico: ic("camera"), on: un("Camera roll sharing suggestions") },
+        { l: "Ads in content that you've created", ico: ic("mega"), on: un("Ads in content") },
+        { l: "Early access to features", ico: ic("star"), on: un("Early access to features") }
+      ] },
+      { t: "Audience and visibility", sub: "Control who can see what you share on MeBook.", items: [
+        { l: "Profile locking", ico: ic("shield"), on: un("Profile locking") },
+        { l: "Profile details", ico: ic("personEdit"), on: () => pushPage("fb-own-menu") },
+        { l: "Pro mode", ico: ic("star"), on: () => pushPage("fb-own-menu") },
+        { l: "How people can find and contact you", ico: ic("search"), on: un("How people can find and contact you") },
+        { l: "Posts", ico: ic("review"), on: un("Posts") },
+        { l: "Stories", ico: ic("gallery"), on: un("Stories") },
+        { l: "Pages", ico: ic("report"), on: un("Pages") },
+        { l: "Reels", ico: ic("gallery"), on: un("Reels") },
+        { l: "Followers and public content", ico: ic("people"), on: un("Followers and public content") },
+        { l: "Profile and tagging", ico: ic("following"), on: un("Profile and tagging") },
+        { l: "Blocking", ico: ic("block"), on: un("Blocking") },
+        { l: "Active Status", ico: ic("personCheck"), on: un("Active Status") }
+      ] }
+    ];
+    const q = stQ.trim().toLowerCase();
+    return h("div", { className: "mb-view active" }, h("div", { className: "fbs-wrap" }, h("div", { className: "fbs-head" }, h("button", { className: "fbs-ib", onClick: goBack, "aria-label": "Back" }, SnI("back", 28)), h("b", null, "Settings & privacy"), h("button", { className: "fbs-ib", onClick: () => document.querySelector(".fbs-search") && document.querySelector(".fbs-search").focus(), "aria-label": "Search" }, SnI("search", 26))), h("input", { className: "fbs-search", placeholder: "Search settings", value: stQ, onChange: (e) => setStQ(e.target.value) }), sections.map((sec) => {
+      const items = q ? sec.items.filter((it) => it.l.toLowerCase().includes(q)) : sec.items;
+      if (!items.length) return null;
+      return h("div", { key: sec.t }, h("div", { className: "fbs-sec-t" }, sec.t), sec.sub && h("div", { className: "fbs-sec-s" }, sec.sub), items.map((it) => h("button", { key: it.l, className: "fbs-item", onClick: it.on }, it.ico, h("span", null, h("b", null, it.l), it.s && h("small", null, it.s)))));
+    })));
+  };
   const renderFbOwnMenu = () => {
     const Item = ({ icon, label, onClick }) => /* @__PURE__ */ React.createElement("button", { className: "fbp-mi", onClick }, /* @__PURE__ */ React.createElement(FbIco, { d: icon, size: 28 }), /* @__PURE__ */ React.createElement("span", null, label));
     const photoUrls = myPosts.filter((p) => p.image && !p.youtube && !p.binnedAt).map((p) => p.image);
@@ -12563,6 +12800,7 @@ ${buildShareUrl(post.id)}`;
       }
     ),
     /* @__PURE__ */ React.createElement(ToastStack, { toasts, onDone: removeToast }),
+    renderSideNavLayer(),
     exitConfirmOpen && /* @__PURE__ */ React.createElement("div", { className: "mb-exit-overlay", onClick: () => setExitConfirmOpen(false) }, /* @__PURE__ */ React.createElement(
       "div",
       {
@@ -13398,7 +13636,7 @@ ${buildShareUrl(post.id)}`;
           )
         );
       }))));
-    })(), currentView === "user-profile" && viewingUser && renderFbProfile(), currentView === "fb-profile-menu" && renderFbMenu(), currentView === "fb-own-menu" && renderFbOwnMenu(), currentView === "fb-view-as" && renderFbProfileCore("preview", profile, myPosts, myFriends, false), currentView === "fb-activity" && renderFbActivity(), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement("div", { className: "mc-listpage" }, mcListHead(), /* @__PURE__ */ React.createElement("div", { className: "mc-listpage-body" }, renderChatListPanel(false)), mcTabBar()) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true)), mcBackBtn("in-side")), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" })), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, chatPartner?.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "#16a34a" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : "Active now")), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), /* @__PURE__ */ React.createElement(
+    })(), currentView === "user-profile" && viewingUser && renderFbProfile(), currentView === "fb-profile-menu" && renderFbMenu(), currentView === "fb-own-menu" && renderFbOwnMenu(), currentView === "fb-settings" && renderFbSettings(), currentView === "fb-view-as" && renderFbProfileCore("preview", profile, myPosts, myFriends, false), currentView === "fb-activity" && renderFbActivity(), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement("div", { className: "mc-listpage" }, mcListHead(), /* @__PURE__ */ React.createElement("div", { className: "mc-listpage-body" }, renderChatListPanel(false)), mcTabBar()) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true)), mcBackBtn("in-side")), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" })), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, chatPartner?.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "#16a34a" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : "Active now")), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), /* @__PURE__ */ React.createElement(
       "div",
       {
         className: "mechat-body",
