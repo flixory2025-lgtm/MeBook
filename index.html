@@ -3730,6 +3730,28 @@ html.mb-native .mebook-root.mb-hdr-off .mb-layout{padding-top:calc(62px + var(--
 .mebook-root .mb-nav-label .me3d{background:none !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;-webkit-text-fill-color:currentColor !important;color:inherit !important;filter:none !important;font-weight:inherit !important;display:inline;}
 
 /* ===== MeChat seen avatar at the very bottom ===== */
+.mebook-root .mechat-bubble-wrap{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
+.mebook-root .mc-listpage .mc-title{font-size:28px;}
+.mebook-root .mc-listpage .mb-search-box input{font-size:15.5px;}
+.mebook-root .mc-listpage .msgr-online-item{width:68px;}
+.mebook-root .mc-listpage .msgr-online-avatar-wrap,.mebook-root .mc-listpage .msgr-online-avatar-wrap img{width:56px;height:56px;}
+.mebook-root .mc-listpage .msgr-online-name{font-size:12.5px;}
+.mebook-root .mc-listpage .msgr-item{padding:8px 14px;}
+.mebook-root .mc-listpage .msgr-item-avatar-wrap,.mebook-root .mc-listpage .msgr-item-avatar-wrap img{width:54px;height:54px;}
+.mebook-root .mc-listpage .msgr-item-name{font-size:16.5px;}
+.mebook-root .mc-listpage .msgr-item-last{font-size:14.5px;}
+.mebook-root .mc-listpage .msgr-item-time{font-size:12.5px;}
+.mebook-root .mc-tab{height:45px;}
+.mebook-root .mc-tab svg{width:25px;height:25px;}
+.mebook-root .mechat-head-name{font-size:16.5px;}
+.mebook-root .mechat-head-status{font-size:12.5px;}
+.mebook-root .mechat-head-btn{width:38px;height:38px;}
+.mebook-root .mechat-head-btn svg{width:22px;height:22px;}
+.mebook-root .mechat-bubble{font-size:15.5px;padding:7px 12px 6px;border-radius:18px;}
+.mebook-root .mechat-bubble-avatar{width:28px;height:28px;}
+.mebook-root .mechat-input-icon{width:38px;height:38px;}
+.mebook-root .mechat-input-icon svg{width:22px;height:22px;}
+.mebook-root .mechat-input-field{font-size:15.5px;padding:9px 15px;min-height:40px;}
 .mebook-root .mechat-typing-row{display:flex;align-items:flex-end;gap:8px;padding:4px 12px 6px;animation:bubbleIn .2s ease;}
 .mebook-root .mechat-typing-row img{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;}
 .mebook-root .mechat-typing-bubble{display:flex;align-items:center;gap:5px;padding:14px 16px;border-radius:20px;background:var(--bubble-them-bg,#e4e6eb);box-shadow:0 1px 2px rgba(0,0,0,.12);}
@@ -8161,6 +8183,8 @@ function mcThemeStyle(t) {
   return th && th.bg ? { background: th.bg } : void 0;
 }
 function mcVisibleMsgs(msgs, prefs, id) {
+  const hid = prefs && prefs.hideMsgs && prefs.hideMsgs[id];
+  if (hid) msgs = msgs.filter((m) => !hid[m.id]);
   const ms = prefs && prefs.disap && prefs.disap[id];
   if (!ms) return msgs;
   const now = Date.now();
@@ -14340,7 +14364,7 @@ ${buildShareUrl(post.id)}`;
         );
       }
       const m = chatMessages.find((x) => x.id === actionMenu.id);
-      const canEditMsg = !!m && !m.type && !!m.text;
+      const canEditMsg = !!m && m.from === user.uid && !m.type && !!m.text;
       const items = [];
       if (m && canEditMsg) {
         items.push({ label: "Edit message", icon: ICON_EDIT, onClick: () => startEditMessage(m) });
@@ -14369,7 +14393,7 @@ ${buildShareUrl(post.id)}`;
           });
         }
       }
-      {
+      if (m) {
         const pinList = chatPrefs.pinMsgs && chatPrefs.pinMsgs[activeChat] || [];
         const isPin = pinList.includes(m.id);
         items.push({
@@ -14390,7 +14414,23 @@ ${buildShareUrl(post.id)}`;
           }
         });
       }
-      items.push({ label: "Unsend message", icon: ICON_TRASH, danger: true, onClick: () => handleDeleteMessage(actionMenu.id) });
+      if (m) {
+        items.push({
+          label: "Delete for me",
+          icon: ICON_TRASH,
+          danger: true,
+          onClick: () => {
+            updateChatPrefs((p) => {
+              p.hideMsgs = p.hideMsgs || {};
+              p.hideMsgs[activeChat] = p.hideMsgs[activeChat] || {};
+              p.hideMsgs[activeChat][m.id] = 1;
+              return p;
+            });
+            showToast("Deleted for you", "", "success");
+          }
+        });
+      }
+      if (m && m.from === user.uid) items.push({ label: "Unsend message", icon: ICON_TRASH, danger: true, onClick: () => handleDeleteMessage(actionMenu.id) });
       return /* @__PURE__ */ React.createElement(ActionSheet, { onClose: close, items });
     })(),
     editPostId && /* @__PURE__ */ React.createElement("div", { className: "mb-modal-backdrop", onClick: closeEditPost }, /* @__PURE__ */ React.createElement("div", { className: "mb-modal", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "mb-modal-head" }, /* @__PURE__ */ React.createElement("b", null, "Edit post"), /* @__PURE__ */ React.createElement("button", { className: "mb-modal-x", onClick: closeEditPost, title: "Close" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" })))), /* @__PURE__ */ React.createElement(
@@ -14902,14 +14942,21 @@ ${buildShareUrl(post.id)}`;
         const curDay = dayKey(m.at);
         const prevDay = prevMsg ? dayKey(prevMsg.at) : "";
         const dateSep = curDay && curDay !== prevDay ? /* @__PURE__ */ React.createElement("div", { className: "mechat-date-sep" }, /* @__PURE__ */ React.createElement("span", null, dayLabel(m.at))) : null;
-        let sx = 0, sy = 0, cx = 0, dir = "", armed = false;
+        let sx = 0, sy = 0, cx = 0, dir = "", armed = false, lpT = null;
         const onTouchStart = (e) => {
           sx = e.touches[0].clientX; sy = e.touches[0].clientY; cx = sx; dir = ""; armed = false;
+          if (lpT) clearTimeout(lpT);
+          lpT = setTimeout(() => {
+            lpT = null;
+            try { if (navigator.vibrate) navigator.vibrate(15); } catch (er) {}
+            setActionMenu({ kind: "msg", id: m.id });
+          }, 450);
         };
         const onTouchMove = (e) => {
           const t = e.touches[0];
           cx = t.clientX;
           const dx = cx - sx, dy = t.clientY - sy;
+          if (lpT && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) { clearTimeout(lpT); lpT = null; }
           if (!dir) {
             if (Math.abs(dx) < 16 && Math.abs(dy) < 16) return;
             dir = dx > 0 && dx > Math.abs(dy) * 2 ? "h" : "v";
@@ -14924,6 +14971,7 @@ ${buildShareUrl(post.id)}`;
           } else if (dx < 140) armed = false;
         };
         const onTouchEnd = (e) => {
+          if (lpT) { clearTimeout(lpT); lpT = null; }
           const el = e.currentTarget;
           el.style.transition = "transform .15s ease";
           el.style.transform = "translateX(0)";
@@ -15011,7 +15059,7 @@ ${buildShareUrl(post.id)}`;
             onTouchEnd,
             onContextMenu: (e) => {
               e.preventDefault();
-              openChatReactionPicker(e, m.id);
+              setActionMenu({ kind: "msg", id: m.id });
             },
             onDoubleClick: (e) => openChatReactionPicker(e, m.id)
           },
