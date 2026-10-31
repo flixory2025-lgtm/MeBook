@@ -21,7 +21,7 @@
 <link rel="icon" href="https://i.postimg.cc/g0pGNkxc/file-000000000bf482118c249820a099f2d4.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
 <style>
 *,*::before,*::after{box-sizing:border-box;}
 html,body{margin:0;padding:0;background:#000;}
@@ -708,6 +708,104 @@ animation:cardFloat .7s cubic-bezier(.2,.8,.3,1);color:#f3f4f6;
 .mebook-root .auth-err{background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.25);color:#fca5a5;font-size:13px;padding:11px 14px;border-radius:10px;margin-top:12px;display:none;animation:shake .4s ease;}
 .mebook-root .auth-err.show{display:block;}
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+
+/* ============ FLOW AUTH (animated login popup) ============ */
+.mebook-root .auth-wrap.fx-wrap{
+display:flex;align-items:flex-start;justify-content:center;padding:84px 20px 28px;overflow-x:hidden;overflow-y:auto;
+background:radial-gradient(ellipse at 50% 34%,#06222f 0%,#031219 36%,#01070b 100%);
+-webkit-tap-highlight-color:transparent;
+}
+.mebook-root .auth-wrap.fx-wrap::before{
+content:'';position:absolute;top:0;left:0;width:100%;height:100%;filter:none;transform:none;
+background:radial-gradient(circle at 50% 38%,rgba(20,170,210,.13) 0%,transparent 52%),radial-gradient(circle at 18% 88%,rgba(37,99,235,.10) 0%,transparent 45%),radial-gradient(circle at 86% 14%,rgba(14,165,200,.08) 0%,transparent 40%);
+animation:fxAmbient 12s ease-in-out infinite;pointer-events:none;z-index:0;
+}
+@keyframes fxAmbient{0%,100%{opacity:.75;}50%{opacity:1;}}
+.mebook-root .fx-stage{position:relative;z-index:2;width:100%;max-width:340px;margin:auto;}
+.mebook-root .fx-orb{position:absolute;left:50%;top:-62px;width:54px;height:54px;margin-left:-27px;z-index:3;pointer-events:none;animation:fxFloat 5s ease-in-out infinite;}
+@keyframes fxFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
+.mebook-root .fx-orb-core{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:50%;
+background:radial-gradient(circle at 34% 28%,#8be9ff 0%,#2fb6ff 28%,#1170f0 62%,#0a45c4 100%);
+box-shadow:0 0 26px rgba(32,150,255,.55),0 0 64px rgba(20,120,255,.26),inset -5px -7px 14px rgba(0,30,120,.55),inset 3px 4px 8px rgba(190,240,255,.5);
+animation:fxMorph 7s ease-in-out infinite;}
+.mebook-root .fx-orb-core::after{content:"";position:absolute;left:27%;top:34%;width:46%;height:46%;border-radius:50%;
+background:radial-gradient(circle at 42% 36%,rgba(20,110,235,.0) 0%,rgba(8,64,196,.5) 75%);filter:blur(1px);animation:fxInner 6s ease-in-out infinite;}
+@keyframes fxMorph{0%,100%{border-radius:50% 50% 50% 50%/50% 50% 50% 50%;}25%{border-radius:46% 54% 50% 50%/54% 46% 54% 46%;}50%{border-radius:54% 46% 48% 52%/46% 54% 46% 54%;}75%{border-radius:48% 52% 54% 46%/52% 48% 50% 50%;}}
+@keyframes fxInner{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(8%,-6%) scale(1.12);}}
+.mebook-root .fx-orb-hl{position:absolute;left:-16px;top:-5px;width:28px;height:14px;border-radius:50%;background:radial-gradient(ellipse,rgba(255,255,255,.8) 0%,rgba(255,255,255,0) 72%);filter:blur(2px);transform:rotate(-14deg);opacity:.85;}
+.mebook-root .fx-orb-dot{position:absolute;right:-1px;top:-4px;width:5px;height:5px;border-radius:50%;background:#d3e6f0;box-shadow:0 0 7px rgba(200,230,255,.9);animation:fxDot 4s ease-in-out infinite;}
+@keyframes fxDot{0%,100%{transform:translate(0,0);opacity:.85;}50%{transform:translate(-2px,2px);opacity:1;}}
+.mebook-root .fx-wrap.is-open .fx-orb-core{animation:fxMorph 7s ease-in-out infinite,fxPop .75s cubic-bezier(.34,1.56,.64,1);}
+@keyframes fxPop{0%{transform:scale(.82);}60%{transform:scale(1.1);}100%{transform:scale(1);}}
+.mebook-root .fx-card{position:relative;width:100%;overflow:hidden;border-radius:26px;
+background:linear-gradient(180deg,#112b37 0,#1c4e5d 64px,#1a4756 98px,#0a1c27 146px,#040b11 236px,#03080d 100%);
+border:1px solid rgba(70,190,215,.2);
+box-shadow:0 0 0 1px rgba(255,255,255,.02) inset,0 0 44px rgba(16,160,200,.16),0 30px 80px rgba(0,0,0,.6);
+-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);
+transition:height .7s cubic-bezier(.22,1,.36,1),box-shadow .6s ease;
+animation:fxCardIn .8s cubic-bezier(.22,1,.36,1) backwards;color:#e6f2f7;}
+@keyframes fxCardIn{from{opacity:0;transform:translateY(22px) scale(.96);}to{opacity:1;transform:none;}}
+.mebook-root .fx-wrap.is-open .fx-card{box-shadow:0 0 0 1px rgba(255,255,255,.03) inset,0 0 70px rgba(16,170,215,.24),0 34px 90px rgba(0,0,0,.65);}
+.mebook-root .fx-inner{position:relative;width:100%;}
+.mebook-root .fx-head{padding:47px 24px 0;text-align:center;}
+.mebook-root .fx-title{font:800 28px/34px 'Sora','Manrope',Inter,-apple-system,sans-serif;letter-spacing:-.5px;color:#35d6e8;text-shadow:0 0 22px rgba(34,211,238,.28);}
+.mebook-root .fx-sub{margin-top:5px;font:500 12.5px/18px 'Manrope',Inter,-apple-system,sans-serif;color:#7f95a5;letter-spacing:.1px;}
+.mebook-root .fx-login-slot{padding:15px 0 42px;display:flex;justify-content:center;transition:opacity .3s ease,transform .45s cubic-bezier(.22,1,.36,1);}
+.mebook-root .fx-wrap.is-open .fx-login-slot{position:absolute;left:0;right:0;opacity:0;transform:scale(.88);pointer-events:none;}
+.mebook-root .fx-login{display:inline-flex;align-items:center;gap:7px;height:39px;padding:0 20px;border-radius:999px;font:600 13px 'Manrope',Inter,sans-serif;color:#e6f6fb;
+background:linear-gradient(180deg,rgba(26,98,118,.8),rgba(11,48,64,.9));border:1px solid rgba(60,200,225,.36);
+box-shadow:0 0 22px rgba(20,170,210,.3),inset 0 1px 0 rgba(255,255,255,.14);transition:transform .2s,box-shadow .25s,filter .2s;}
+.mebook-root .fx-login:hover{transform:translateY(-1px);box-shadow:0 0 32px rgba(20,190,230,.45),inset 0 1px 0 rgba(255,255,255,.18);}
+.mebook-root .fx-login:active{transform:scale(.97);}
+.mebook-root .fx-login svg{width:13px;height:13px;opacity:.85;transition:transform .3s;}
+.mebook-root .fx-body{position:absolute;left:0;right:0;padding:0 28px 28px;opacity:0;visibility:hidden;transition:opacity .22s ease,visibility 0s linear .22s;}
+.mebook-root .fx-wrap.is-open .fx-body{position:relative;margin-top:54px;opacity:1;visibility:visible;transition:opacity .2s ease,visibility 0s;}
+.mebook-root .fx-wrap.is-open .fx-s{animation:fxIn .6s cubic-bezier(.22,1,.36,1) backwards;animation-delay:var(--d,0s);}
+@keyframes fxIn{from{opacity:0;transform:translateY(14px) scale(.98);filter:blur(6px);}to{opacity:1;transform:none;filter:blur(0);}}
+.mebook-root .fx-field{position:relative;margin-bottom:11px;}
+.mebook-root .fx-input{display:block;width:100%;height:42px;padding:0 14px;border-radius:12px;font:500 13px 'Manrope',Inter,sans-serif;color:#dbe9f0;outline:none;
+background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);transition:border-color .2s,box-shadow .2s,background .2s;}
+.mebook-root .fx-input::placeholder{color:#6f8494;}
+.mebook-root .fx-input:focus{border-color:rgba(56,210,235,.55);background:rgba(34,211,238,.05);box-shadow:0 0 0 3px rgba(34,211,238,.12);}
+.mebook-root .fx-input:-webkit-autofill{-webkit-text-fill-color:#dbe9f0;-webkit-box-shadow:0 0 0 40px #0c202b inset;}
+.mebook-root .fx-pw .fx-input{padding-right:42px;}
+.mebook-root .fx-eye{position:absolute;right:6px;top:50%;width:34px;height:34px;margin-top:-17px;display:flex;align-items:center;justify-content:center;color:#6f8494;border-radius:8px;transition:color .2s;}
+.mebook-root .fx-eye:hover{color:#bfe9f3;}
+.mebook-root .fx-eye svg{width:17px;height:17px;}
+.mebook-root .fx-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;height:16px;}
+.mebook-root .fx-check{display:inline-flex;align-items:center;gap:7px;font:500 11px 'Manrope',Inter,sans-serif;color:#7d93a3;cursor:pointer;position:relative;}
+.mebook-root .fx-check input{position:absolute;opacity:0;width:0;height:0;}
+.mebook-root .fx-box{width:14px;height:14px;border-radius:4px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.mebook-root .fx-box svg{width:10px;height:10px;opacity:0;transform:scale(.5);transition:all .2s;}
+.mebook-root .fx-check input:checked + .fx-box{background:#1fb5d6;border-color:#1fb5d6;box-shadow:0 0 10px rgba(31,181,214,.45);}
+.mebook-root .fx-check input:checked + .fx-box svg{opacity:1;transform:scale(1);}
+.mebook-root .fx-check input:focus-visible + .fx-box{box-shadow:0 0 0 3px rgba(34,211,238,.25);}
+.mebook-root .fx-link{font:500 11px 'Manrope',Inter,sans-serif;color:#9fb6c5;transition:color .2s;}
+.mebook-root .fx-link:hover{color:#e6f6fb;}
+.mebook-root .fx-submit{display:block;width:100%;height:47px;margin-top:16px;border-radius:999px;font:700 14px 'Manrope',Inter,sans-serif;letter-spacing:.2px;color:#fff;
+background:linear-gradient(100deg,#19d3ee 0%,#1a9cf5 50%,#1f55dd 100%);
+box-shadow:0 10px 28px rgba(26,110,245,.45),inset 0 1px 0 rgba(255,255,255,.38),0 0 0 1px rgba(255,255,255,.06) inset;
+transition:transform .15s,box-shadow .25s,filter .2s;}
+.mebook-root .fx-submit:hover:not(:disabled){filter:brightness(1.08);box-shadow:0 12px 34px rgba(26,130,245,.6),inset 0 1px 0 rgba(255,255,255,.42);}
+.mebook-root .fx-submit:active:not(:disabled){transform:scale(.985);}
+.mebook-root .fx-submit:disabled{opacity:.65;cursor:not-allowed;}
+.mebook-root .fx-or{margin-top:15px;text-align:center;font:500 10.5px/14px 'Manrope',Inter,sans-serif;color:#5d7283;letter-spacing:.2px;}
+.mebook-root .fx-soc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+.mebook-root .fx-soc button{display:flex;align-items:center;justify-content:center;gap:8px;height:42px;border-radius:12px;font:600 12.5px 'Manrope',Inter,sans-serif;color:#e3eef4;
+background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);transition:background .2s,border-color .2s,transform .12s;}
+.mebook-root .fx-soc button:hover:not(:disabled){background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);}
+.mebook-root .fx-soc button:active:not(:disabled){transform:scale(.97);}
+.mebook-root .fx-soc button:disabled{opacity:.6;cursor:not-allowed;}
+.mebook-root .fx-soc svg{width:15px;height:15px;flex-shrink:0;}
+.mebook-root .fx-foot{margin-top:15px;text-align:center;font:500 11.5px/14px 'Manrope',Inter,sans-serif;color:#6b8191;}
+.mebook-root .fx-foot button{font:700 11.5px 'Manrope',Inter,sans-serif;color:#c8dbe6;margin-left:3px;transition:color .2s;}
+.mebook-root .fx-foot button:hover{color:#35d6e8;}
+.mebook-root .fx-err,.mebook-root .fx-note{margin-top:12px;font:500 12px/1.4 'Manrope',Inter,sans-serif;padding:9px 12px;border-radius:10px;}
+.mebook-root .fx-err,.mebook-root .fx-note.err{color:#fda4af;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.22);animation:fxShake .4s ease;}
+.mebook-root .fx-note.ok{color:#8eeaf5;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.22);}
+@keyframes fxShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+@media (pointer:coarse){.mebook-root .fx-input{font-size:16px;}}
+@media (prefers-reduced-motion:reduce){.mebook-root .fx-orb,.mebook-root .fx-orb-core,.mebook-root .fx-orb-core::after,.mebook-root .fx-orb-dot,.mebook-root .auth-wrap.fx-wrap::before{animation:none!important;}.mebook-root .fx-card{transition:none;}}
 
 /* ============ HEADER ============ */
 .mebook-root .mb-header{
@@ -9730,6 +9828,158 @@ function SearchPage(props) {
     return /* @__PURE__ */ React.createElement("button", { className: "sr-opt", disabled: blocked, onClick: () => togglePin(sheet.item) }, /* @__PURE__ */ React.createElement("span", { className: "sr-opt-ico" }, /* @__PURE__ */ React.createElement(SrIco, { d: SR_ICON.pin })), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("b", null, isPinned ? "Unpin this search" : "Pin this search"), /* @__PURE__ */ React.createElement("small", null, "You can only pin 3 searches at a time.")));
   })())));
 }
+function FlowAuth(p) {
+  const h = React.createElement;
+  const [open, setOpen] = React.useState(false);
+  const [showPw, setShowPw] = React.useState(false);
+  const [remember, setRemember] = React.useState(() => {
+    try {
+      return !!localStorage.getItem("fx_remember_email");
+    } catch (e) {
+      return false;
+    }
+  });
+  const [note, setNote] = React.useState(null);
+  const [boxH, setBoxH] = React.useState(null);
+  const innerRef = React.useRef(null);
+  const isIn = p.authMode === "signin";
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem("fx_remember_email");
+      if (saved && !p.siEmail) p.setSiEmail(saved);
+    } catch (e) {
+    }
+  }, []);
+  React.useLayoutEffect(() => {
+    const el = innerRef.current;
+    if (!el) return;
+    const measure = () => setBoxH(el.offsetHeight);
+    measure();
+    let ro = null;
+    if (typeof ResizeObserver !== "undefined") {
+      ro = new ResizeObserver(measure);
+      ro.observe(el);
+    }
+    return () => {
+      if (ro) ro.disconnect();
+    };
+  }, []);
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+  const svg = (props, ...kids) => h("svg", Object.assign({ viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round" }, props), ...kids);
+  const chevron = svg({}, h("path", { d: "M6 9l6 6 6-6" }));
+  const eyeOn = svg({}, h("path", { d: "M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" }), h("circle", { cx: 12, cy: 12, r: 3 }));
+  const eyeOff = svg({}, h("path", { d: "M17.9 17.9A10.1 10.1 0 0112 19C5.6 19 2 12 2 12a18.5 18.5 0 015.1-5.9M9.9 5.2A9.7 9.7 0 0112 5c6.4 0 10 7 10 7a18.6 18.6 0 01-2.2 3.2M1 1l22 22" }), h("path", { d: "M14.1 14.1a3 3 0 01-4.2-4.2" }));
+  const checkIco = svg({ stroke: "#fff", strokeWidth: 3.2 }, h("path", { d: "M5 12.5l4.2 4.2L19 7" }));
+  const googleIco = h(
+    "svg",
+    { viewBox: "0 0 48 48" },
+    h("path", { fill: "#FFC107", d: "M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z" }),
+    h("path", { fill: "#FF3D00", d: "M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" }),
+    h("path", { fill: "#4CAF50", d: "M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2c-2 1.5-4.5 2.4-7.2 2.4-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z" }),
+    h("path", { fill: "#1976D2", d: "M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.5l6.2 5.2C41 35.4 44 30.1 44 24c0-1.2-.1-2.4-.4-3.5z" })
+  );
+  const appleIco = h("svg", { viewBox: "0 0 24 24", fill: "#fff" }, h("path", { d: "M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98.804-.94 2.142-1.64 3.248-1.68.03.13.05.28.05.43zm4.565 15.71c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.332-1.26-3.428-2.8-1.287-1.82-2.323-4.63-2.323-7.28 0-4.28 2.797-6.55 5.552-6.55 1.448 0 2.675.95 3.6.95.865 0 2.222-1.01 3.902-1.01.613 0 2.886.06 4.374 2.19-.13.09-2.383 1.37-2.383 4.19 0 3.26 2.854 4.42 2.955 4.45z" }));
+  const switchMode = (m) => {
+    setNote(null);
+    setShowPw(false);
+    p.setAuthErr({ si: "", su: "" });
+    p.setAuthMode(m);
+  };
+  const submitIn = (e) => {
+    try {
+      if (remember) localStorage.setItem("fx_remember_email", (p.siEmail || "").trim());
+      else localStorage.removeItem("fx_remember_email");
+    } catch (err) {
+    }
+    return p.handleSignIn(e);
+  };
+  const forgot = async () => {
+    setNote(null);
+    const r = await p.handleForgot(p.siEmail);
+    setNote({ t: r.ok ? "ok" : "err", m: r.msg });
+  };
+  const input = (type, ph, val, set, extra) => h("input", Object.assign({
+    className: "fx-input",
+    type,
+    required: true,
+    placeholder: ph,
+    "aria-label": ph,
+    value: val,
+    onChange: (e) => set(e.target.value)
+  }, extra || {}));
+  const eyeBtn = h("button", { type: "button", className: "fx-eye", "aria-label": showPw ? "Hide password" : "Show password", onClick: () => setShowPw((v) => !v), tabIndex: -1 }, showPw ? eyeOff : eyeOn);
+  const social = [
+    h("div", { className: "fx-s fx-or", key: "or", style: { "--d": ".34s" } }, "or continue with"),
+    h(
+      "div",
+      { className: "fx-s fx-soc", key: "soc", style: { "--d": ".4s" } },
+      h("button", { type: "button", onClick: p.handleGoogleSignIn, disabled: p.authBusy }, googleIco, "Google"),
+      h("button", { type: "button", onClick: () => setNote({ t: "err", m: "Apple sign-in is coming soon" }), disabled: p.authBusy }, appleIco, "Apple")
+    )
+  ];
+  const noteEl = note ? h("div", { className: "fx-note " + note.t, key: "note" }, note.m) : null;
+  const foot = (txt, btn, mode) => h("div", { className: "fx-s fx-foot", key: "foot", style: { "--d": ".46s" } }, txt, h("button", { type: "button", onClick: () => switchMode(mode) }, btn));
+  const form = isIn ? h(
+    "form",
+    { key: "si", onSubmit: submitIn },
+    h("div", { className: "fx-s fx-field", style: { "--d": ".14s" } }, input("email", "Email", p.siEmail, p.setSiEmail, { autoComplete: "email" })),
+    h("div", { className: "fx-s fx-field fx-pw", style: { "--d": ".2s" } }, input(showPw ? "text" : "password", "Password", p.siPass, p.setSiPass, { autoComplete: "current-password", minLength: 6 }), eyeBtn),
+    h(
+      "div",
+      { className: "fx-s fx-row", style: { "--d": ".26s" } },
+      h("label", { className: "fx-check" }, h("input", { type: "checkbox", checked: remember, onChange: (e) => setRemember(e.target.checked) }), h("span", { className: "fx-box" }, checkIco), h("span", null, "Remember me")),
+      h("button", { type: "button", className: "fx-link", onClick: forgot }, "Forgot password?")
+    ),
+    h("button", { type: "submit", className: "fx-s fx-submit", style: { "--d": ".06s" }, disabled: p.authBusy }, p.authBusy ? "Signing in..." : "Sign in"),
+    p.authErr.si ? h("div", { className: "fx-err" }, p.authErr.si) : null,
+    noteEl,
+    ...social,
+    foot("New here?", "Create account", "signup")
+  ) : h(
+    "form",
+    { key: "su", onSubmit: p.handleSignUp },
+    h("div", { className: "fx-s fx-field", style: { "--d": ".12s" } }, input("text", "Full name", p.suName, p.setSuName, { autoComplete: "name", minLength: 2 })),
+    h("div", { className: "fx-s fx-field", style: { "--d": ".18s" } }, input("email", "Email", p.suEmail, p.setSuEmail, { autoComplete: "email" })),
+    h("div", { className: "fx-s fx-field fx-pw", style: { "--d": ".24s" } }, input(showPw ? "text" : "password", "Password (min 6 chars)", p.suPass, p.setSuPass, { autoComplete: "new-password", minLength: 6 }), eyeBtn),
+    h("button", { type: "submit", className: "fx-s fx-submit", style: { "--d": ".06s", marginTop: 6 }, disabled: p.authBusy }, p.authBusy ? "Creating..." : "Create account"),
+    p.authErr.su ? h("div", { className: "fx-err" }, p.authErr.su) : null,
+    noteEl,
+    ...social,
+    foot("Already a member?", "Sign in", "signin")
+  );
+  return h(
+    "div",
+    {
+      className: "auth-wrap fx-wrap" + (open ? " is-open" : ""),
+      onClick: (e) => {
+        if (open && !p.authBusy && e.target === e.currentTarget) setOpen(false);
+      }
+    },
+    h(
+      "div",
+      { className: "fx-stage" },
+      h("div", { className: "fx-orb", "aria-hidden": "true" }, h("i", { className: "fx-orb-core" }), h("i", { className: "fx-orb-hl" }), h("i", { className: "fx-orb-dot" })),
+      h(
+        "div",
+        { className: "fx-card", role: "dialog", "aria-label": "Log in", style: boxH == null ? void 0 : { height: boxH } },
+        h(
+          "div",
+          { className: "fx-inner", ref: innerRef },
+          h("div", { className: "fx-head" }, h("h1", { className: "fx-title" }, "Flow"), h("p", { className: "fx-sub" }, open && !isIn ? "Create your account. Dive in." : "Good to see you. Dive back in.")),
+          h("div", { className: "fx-login-slot" }, h("button", { type: "button", className: "fx-login", "aria-expanded": open, onClick: () => setOpen(true) }, "Log in", chevron)),
+          h("div", { className: "fx-body" }, form)
+        )
+      )
+    )
+  );
+}
 function MeBookPage({ onExit }) {
   const rootRef = useRef(null);
   const [ready, setReady] = useState(false);
@@ -12088,6 +12338,18 @@ function MeBookPage({ onExit }) {
       setAuthBusy(false);
     }
   };
+  const handleForgot = async (email) => {
+    const em = (email || "").trim();
+    if (!em) return { ok: false, msg: "Enter your email above first" };
+    try {
+      const fb = await getFirebase();
+      await fb.sendPasswordResetEmail(fb.auth, em);
+      return { ok: true, msg: "Reset link sent. Check your inbox" };
+    } catch (err) {
+      console.error(err);
+      return { ok: false, msg: friendlyErr(err) };
+    }
+  };
   const handleSignOut = async () => {
     if (!confirm("Log out of MeBook?")) return;
     try {
@@ -13598,91 +13860,27 @@ ${buildShareUrl(post.id)}`;
     return isVerified(allUsers.find((u) => u.uid === uid));
   };
   if (!user) {
-    return /* @__PURE__ */ React.createElement("div", { className: "mebook-root dark-mode", ref: rootRef }, /* @__PURE__ */ React.createElement("div", { className: "auth-wrap" }, /* @__PURE__ */ React.createElement("div", { className: "auth-card" }, /* @__PURE__ */ React.createElement("div", { className: "auth-logo" }, /* @__PURE__ */ React.createElement("img", { src: HEADER_LOGO, alt: "MeBook" }), /* @__PURE__ */ React.createElement("div", { className: "mb-logo-stack" }, /* @__PURE__ */ React.createElement("div", { className: "mb-logo-text" }, /* @__PURE__ */ React.createElement("span", { className: "me" }, "Me"), /* @__PURE__ */ React.createElement("span", { className: "book" }, "Book")), /* @__PURE__ */ React.createElement("span", { className: "mb-beta-badge" }, /* @__PURE__ */ React.createElement("span", { className: "mb-beta-dot" }), "BETA"))), /* @__PURE__ */ React.createElement("p", { className: "auth-sub" }, "Movie lovers' social network \u{1F3AC}"), /* @__PURE__ */ React.createElement("div", { className: "auth-tabs" }, /* @__PURE__ */ React.createElement(
-      "button",
-      {
-        type: "button",
-        className: `auth-tab ${authMode === "signin" ? "active" : ""}`,
-        onClick: () => {
-          setAuthMode("signin");
-          setAuthErr({ si: "", su: "" });
-        }
-      },
-      "Sign In"
-    ), /* @__PURE__ */ React.createElement(
-      "button",
-      {
-        type: "button",
-        className: `auth-tab ${authMode === "signup" ? "active" : ""}`,
-        onClick: () => {
-          setAuthMode("signup");
-          setAuthErr({ si: "", su: "" });
-        }
-      },
-      "Sign Up"
-    )), authMode === "signin" ? /* @__PURE__ */ React.createElement("form", { onSubmit: handleSignIn }, /* @__PURE__ */ React.createElement("div", { className: "auth-field" }, /* @__PURE__ */ React.createElement("label", null, "Email"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        type: "email",
-        required: true,
-        autoComplete: "email",
-        placeholder: "you@example.com",
-        value: siEmail,
-        onChange: (e) => setSiEmail(e.target.value)
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "auth-field" }, /* @__PURE__ */ React.createElement("label", null, "Password"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        type: "password",
-        required: true,
-        autoComplete: "current-password",
-        placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022",
-        minLength: 6,
-        value: siPass,
-        onChange: (e) => setSiPass(e.target.value)
-      }
-    )), /* @__PURE__ */ React.createElement("button", { type: "submit", className: "auth-btn", disabled: authBusy }, authBusy ? "Signing in..." : "Sign In"), authErr.si && /* @__PURE__ */ React.createElement("div", { className: "auth-err show" }, authErr.si)) : /* @__PURE__ */ React.createElement("form", { onSubmit: handleSignUp }, /* @__PURE__ */ React.createElement("div", { className: "auth-field" }, /* @__PURE__ */ React.createElement("label", null, "Full Name"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        type: "text",
-        required: true,
-        placeholder: "Your name",
-        minLength: 2,
-        value: suName,
-        onChange: (e) => setSuName(e.target.value)
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "auth-field" }, /* @__PURE__ */ React.createElement("label", null, "Email"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        type: "email",
-        required: true,
-        autoComplete: "email",
-        placeholder: "you@example.com",
-        value: suEmail,
-        onChange: (e) => setSuEmail(e.target.value)
-      }
-    )), /* @__PURE__ */ React.createElement("div", { className: "auth-field" }, /* @__PURE__ */ React.createElement("label", null, "Password (min 6 chars)"), /* @__PURE__ */ React.createElement(
-      "input",
-      {
-        type: "password",
-        required: true,
-        autoComplete: "new-password",
-        placeholder: "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022",
-        minLength: 6,
-        value: suPass,
-        onChange: (e) => setSuPass(e.target.value)
-      }
-    )), /* @__PURE__ */ React.createElement("button", { type: "submit", className: "auth-btn", disabled: authBusy }, authBusy ? "Creating..." : "Create Account"), authErr.su && /* @__PURE__ */ React.createElement("div", { className: "auth-err show" }, authErr.su)), /* @__PURE__ */ React.createElement("div", { className: "auth-divider" }, "OR"), /* @__PURE__ */ React.createElement(
-      "button",
-      {
-        type: "button",
-        className: "auth-google",
-        onClick: handleGoogleSignIn,
-        disabled: authBusy
-      },
-      /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 48 48" }, /* @__PURE__ */ React.createElement("path", { fill: "#FFC107", d: "M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.4-.4-3.5z" }), /* @__PURE__ */ React.createElement("path", { fill: "#FF3D00", d: "M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" }), /* @__PURE__ */ React.createElement("path", { fill: "#4CAF50", d: "M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2c-2 1.5-4.5 2.4-7.2 2.4-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z" }), /* @__PURE__ */ React.createElement("path", { fill: "#1976D2", d: "M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.5l6.2 5.2C41 35.4 44 30.1 44 24c0-1.2-.1-2.4-.4-3.5z" })),
-      "Continue with Google"
-    ))));
+    return /* @__PURE__ */ React.createElement("div", { className: "mebook-root dark-mode", ref: rootRef }, /* @__PURE__ */ React.createElement(FlowAuth, {
+      authMode,
+      setAuthMode,
+      authErr,
+      setAuthErr,
+      authBusy,
+      siEmail,
+      setSiEmail,
+      siPass,
+      setSiPass,
+      suName,
+      setSuName,
+      suEmail,
+      setSuEmail,
+      suPass,
+      setSuPass,
+      handleSignIn,
+      handleSignUp,
+      handleGoogleSignIn,
+      handleForgot
+    }));
   }
   const renderSharedEmbed = (sp) => {
     const av = sp.authorAvatar || `https://ui-avatars.com/api/?background=16a34a&color=fff&name=${encodeURIComponent(sp.authorName || "User")}`;
