@@ -65,6 +65,12 @@ html,body{margin:0;padding:0;background:#000;}
           var tc=document.querySelector('meta[name="theme-color"]');
           if(tc)tc.setAttribute("content",d?"#000000":"#ffffff");
         });
+        /* Custom Android bridge (optional): MeBookNative.setStatusBarDark(true=dark theme/white icons, false=light theme/black icons) */
+        var NB=window.MeBookNative;
+        var hasBridge=!!(NB&&NB.setStatusBarDark);
+        if(hasBridge)safe(function(){return NB.setStatusBarDark(!!d);});
+        /* Fallback when icon colour cannot be controlled: soft dark scrim behind the status bar in light mode so white icons stay visible */
+        de.classList.toggle("mb-sb-scrim",!d&&!hasBridge);
         var SB=plug("SystemBars");   /* Capacitor 7+ (edge-to-edge) */
         if(SB&&SB.setStyle){ safe(function(){return SB.setStyle({style:st});}); safe(function(){return SB.setStyle({style:st,bar:"StatusBar"});}); }
         var S=plug("StatusBar");     /* older Capacitor */
@@ -140,6 +146,7 @@ html.mb-native input,html.mb-native textarea,html.mb-native [contenteditable]{-w
 html.mb-native .mebook-root::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sat);background:var(--header-bg);z-index:1001;pointer-events:none;}
 html.mb-native .mebook-root.dark-mode::before{background:#000;}
 html.mb-native .mebook-root:not(.dark-mode)::before{background:#ffffff;}
+html.mb-native.mb-sb-scrim .mebook-root:not(.dark-mode)::after{content:"";position:fixed;top:0;left:0;right:0;height:var(--sat);z-index:100000;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,.62) 0%,rgba(0,0,0,.55) 65%,rgba(0,0,0,0) 100%);}
 html.mb-native .mebook-root .mb-header{height:calc(60px + var(--sat));padding-top:var(--sat);box-sizing:border-box;}
 html.mb-native .mebook-root .mb-navbar{top:calc(60px + var(--sat));}
 html.mb-native .mebook-root .mb-layout{padding-top:calc(128px + var(--sat));}
