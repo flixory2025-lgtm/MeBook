@@ -3730,28 +3730,6 @@ html.mb-native .mebook-root.mb-hdr-off .mb-layout{padding-top:calc(62px + var(--
 .mebook-root .mb-nav-label .me3d{background:none !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;-webkit-text-fill-color:currentColor !important;color:inherit !important;filter:none !important;font-weight:inherit !important;display:inline;}
 
 /* ===== MeChat seen avatar at the very bottom ===== */
-.mebook-root .mechat-bubble-wrap{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
-.mebook-root .mc-listpage .mc-title{font-size:28px;}
-.mebook-root .mc-listpage .mb-search-box input{font-size:15.5px;}
-.mebook-root .mc-listpage .msgr-online-item{width:68px;}
-.mebook-root .mc-listpage .msgr-online-avatar-wrap,.mebook-root .mc-listpage .msgr-online-avatar-wrap img{width:56px;height:56px;}
-.mebook-root .mc-listpage .msgr-online-name{font-size:12.5px;}
-.mebook-root .mc-listpage .msgr-item{padding:8px 14px;}
-.mebook-root .mc-listpage .msgr-item-avatar-wrap,.mebook-root .mc-listpage .msgr-item-avatar-wrap img{width:54px;height:54px;}
-.mebook-root .mc-listpage .msgr-item-name{font-size:16.5px;}
-.mebook-root .mc-listpage .msgr-item-last{font-size:14.5px;}
-.mebook-root .mc-listpage .msgr-item-time{font-size:12.5px;}
-.mebook-root .mc-tab{height:45px;}
-.mebook-root .mc-tab svg{width:25px;height:25px;}
-.mebook-root .mechat-head-name{font-size:16.5px;}
-.mebook-root .mechat-head-status{font-size:12.5px;}
-.mebook-root .mechat-head-btn{width:38px;height:38px;}
-.mebook-root .mechat-head-btn svg{width:22px;height:22px;}
-.mebook-root .mechat-bubble{font-size:15.5px;padding:7px 12px 6px;border-radius:18px;}
-.mebook-root .mechat-bubble-avatar{width:28px;height:28px;}
-.mebook-root .mechat-input-icon{width:38px;height:38px;}
-.mebook-root .mechat-input-icon svg{width:22px;height:22px;}
-.mebook-root .mechat-input-field{font-size:15.5px;padding:9px 15px;min-height:40px;}
 .mebook-root .mechat-typing-row{display:flex;align-items:flex-end;gap:8px;padding:4px 12px 6px;animation:bubbleIn .2s ease;}
 .mebook-root .mechat-typing-row img{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;}
 .mebook-root .mechat-typing-bubble{display:flex;align-items:center;gap:5px;padding:14px 16px;border-radius:20px;background:var(--bubble-them-bg,#e4e6eb);box-shadow:0 1px 2px rgba(0,0,0,.12);}
@@ -3839,6 +3817,99 @@ html.mb-native .mebook-root.mb-hdr-off .mb-layout{padding-top:calc(62px + var(--
 .mebook-root:not(.dark-mode) .mci-menu{background:#fff;color:#050505;box-shadow:0 12px 32px rgba(0,0,0,.22);}
 .mebook-root .mci-menu button{display:block;width:100%;text-align:left;padding:14px 22px;font-size:16.5px;color:inherit;}
 .mebook-root .mci-menu button:active{background:rgba(128,128,128,.25);}
+
+/* ===== MeChat: notes row / editor / viewer ===== */
+.mebook-root .mc-notes-row{align-items:flex-start;}
+.mebook-root .mc-ntile{position:relative;}
+.mebook-root .mc-note-slot{height:44px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:6px;}
+.mebook-root .nt-bubble{position:relative;max-width:100%;min-width:34px;padding:5px 8px;border-radius:14px;background:rgba(128,128,128,.24);color:var(--text,#111);font-size:10.5px;line-height:1.25;font-weight:600;text-align:center;overflow:visible;word-break:break-word;}
+.mebook-root .nt-bubble::after{content:"";position:absolute;bottom:-5px;left:50%;margin-left:-4px;width:8px;height:8px;border-radius:50%;background:rgba(128,128,128,.24);}
+.mebook-root .nt-bubble.ph{opacity:.8;font-weight:500;}
+.mebook-root .nt-b-text{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.mebook-root .nt-b-music{font-size:9.5px;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.mebook-root .nt-b-gif{width:34px;height:34px;object-fit:cover;border-radius:8px;display:block;margin:0 auto 2px;}
+.mebook-root .nt-b-stk{display:flex;justify-content:center;}
+.mebook-root .nt-plus{position:absolute;right:-2px;bottom:-2px;width:20px;height:20px;border-radius:50%;background:var(--green,#22c55e);color:#fff;font-size:16px;font-weight:700;line-height:19px;text-align:center;border:2px solid var(--card,#fff);}
+.mebook-root .nt-bubble.big{font-size:17px;padding:14px 20px;border-radius:26px;max-width:290px;min-width:90px;margin-bottom:22px;}
+.mebook-root .nt-bubble.big::after{width:14px;height:14px;bottom:-9px;margin-left:-7px;}
+.mebook-root .nt-bubble.big .nt-b-text{-webkit-line-clamp:5;}
+.mebook-root .nt-bubble.big .nt-b-music{font-size:13px;margin-top:4px;}
+.mebook-root .nt-bubble.big .nt-b-gif{width:130px;height:130px;margin-bottom:6px;}
+.mebook-root .nt-ed{position:fixed;inset:0;z-index:10002;background:#000;color:#fff;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);animation:ntFade .18s ease;}
+@keyframes ntFade{from{opacity:0;}to{opacity:1;}}
+.mebook-root .nt-ed-top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;}
+.mebook-root .nt-ed-x{background:none;border:none;color:#fff;padding:6px;cursor:pointer;display:flex;}
+.mebook-root .nt-ed-title{font-size:19px;font-weight:700;}
+.mebook-root .nt-ed-share{border:none;border-radius:999px;padding:12px 26px;font-size:16px;font-weight:700;background:#2a2a2a;color:#777;font-family:inherit;}
+.mebook-root .nt-ed-share.on{background:var(--green,#22c55e);color:#fff;cursor:pointer;}
+.mebook-root .nt-ed-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px 40px;gap:16px;overflow-y:auto;}
+.mebook-root .nt-ed-bubble{position:relative;width:min(320px,100%);background:#2b2b2d;border-radius:26px;padding:14px 18px 8px;margin-bottom:10px;}
+.mebook-root .nt-ed-bubble::after{content:"";position:absolute;bottom:-12px;left:50%;margin-left:-8px;width:16px;height:16px;border-radius:50%;background:#2b2b2d;}
+.mebook-root .nt-ed-input{width:100%;box-sizing:border-box;background:none;border:none;outline:none;color:#fff;font-size:18px;font-family:inherit;resize:none;caret-color:#2f80ff;text-align:center;}
+.mebook-root .nt-ed-input::placeholder{color:#8a8a8d;}
+.mebook-root .nt-ed-count{text-align:right;font-size:11px;color:#8a8a8d;}
+.mebook-root .nt-ed-media{position:relative;display:flex;justify-content:center;margin-bottom:8px;}
+.mebook-root .nt-ed-media img{max-height:110px;border-radius:12px;}
+.mebook-root .nt-ed-mx{position:absolute;top:-6px;right:calc(50% - 70px);width:22px;height:22px;border-radius:50%;border:none;background:#555;color:#fff;font-size:11px;cursor:pointer;}
+.mebook-root .nt-ed-avatar{width:140px;height:140px;border-radius:50%;object-fit:cover;}
+.mebook-root .nt-ed-tools{display:flex;gap:22px;margin-top:6px;}
+.mebook-root .nt-ed-tools button{width:50px;height:50px;border-radius:50%;border:none;background:#232325;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.mebook-root .nt-ed-tools button.on{background:var(--green,#22c55e);}
+.mebook-root .nt-gif-ico{font-size:13px;font-weight:800;border:2px solid currentColor;border-radius:6px;padding:0 4px;}
+.mebook-root .nt-ed-musicchip{display:flex;align-items:center;gap:10px;background:#232325;border-radius:14px;padding:8px 12px;max-width:300px;}
+.mebook-root .nt-ed-musicchip img,.mebook-root .nt-vw-music img{width:38px;height:38px;border-radius:8px;object-fit:cover;}
+.mebook-root .nt-ed-mi{display:flex;flex-direction:column;min-width:0;flex:1;text-align:left;}
+.mebook-root .nt-ed-mi b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mebook-root .nt-ed-mi span{font-size:12px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mebook-root .nt-ed-musicchip button{background:none;border:none;color:#fff;cursor:pointer;font-size:14px;}
+.mebook-root .nt-ed-del{background:none;border:none;color:#ef4444;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;}
+.mebook-root .nt-ed-foot{text-align:center;color:#aaa;font-size:13px;padding:0 24px calc(18px + env(safe-area-inset-bottom,0px));}
+.mebook-root .nt-gif-grid,.mebook-root .nt-stk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-height:55vh;overflow-y:auto;}
+.mebook-root .nt-stk-grid{grid-template-columns:repeat(4,1fr);}
+.mebook-root .nt-gif-cell{border:none;background:#3a3b3c;border-radius:10px;padding:0;aspect-ratio:1/1;overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.mebook-root .nt-gif-cell img{width:100%;height:100%;object-fit:cover;}
+.mebook-root .nt-gif-note{color:#a8abaf;font-size:13px;padding:8px 4px;}
+.mebook-root .nt-vw-bg{position:fixed;inset:0;z-index:10002;background:rgba(0,0,0,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;animation:ntFade .18s ease;}
+.mebook-root .nt-vw{display:flex;flex-direction:column;align-items:center;color:#fff;padding:20px;width:min(340px,92vw);animation:mpmCard .26s cubic-bezier(.2,.9,.3,1.2);}
+.mebook-root .nt-vw .nt-bubble.big{background:#2b2b2d;color:#fff;}
+.mebook-root .nt-vw .nt-bubble.big::after{background:#2b2b2d;}
+.mebook-root .nt-vw-avatar{width:120px;height:120px;border-radius:50%;object-fit:cover;}
+.mebook-root .nt-vw-name{font-size:18px;font-weight:700;margin-top:10px;}
+.mebook-root .nt-vw-time{font-size:13px;opacity:.7;margin-bottom:12px;}
+.mebook-root .nt-vw-music{display:flex;align-items:center;gap:10px;width:100%;background:#232325;border:none;border-radius:14px;padding:10px 14px;color:#fff;cursor:pointer;font-family:inherit;}
+.mebook-root .nt-vw-actions{display:flex;gap:10px;margin-top:18px;width:100%;}
+.mebook-root .nt-vw-btn{flex:1;border:none;border-radius:999px;padding:12px 0;font-size:15px;font-weight:700;background:#2a2a2a;color:#fff;cursor:pointer;font-family:inherit;}
+.mebook-root .nt-vw-btn.pri{background:var(--green,#22c55e);}
+
+/* ===== MeChat: long-press message menu ===== */
+.mebook-root .mechat-bubble-wrap{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
+.mebook-root .mpm-bg{position:fixed;inset:0;z-index:10050;background:rgba(0,0,0,.42);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:ntFade .16s ease;}
+.mebook-root .mpm-col{position:fixed;z-index:10051;display:flex;flex-direction:column;gap:10px;}
+.mebook-root .mpm-col.me{align-items:flex-end;}
+.mebook-root .mpm-col.them{align-items:flex-start;}
+.mebook-root .mpm-bar{display:flex;gap:2px;padding:6px 8px;border-radius:999px;background:var(--card,#fff);box-shadow:0 8px 28px rgba(0,0,0,.3);animation:mpmBar .3s cubic-bezier(.34,1.56,.64,1);}
+.mebook-root .mpm-col.me .mpm-bar{transform-origin:100% 100%;}
+.mebook-root .mpm-col.them .mpm-bar{transform-origin:0 100%;}
+.mebook-root .mpm-bar button{width:44px;height:44px;border:none;background:none;border-radius:50%;font-size:27px;line-height:1;cursor:pointer;animation:mpmEmoji .34s cubic-bezier(.34,1.56,.64,1) both;animation-delay:calc(var(--i) * 40ms);transition:transform .12s ease;}
+.mebook-root .mpm-bar button:active{transform:scale(1.35);}
+.mebook-root .mpm-bar button.on{background:rgba(34,197,94,.25);}
+.mebook-root .mpm-prev{overflow:hidden;border-radius:20px;animation:mpmLift .24s ease;}
+.mebook-root .mpm-prev .mechat-bubble{margin:0;max-width:min(340px,calc(100vw - 20px));white-space:pre-wrap;word-break:break-word;}
+.mebook-root .mpm-card{min-width:220px;border-radius:16px;background:var(--card,#fff);color:var(--text,#111);box-shadow:0 8px 28px rgba(0,0,0,.3);overflow:hidden;animation:mpmCard .28s cubic-bezier(.2,.9,.3,1.15);}
+.mebook-root .mpm-col.me .mpm-card{transform-origin:100% 0;}
+.mebook-root .mpm-col.them .mpm-card{transform-origin:0 0;}
+.mebook-root .mpm-item{display:flex;align-items:center;gap:12px;width:100%;height:46px;padding:0 16px;border:none;background:none;color:inherit;font-size:15px;font-weight:600;font-family:inherit;text-align:left;cursor:pointer;}
+.mebook-root .mpm-item:active{background:rgba(128,128,128,.16);}
+.mebook-root .mpm-item svg{width:20px;height:20px;fill:currentColor;flex:0 0 auto;}
+.mebook-root .mpm-item.danger{color:#ef4444;}
+.mebook-root .mpm-item + .mpm-item{border-top:1px solid rgba(128,128,128,.18);}
+@keyframes mpmBar{from{opacity:0;transform:scale(.4);}to{opacity:1;transform:scale(1);}}
+@keyframes mpmEmoji{from{opacity:0;transform:translateY(14px) scale(.3);}to{opacity:1;transform:none;}}
+@keyframes mpmLift{from{opacity:.6;transform:scale(.96);}to{opacity:1;transform:scale(1);}}
+@keyframes mpmCard{from{opacity:0;transform:scale(.8);}to{opacity:1;transform:scale(1);}}
+.mebook-root .mechat-bubble-unsent{background:transparent !important;box-shadow:none !important;border:1px dashed rgba(128,128,128,.55);}
+.mebook-root .mechat-bubble-unsent::before,.mebook-root .mechat-bubble-unsent::after{display:none !important;}
+.mebook-root .mechat-unsent-text{font-style:italic;font-size:13.5px;color:var(--text-muted,#8a8d91);}
 
 `;
 function ToastStack({
@@ -5063,6 +5134,288 @@ function PhotoViewer({
     }
   )), /* @__PURE__ */ React.createElement("div", { className: "mb-pv-top" }, /* @__PURE__ */ React.createElement("button", { className: "mb-pv-icon", onClick: onClose, "aria-label": "Close" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React.createElement("path", { d: "M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" }))), /* @__PURE__ */ React.createElement("button", { className: "mb-pv-icon", onClick: () => setSheet(true), "aria-label": "More" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React.createElement("circle", { cx: "12", cy: "4.5", r: "2" }), /* @__PURE__ */ React.createElement("circle", { cx: "12", cy: "12", r: "2" }), /* @__PURE__ */ React.createElement("circle", { cx: "12", cy: "19.5", r: "2" })))), (authorName || cap || stats) && /* @__PURE__ */ React.createElement("div", { className: "mb-pv-bottom" }, authorName ? /* @__PURE__ */ React.createElement("div", { className: "mb-pv-name" }, authorName) : null, time ? /* @__PURE__ */ React.createElement("div", { className: "mb-pv-time" }, /* @__PURE__ */ React.createElement("span", null, time), /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54A1.99 1.99 0 0 0 16 16h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" }))) : null, cap ? /* @__PURE__ */ React.createElement("div", { className: "mb-pv-caption" }, shownCap, longCap && !expanded ? /* @__PURE__ */ React.createElement("button", { className: "mb-pv-more", onClick: () => setExpanded(true) }, "See more") : null) : null, stats ? /* @__PURE__ */ React.createElement("div", { className: "mb-pv-stats" }, /* @__PURE__ */ React.createElement("div", { className: "mb-pv-stats-left" }, /* @__PURE__ */ React.createElement("button", { className: "mb-pv-stat", onClick: onLike }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinejoin: "round", strokeLinecap: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M7 11v9H4a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h3zm0 0 4-7a2 2 0 0 1 2 2v3.5h5.2a2 2 0 0 1 1.96 2.4l-1.2 6A2 2 0 0 1 17 20H7" })), /* @__PURE__ */ React.createElement("span", null, stats.likes)), /* @__PURE__ */ React.createElement("button", { className: "mb-pv-stat", onClick: onComment }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinejoin: "round", strokeLinecap: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.6-.8L3 21l1.9-5.1A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5z" })), /* @__PURE__ */ React.createElement("span", null, stats.comments)), /* @__PURE__ */ React.createElement("button", { className: "mb-pv-stat", onClick: onShare }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinejoin: "round", strokeLinecap: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z" })), /* @__PURE__ */ React.createElement("span", null, stats.shares))), stats.likes > 0 && stats.reactionKeys.length > 0 ? /* @__PURE__ */ React.createElement("div", { className: "mb-pv-rx", onClick: onLike }, stats.reactionKeys.slice(0, 3).map((k, i) => /* @__PURE__ */ React.createElement("span", { key: k, style: { marginLeft: i ? -6 : 0, zIndex: 5 - i } }, /* @__PURE__ */ React.createElement(ReactionIcon, { k, size: 24, ring: true })))) : null) : null), sheet && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "mb-pv-dim", onClick: () => setSheet(false) }), /* @__PURE__ */ React.createElement("div", { className: "mb-pv-sheet", role: "menu" }, /* @__PURE__ */ React.createElement("button", { className: "mb-pv-sheet-item", onClick: savePhoto }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" })), /* @__PURE__ */ React.createElement("span", null, "Save to phone")), /* @__PURE__ */ React.createElement("button", { className: "mb-pv-sheet-item", onClick: shareExternal }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinejoin: "round", strokeLinecap: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M14 9V5l7 7-7 7v-4.1c-5 0-8.5 1.6-11 5.1 1-5 4-10 11-11z" })), /* @__PURE__ */ React.createElement("span", null, "Share external")), /* @__PURE__ */ React.createElement("button", { className: "mb-pv-sheet-item", onClick: reportPhoto }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.8", strokeLinejoin: "round", strokeLinecap: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.6-.8L3 21l1.9-5.1A8.4 8.4 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5z" }), /* @__PURE__ */ React.createElement("path", { d: "M12 8v4" }), /* @__PURE__ */ React.createElement("circle", { cx: "12", cy: "15.2", r: ".6", fill: "currentColor" })), /* @__PURE__ */ React.createElement("span", null, "Report photo")))));
 }
+/* ===== MeChat additions: presence, notes, press menu ===== */
+const PRES_WINDOW_MS = 5 * 60 * 1000;
+const NOTE_TTL_MS = 24 * 60 * 60 * 1000;
+const NOTE_GIF_KEY = "LIVDSRZULELA";
+function presMs(u) {
+  const t = u && u.lastActive;
+  if (!t) return 0;
+  if (typeof t === "number") return t;
+  if (typeof t.toMillis === "function") return t.toMillis();
+  if (typeof t.seconds === "number") return t.seconds * 1000;
+  return 0;
+}
+function isUserOnline(u, now) {
+  const ms = presMs(u);
+  return !!ms && (now || Date.now()) - ms < PRES_WINDOW_MS;
+}
+function presLabel(u, now) {
+  const ms = presMs(u);
+  if (!ms) return "Offline";
+  const d = (now || Date.now()) - ms;
+  if (d < PRES_WINDOW_MS) return "Active now";
+  const m = Math.floor(d / 6e4);
+  if (m < 60) return "Active " + m + "m ago";
+  const hr = Math.floor(m / 60);
+  if (hr < 24) return "Active " + hr + "h ago";
+  return "Active " + Math.floor(hr / 24) + "d ago";
+}
+function activeNote(u, now) {
+  const n = u && u.note;
+  if (!n || typeof n !== "object" || !n.at) return null;
+  if ((now || Date.now()) - n.at > NOTE_TTL_MS) return null;
+  if (!n.text && !n.music && !n.gif && !n.sticker) return null;
+  return n;
+}
+function noteAgo(at) {
+  const m = Math.max(0, Math.floor((Date.now() - at) / 6e4));
+  if (m < 1) return "Just now";
+  if (m < 60) return m + "m ago";
+  return Math.floor(m / 60) + "h ago";
+}
+const NT_IC = {
+  x: "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z",
+  music: "M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z",
+  smile: "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z",
+  play: "M8 5v14l11-7z",
+  pause: "M6 19h4V5H6v14zm8-14v14h4V5h-4z"
+};
+function NtIco(p) {
+  return React.createElement("svg", { viewBox: "0 0 24 24", width: p.size || 22, height: p.size || 22, fill: "currentColor" }, React.createElement("path", { d: p.d }));
+}
+function NoteBubble(props) {
+  const h = React.createElement;
+  const n = props.note;
+  const kids = [];
+  if (n.gif) kids.push(h("img", { key: "g", className: "nt-b-gif", src: n.gif, alt: "", loading: "lazy" }));
+  else if (n.sticker) kids.push(h("div", { key: "s", className: "nt-b-stk" }, h(StickerImg, { emoji: n.sticker, size: props.big ? 84 : 30 })));
+  if (n.text) kids.push(h("div", { key: "t", className: "nt-b-text" }, n.text));
+  if (n.music) kids.push(h("div", { key: "m", className: "nt-b-music" }, "\u266B " + n.music.title));
+  return h("div", { className: "nt-bubble" + (props.big ? " big" : "") }, kids);
+}
+function NoteGifSheet(props) {
+  const h = React.createElement;
+  const [q, setQ] = useState("");
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [fail, setFail] = useState(false);
+  useEffect(() => {
+    let dead = false;
+    const term = q.trim();
+    const t = setTimeout(async () => {
+      setLoading(true);
+      setFail(false);
+      try {
+        const url = term ? "https://g.tenor.com/v1/search?q=" + encodeURIComponent(term) + "&key=" + NOTE_GIF_KEY + "&limit=30&media_filter=minimal" : "https://g.tenor.com/v1/trending?key=" + NOTE_GIF_KEY + "&limit=30&media_filter=minimal";
+        const r = await fetch(url);
+        if (!r.ok) throw new Error("gif");
+        const j = await r.json();
+        const arr = (j.results || []).map((x) => {
+          const m = x.media && x.media[0];
+          const g = m && (m.tinygif || m.gif);
+          return g ? { url: g.url } : null;
+        }).filter(Boolean);
+        if (!dead) {
+          setList(arr);
+          if (!arr.length) setFail(true);
+        }
+      } catch (e) {
+        if (!dead) {
+          setList([]);
+          setFail(true);
+        }
+      } finally {
+        if (!dead) setLoading(false);
+      }
+    }, term ? 450 : 0);
+    return () => {
+      dead = true;
+      clearTimeout(t);
+    };
+  }, [q]);
+  const emojiGif = (em) => "https://fonts.gstatic.com/s/e/notoemoji/latest/" + Array.from(em).map((c) => (c.codePointAt(0) || 0).toString(16)).join("_") + "/512.gif";
+  const items = fail ? STORY_EMOJIS.slice(0, 28).map((em) => ({ url: emojiGif(em) })) : list;
+  return h(
+    StSheet,
+    { title: "GIFs", onClose: props.onClose, tall: true },
+    h("input", { className: "st-search", placeholder: "Search GIFs", value: q, onChange: (e) => setQ(e.target.value) }),
+    fail && h("div", { className: "nt-gif-note" }, "GIF search isn't available right now. Animated stickers:"),
+    loading && !items.length ? h("div", { className: "nt-gif-note" }, "Loading...") : h("div", { className: "nt-gif-grid" }, items.map((g, i) => h("button", { key: i, className: "nt-gif-cell", onClick: () => props.onPick(g.url) }, h("img", { src: g.url, alt: "", loading: "lazy" }))))
+  );
+}
+function NoteStickerSheet(props) {
+  const h = React.createElement;
+  const [cat, setCat] = useState(STICKER_CATS[0].key);
+  const c = STICKER_CATS.find((x) => x.key === cat) || STICKER_CATS[0];
+  return h(
+    StSheet,
+    { title: "Stickers", onClose: props.onClose },
+    h("div", { className: "st-chips" }, STICKER_CATS.map((x) => h("button", { key: x.key, className: "st-chipb" + (x.key === cat ? " on" : ""), onClick: () => setCat(x.key) }, x.icon + " " + x.label))),
+    h("div", { className: "nt-stk-grid" }, c.items.map((em) => h("button", { key: em, className: "nt-gif-cell", onClick: () => props.onPick(em) }, h(StickerImg, { emoji: em, size: 56 }))))
+  );
+}
+function NoteEditor(props) {
+  const h = React.createElement;
+  const ini = props.initial || {};
+  const [text, setText] = useState(ini.text || "");
+  const [music, setMusic] = useState(ini.music || null);
+  const [gif, setGif] = useState(ini.gif || "");
+  const [sticker, setSticker] = useState(ini.sticker || "");
+  const [panel, setPanel] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const can = !!(text.trim() || music || gif || sticker);
+  const share = async () => {
+    if (!can || busy) return;
+    setBusy(true);
+    try {
+      await props.onShare({ text: text.trim().slice(0, 100), music: music || null, gif: gif || "", sticker: sticker || "" });
+    } finally {
+      setBusy(false);
+    }
+  };
+  const media = gif ? h("div", { className: "nt-ed-media" }, h("img", { src: gif, alt: "" }), h("button", { className: "nt-ed-mx", onClick: () => setGif("") }, "\u2715")) : sticker ? h("div", { className: "nt-ed-media" }, h(StickerImg, { emoji: sticker, size: 72 }), h("button", { className: "nt-ed-mx", onClick: () => setSticker("") }, "\u2715")) : null;
+  return h(
+    "div",
+    { className: "nt-ed" },
+    h(
+      "div",
+      { className: "nt-ed-top" },
+      h("button", { className: "nt-ed-x", onClick: props.onClose, "aria-label": "Close" }, h(NtIco, { d: NT_IC.x, size: 28 })),
+      h("div", { className: "nt-ed-title" }, "New note"),
+      h("button", { className: "nt-ed-share" + (can ? " on" : ""), disabled: !can || busy, onClick: share }, busy ? "..." : "Share")
+    ),
+    h(
+      "div",
+      { className: "nt-ed-mid" },
+      h(
+        "div",
+        { className: "nt-ed-bubble" },
+        media,
+        h("textarea", { className: "nt-ed-input", rows: 2, maxLength: 100, placeholder: "Share a thought...", value: text, autoFocus: true, onChange: (e) => setText(e.target.value.replace(/\n/g, " ").slice(0, 100)) }),
+        h("div", { className: "nt-ed-count" }, text.length + "/100")
+      ),
+      h("img", { className: "nt-ed-avatar", src: props.avatar, alt: "" }),
+      music && h("div", { className: "nt-ed-musicchip" }, music.cover ? h("img", { src: music.cover, alt: "" }) : h(NtIco, { d: NT_IC.music, size: 22 }), h("div", { className: "nt-ed-mi" }, h("b", null, music.title), h("span", null, music.artist)), h("button", { onClick: () => setMusic(null) }, "\u2715")),
+      h(
+        "div",
+        { className: "nt-ed-tools" },
+        h("button", { className: music ? "on" : "", onClick: () => setPanel("music"), title: "Music" }, h(NtIco, { d: NT_IC.music, size: 26 })),
+        h("button", { className: gif ? "on" : "", onClick: () => setPanel("gif"), title: "GIF" }, h("span", { className: "nt-gif-ico" }, "GIF")),
+        h("button", { className: sticker ? "on" : "", onClick: () => setPanel("sticker"), title: "Stickers" }, h(NtIco, { d: NT_IC.smile, size: 26 }))
+      ),
+      props.initial && h("button", { className: "nt-ed-del", onClick: props.onDelete }, "Delete note")
+    ),
+    h("div", { className: "nt-ed-foot" }, "Friends and connections can see your note on MeChat for 24 hours."),
+    panel === "music" && h(StoryMusicSheet, {
+      onClose: () => setPanel(null),
+      onError: (m) => props.showToast("Music", m, "error"),
+      onPick: (t) => {
+        if (t && t.file) {
+          props.showToast("Music", "Please choose a song from the list", "info");
+          return;
+        }
+        setMusic({ title: t.title || "Song", artist: t.artist || "", cover: t.cover || "", url: t.url });
+        setPanel(null);
+      }
+    }),
+    panel === "gif" && h(NoteGifSheet, {
+      onClose: () => setPanel(null),
+      onPick: (u) => {
+        setGif(u);
+        setSticker("");
+        setPanel(null);
+      }
+    }),
+    panel === "sticker" && h(NoteStickerSheet, {
+      onClose: () => setPanel(null),
+      onPick: (em) => {
+        setSticker(em);
+        setGif("");
+        setPanel(null);
+      }
+    })
+  );
+}
+function NoteViewer(props) {
+  const h = React.createElement;
+  const n = props.note;
+  const aRef = useRef(null);
+  const [pl, setPl] = useState(false);
+  useEffect(() => () => {
+    try {
+      if (aRef.current) aRef.current.pause();
+    } catch (e) {
+    }
+  }, []);
+  const toggle = () => {
+    const a = aRef.current;
+    if (!a || !n.music) return;
+    if (pl) {
+      a.pause();
+      setPl(false);
+      return;
+    }
+    a.src = n.music.url;
+    a.play().then(() => setPl(true)).catch(() => setPl(false));
+  };
+  return h(
+    "div",
+    { className: "nt-vw-bg", onClick: props.onClose },
+    h(
+      "div",
+      { className: "nt-vw", onClick: (e) => e.stopPropagation() },
+      h("audio", { ref: aRef, onEnded: () => setPl(false) }),
+      h(NoteBubble, { note: n, big: true }),
+      h("img", { className: "nt-vw-avatar", src: props.avatar, alt: "" }),
+      h("div", { className: "nt-vw-name" }, props.name),
+      h("div", { className: "nt-vw-time" }, noteAgo(n.at)),
+      n.music && h("button", { className: "nt-vw-music", onClick: toggle }, n.music.cover ? h("img", { src: n.music.cover, alt: "" }) : null, h("div", { className: "nt-ed-mi" }, h("b", null, n.music.title), h("span", null, n.music.artist)), h(NtIco, { d: pl ? NT_IC.pause : NT_IC.play, size: 28 })),
+      h("div", { className: "nt-vw-actions" }, h("button", { className: "nt-vw-btn", onClick: props.onClose }, "Close"), h("button", { className: "nt-vw-btn pri", onClick: props.onMessage }, "Message"))
+    )
+  );
+}
+function MsgPressMenu(props) {
+  const h = React.createElement;
+  const openedAt = useRef(Date.now());
+  const r = props.rect;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const barH = 56, gap = 10, itemH = 46;
+  const cardH = props.items.length * itemH;
+  const maxPrev = Math.max(60, vh - barH - cardH - gap * 2 - 90);
+  const prevH = Math.min(r.height, maxPrev);
+  const total = barH + gap + prevH + gap + cardH;
+  let top = r.top - barH - gap;
+  if (top < 56) top = 56;
+  if (top + total > vh - 12) top = Math.max(8, vh - 12 - total);
+  const side = props.mine ? { right: Math.max(10, vw - r.right) } : { left: Math.max(10, r.left) };
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === "Escape") props.onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  const tryClose = () => {
+    if (Date.now() - openedAt.current > 350) props.onClose();
+  };
+  const cls = props.mine ? "me" : "them";
+  return h(
+    "div",
+    { className: "mpm-bg", onClick: tryClose, onContextMenu: (e) => e.preventDefault() },
+    h(
+      "div",
+      Object.assign({ className: "mpm-col " + cls, style: Object.assign({ top, maxWidth: vw - 20 }, side), onClick: (e) => e.stopPropagation() }),
+      h("div", { className: "mpm-bar" }, CHAT_REACTIONS.map((x, i) => h("button", { key: x.key, type: "button", className: props.myReaction === x.key ? "on" : "", style: { "--i": i }, onClick: () => props.onReact(x.key, x.emoji) }, x.emoji))),
+      h("div", { className: "mpm-prev", style: Object.assign({ maxHeight: prevH }, props.themeStyle || {}) }, h("div", { className: "mechat-bubble " + cls }, props.preview)),
+      h("div", { className: "mpm-card" }, props.items.map((it, i) => h("button", { key: i, className: "mpm-item" + (it.danger ? " danger" : ""), onClick: () => {
+        props.onClose();
+        it.onClick();
+      } }, it.icon, h("span", null, it.label))))
+    )
+  );
+}
+
 function ActionSheet({ items, onClose }) {
   useEffect(() => {
     const onKey = (e) => {
@@ -8183,8 +8536,6 @@ function mcThemeStyle(t) {
   return th && th.bg ? { background: th.bg } : void 0;
 }
 function mcVisibleMsgs(msgs, prefs, id) {
-  const hid = prefs && prefs.hideMsgs && prefs.hideMsgs[id];
-  if (hid) msgs = msgs.filter((m) => !hid[m.id]);
   const ms = prefs && prefs.disap && prefs.disap[id];
   if (!ms) return msgs;
   const now = Date.now();
@@ -9296,7 +9647,9 @@ function MeBookPage({ onExit }) {
   const [myFriends, setMyFriends] = useState([]);
   const [sentFriendRequests, setSentFriendRequests] = useState([]);
   const [chats, setChats] = useState([]);
-  const [onlineList, setOnlineList] = useState([]);
+  const [onlineAll, setOnlineList] = useState([]);
+  const [presNow, setPresNow] = useState(() => Date.now());
+  const onlineList = onlineAll.filter((u) => isUserOnline(u, presNow)).slice(0, 12);
   const [activeChat, setActiveChat] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [chatPartner, setChatPartner] = useState(null);
@@ -9649,14 +10002,29 @@ function MeBookPage({ onExit }) {
       }, 30);
     }
   }, [partnerTyping]);
+  const seenMaxRef = useRef({ chat: null, id: null });
+  const effSeenId = (() => {
+    try {
+      const cur = seenMaxRef.current;
+      if (cur.chat !== activeChat) {
+        cur.chat = activeChat;
+        cur.id = null;
+      }
+      const idxOf = (id) => id ? chatMessages.findIndex((x) => String(x.id) === String(id)) : -1;
+      const a = idxOf(partnerLastSeenMessageId);
+      const b = idxOf(cur.id);
+      if (a >= 0 && a >= b) cur.id = partnerLastSeenMessageId;
+      return cur.id || partnerLastSeenMessageId || null;
+    } catch (e) {
+      return partnerLastSeenMessageId;
+    }
+  })();
   const seenTailMode = (() => {
     try {
-      if (!partnerLastSeenMessageId || !chatMessages.length || !user) return false;
+      if (!effSeenId || !chatMessages.length || !user) return false;
       if (chatPartner && chatPartner.isGroup) return false;
-      const lastM = chatMessages[chatMessages.length - 1];
-      if (!lastM || lastM.from === user.uid) return false;
       for (let i = chatMessages.length - 1; i >= 0; i--) {
-        if (chatMessages[i].from === user.uid) return String(chatMessages[i].id) === String(partnerLastSeenMessageId);
+        if (chatMessages[i].from === user.uid) return String(chatMessages[i].id) === String(effSeenId);
       }
       return false;
     } catch (e) {
@@ -9665,6 +10033,46 @@ function MeBookPage({ onExit }) {
   })();
   const typingTimeoutRef = useRef(null);
   const lastMarkedSeenRef = useRef(null);
+  useEffect(() => {
+    const t = setInterval(() => setPresNow(Date.now()), 30000);
+    return () => clearInterval(t);
+  }, []);
+  useEffect(() => {
+    if (!user || !user.uid) return;
+    const uid = user.uid;
+    let timer = null;
+    const write = async () => {
+      try {
+        const fb = await getFirebase();
+        await fb.updateDoc(fb.doc(fb.db, "users", uid), { lastActive: fb.serverTimestamp() });
+      } catch (e) {
+      }
+    };
+    const start = () => {
+      write();
+      if (timer) clearInterval(timer);
+      timer = setInterval(() => {
+        if (!document.hidden) write();
+      }, 90000);
+    };
+    const onVis = () => {
+      if (document.hidden) {
+        if (timer) clearInterval(timer);
+        timer = null;
+        write();
+      } else start();
+    };
+    start();
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("pagehide", write);
+    window.addEventListener("focus", onVis);
+    return () => {
+      if (timer) clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("pagehide", write);
+      window.removeEventListener("focus", onVis);
+    };
+  }, [user && user.uid]);
   const [postReactionPicker, setPostReactionPicker] = useState({ open: false, postId: null, anchorRect: null });
   const [postReactions, setPostReactions] = useState({});
   const [fastLikeFlyers, setFastLikeFlyers] = useState([]);
@@ -9711,6 +10119,10 @@ function MeBookPage({ onExit }) {
   const [mcHeadsOn, setMcHeadsOn] = useState(() => { try { return localStorage.getItem("mc-heads") !== "0"; } catch (e) { return true; } });
   const [expandedReplies, setExpandedReplies] = useState(/* @__PURE__ */ new Set());
   const [actionMenu, setActionMenu] = useState(null);
+  const [msgMenu, setMsgMenu] = useState(null);
+  const [noteEditor, setNoteEditor] = useState(false);
+  const [noteView, setNoteView] = useState(null);
+  const mpLpRef = useRef({ t: null, fired: false, last: 0 });
   const [photoViewer, setPhotoViewer] = useState(null);
   const [editPostId, setEditPostId] = useState(null);
   const [editPostText, setEditPostText] = useState("");
@@ -9898,6 +10310,11 @@ function MeBookPage({ onExit }) {
         if (!latestVisiblePartnerMessage?.id) return;
         const messageId = String(latestVisiblePartnerMessage.id);
         if (lastMarkedSeenRef.current === messageId) return;
+        if (lastMarkedSeenRef.current) {
+          const iNew = chatMessages.findIndex((x) => String(x.id) === messageId);
+          const iOld = chatMessages.findIndex((x) => String(x.id) === String(lastMarkedSeenRef.current));
+          if (iOld >= 0 && iNew <= iOld) return;
+        }
         try {
           const cc0 = chatsRef.current.find((x) => x.id === activeChat);
           if (cc0 && cc0.unreadN > 0) {
@@ -10075,7 +10492,7 @@ function MeBookPage({ onExit }) {
           });
           setFriends(arr);
           setAllUsers(arr);
-          setOnlineList(arr.slice(0, 12));
+          setOnlineList(arr);
         })
       );
       const reqQ = fb.query(
@@ -10933,7 +11350,7 @@ function MeBookPage({ onExit }) {
       setEditPostBusy(false);
     }
   };
-  const chatMsgSummary = (m) => m.type === "image" ? "\u{1F4F7} Photo" : m.type === "voice" ? "\u{1F3A4} Voice message" : m.type === "like" ? "\u{1F44D}" : m.text || "";
+  const chatMsgSummary = (m) => m.unsent ? "Message unsent" : m.type === "image" ? "\u{1F4F7} Photo" : m.type === "voice" ? "\u{1F3A4} Voice message" : m.type === "like" ? "\u{1F44D}" : m.text || "";
   const startEditMessage = (m) => {
     setEditingMsgId(m.id);
     setChatReplyTo(null);
@@ -10987,21 +11404,127 @@ function MeBookPage({ onExit }) {
     if (!msg || msg.from !== user.uid) return;
     if (!confirm("Unsend this message? It will be removed for everyone.")) return;
     const wasLast = idx === chatMessages.length - 1;
-    const prev = idx > 0 ? chatMessages[idx - 1] : null;
+    const myName = profile && profile.name || user.displayName || "User";
     try {
       const fb = await getFirebase();
-      await fb.deleteDoc(fb.doc(fb.db, "chats", activeChat, "messages", msgId));
+      await fb.updateDoc(fb.doc(fb.db, "chats", activeChat, "messages", msgId), {
+        unsent: true,
+        unsentBy: user.uid,
+        unsentByName: myName,
+        unsentAt: fb.serverTimestamp(),
+        text: "",
+        imageUrl: "",
+        voiceUrl: "",
+        emoji: "",
+        reactions: {},
+        replyTo: null,
+        edited: false
+      });
       if (editingMsgId === msgId) cancelEditMessage();
       if (chatReplyTo && chatReplyTo.id === msgId) setChatReplyTo(null);
       if (wasLast) {
         await fb.updateDoc(fb.doc(fb.db, "chats", activeChat), {
-          lastMessage: prev ? { text: chatMsgSummary(prev), from: prev.from } : null
+          lastMessage: { text: "unsent a message", from: user.uid, unsent: true, name: myName }
         });
       }
       showToast("Message unsent", "", "success");
     } catch (e) {
       showToast("Error", e.message, "error");
     }
+  };
+  const openMsgMenu = (wrapEl, m) => {
+    try {
+      const b = wrapEl.querySelector(".mechat-bubble") || wrapEl;
+      const r = b.getBoundingClientRect();
+      setMsgMenu({ id: m.id, rect: { left: r.left, top: r.top, right: r.right, width: r.width, height: r.height } });
+    } catch (e) {
+    }
+  };
+  const saveMyNote = async (note) => {
+    try {
+      const fb = await getFirebase();
+      await fb.updateDoc(fb.doc(fb.db, "users", user.uid), { note: { text: note.text || "", music: note.music || null, gif: note.gif || "", sticker: note.sticker || "", at: Date.now() } });
+      setNoteEditor(false);
+      showToast("Note shared", "Visible for 24 hours", "success");
+    } catch (e) {
+      showToast("Error", e.message, "error");
+    }
+  };
+  const deleteMyNote = async () => {
+    try {
+      const fb = await getFirebase();
+      await fb.updateDoc(fb.doc(fb.db, "users", user.uid), { note: null });
+      setNoteEditor(false);
+      showToast("Note deleted", "", "success");
+    } catch (e) {
+      showToast("Error", e.message, "error");
+    }
+  };
+  const renderMsgMenu = () => {
+    if (!msgMenu || !user) return null;
+    const m = chatMessages.find((x) => String(x.id) === String(msgMenu.id));
+    if (!m || m.unsent) return null;
+    const mine = m.from === user.uid;
+    const items = [];
+    items.push({
+      label: "Reply",
+      icon: ICON_REPLY,
+      onClick: () => {
+        setChatReplyTo({ id: m.id, from: m.from, text: m.type === "image" ? "\u{1F4F7} Photo" : m.type === "voice" ? "\u{1F3A4} Voice" : m.type === "like" ? "\u{1F44D}" : m.text || "" });
+        setTimeout(() => chatInputRef.current?.focus(), 50);
+      }
+    });
+    if (m.text) {
+      items.push({
+        label: "Copy",
+        icon: ICON_COPY,
+        onClick: async () => {
+          try {
+            await navigator.clipboard.writeText(m.text);
+            showToast("Copied", "", "success");
+          } catch (e) {
+            showToast("Could not copy", "", "error");
+          }
+        }
+      });
+    }
+    if (mine && !m.type && m.text) items.push({ label: "Edit", icon: ICON_EDIT, onClick: () => startEditMessage(m) });
+    {
+      const pinList = chatPrefs.pinMsgs && chatPrefs.pinMsgs[activeChat] || [];
+      const isPin = pinList.includes(m.id);
+      items.push({
+        label: isPin ? "Unpin" : "Pin",
+        icon: ICON_COPY,
+        onClick: () => {
+          if (!isPin && pinList.length >= 5) {
+            showToast("Pin limit", "You can pin up to 5 messages", "info");
+            return;
+          }
+          updateChatPrefs((p) => {
+            p.pinMsgs = p.pinMsgs || {};
+            const arr = p.pinMsgs[activeChat] || [];
+            p.pinMsgs[activeChat] = isPin ? arr.filter((x) => x !== m.id) : arr.concat([m.id]);
+            return p;
+          });
+          showToast(isPin ? "Unpinned" : "Message pinned", "", "success");
+        }
+      });
+    }
+    if (mine) items.push({ label: "Unsend", icon: ICON_TRASH, danger: true, onClick: () => handleDeleteMessage(m.id) });
+    const preview = m.type === "image" && m.imageUrl ? /* @__PURE__ */ React.createElement("img", { src: m.imageUrl, alt: "", style: { display: "block", maxWidth: 240, maxHeight: 300, borderRadius: 14 } }) : m.type === "voice" ? "\u{1F3A4} Voice message" : m.type === "like" ? /* @__PURE__ */ React.createElement("span", { style: { fontSize: 40, lineHeight: 1 } }, m.emoji || "\u{1F44D}") : m.text || "";
+    return /* @__PURE__ */ React.createElement(MsgPressMenu, {
+      rect: msgMenu.rect,
+      mine,
+      preview,
+      items,
+      myReaction: (m.reactions || {})[user.uid],
+      themeStyle: mcThemeStyle(chatPrefs.themes && chatPrefs.themes[activeChat]),
+      onClose: () => setMsgMenu(null),
+      onReact: (key, emoji) => {
+        handleReactToMessage(m.id, key, emoji, { clientX: msgMenu.rect.left + msgMenu.rect.width / 2, clientY: msgMenu.rect.top });
+        setMsgMenu(null);
+      }
+    });
   };
   const handleReactToMessage = async (msgId, reactionKey, emoji, evt) => {
     if (!activeChat) return;
@@ -11011,6 +11534,7 @@ function MeBookPage({ onExit }) {
       const snap = await fb.getDoc(ref);
       if (!snap.exists()) return;
       const data = snap.data();
+      if (data.unsent) return;
       const reactions = { ...data.reactions || {} };
       if (reactions[user.uid] === reactionKey) {
         delete reactions[user.uid];
@@ -12216,6 +12740,7 @@ ${buildShareUrl(post.id)}`;
     hasNotifMenu: !!notifMenu,
     hasLinkDialog: !!linkDialogPostId,
     hasManage: manageOpen,
+    hasNoteUi: !!msgMenu || noteEditor || !!noteView,
     hasPicker: !!reactionPicker.open || !!postReactionPicker.open || !!chatReactionPicker.open,
     goBack,
     closeChat
@@ -12267,6 +12792,12 @@ ${buildShareUrl(post.id)}`;
           bs[bs.length - 1]();
         } catch {
         }
+        return true;
+      }
+      if (s.hasNoteUi) {
+        setMsgMenu(null);
+        setNoteEditor(false);
+        setNoteView(null);
         return true;
       }
       if (s.hasPicker) {
@@ -13028,6 +13559,27 @@ ${buildShareUrl(post.id)}`;
       openChat(c.id, c.otherId, c.other);
     }
   });
+  const mcNotesRow = () => {
+    const h = React.createElement;
+    const myNote = activeNote(profile, presNow);
+    const others = allUsers.filter((u) => u.uid !== user.uid).map((u) => ({ u, note: activeNote(u, presNow), on: isUserOnline(u, presNow) })).filter((x) => x.note || x.on).sort((p, q) => (q.note ? 2 : 0) + (q.on ? 1 : 0) - ((p.note ? 2 : 0) + (p.on ? 1 : 0))).slice(0, 25);
+    const tile = (key, photo, label, note, on, isMe, onClick) => h(
+      "div",
+      { key, className: "msgr-online-item mc-ntile", onClick },
+      h("div", { className: "mc-note-slot" }, note ? h(NoteBubble, { note }) : isMe ? h("div", { className: "nt-bubble ph" }, "Share a song") : null),
+      h("div", { className: "msgr-online-avatar-wrap" }, h("img", { src: photo, alt: "" }), on && !isMe ? h("span", { className: "msgr-online-dot" }) : null, isMe && !note ? h("span", { className: "nt-plus" }, "+") : null),
+      h("div", { className: "msgr-online-name" }, label)
+    );
+    return h(
+      "div",
+      { className: "msgr-online-row mc-notes-row" },
+      tile("me", avatarUrl(profile), "Your note", myNote, false, true, () => setNoteEditor(true)),
+      others.map((x) => {
+        const photo = avatarUrl(x.u);
+        return tile(x.u.uid, photo, (x.u.name || "").split(" ")[0], x.note, x.on, false, () => x.note ? setNoteView(x.u) : startChat(x.u.uid, x.u.name, photo));
+      })
+    );
+  };
   const mcRenderChatRow = (c) => {
     const photo = avatarUrl(c.other);
     const pr = chatPrefs;
@@ -13047,7 +13599,7 @@ ${buildShareUrl(post.id)}`;
         "div",
         { className: "msgr-item-avatar-wrap" },
         React.createElement("img", { src: photo, alt: "", draggable: false }),
-        c.isGroup ? null : React.createElement("span", { className: "msgr-item-dot" })
+        c.isGroup || !isUserOnline(allUsers.find((x) => x.uid === c.otherId), presNow) ? null : React.createElement("span", { className: "msgr-item-dot" })
       ),
       React.createElement(
         "div",
@@ -13058,7 +13610,7 @@ ${buildShareUrl(post.id)}`;
           React.createElement("span", { className: "mc-name-text" }, c.other.name),
           !c.isGroup && isVerifiedUid(c.otherId, c.other) ? mcVerifiedBadge(14) : null
         ),
-        React.createElement("div", { className: "msgr-item-last" + (unread ? " unread" : "") }, lastObj && lastObj.text ? (lastObj.from === user.uid ? "You: " : "") + lastObj.text : "Say hi \u{1F44B}")
+        React.createElement("div", { className: "msgr-item-last" + (unread ? " unread" : "") }, lastObj && lastObj.unsent ? (lastObj.from === user.uid ? "You" : lastObj.name || c.other.name || "User") + " unsent a message" : lastObj && lastObj.text ? (lastObj.from === user.uid ? "You: " : "") + lastObj.text : "Say hi \u{1F44B}")
       ),
       React.createElement(
         "div",
@@ -13441,11 +13993,8 @@ ${buildShareUrl(post.id)}`;
     }
   )), searchedUsersForChat.length > 0 && /* @__PURE__ */ React.createElement("div", { className: "msgr-wrap", style: { height: "auto", marginBottom: 16 } }, /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px 8px", fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase" } }, "People"), searchedUsersForChat.map((u) => {
     const photo = avatarUrl(u);
-    return /* @__PURE__ */ React.createElement("div", { className: "msgr-item", key: u.uid, onClick: () => startChat(u.uid, u.name, photo) }, /* @__PURE__ */ React.createElement("div", { className: "msgr-item-avatar-wrap" }, /* @__PURE__ */ React.createElement("img", { src: photo, alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "msgr-item-dot" })), /* @__PURE__ */ React.createElement("div", { className: "msgr-item-body" }, /* @__PURE__ */ React.createElement("div", { className: "msgr-item-name" }, u.name, isVerifiedUid(u.uid, u) && mcVerifiedBadge(14)), /* @__PURE__ */ React.createElement("div", { className: "msgr-item-last" }, "Tap to start chatting")));
-  })), /* @__PURE__ */ React.createElement("div", { className: inShell ? "mc-list" : "msgr-wrap mc-plain" }, /* @__PURE__ */ React.createElement("div", { className: "msgr-list", style: { width: "100%", borderRight: "none" } }, onlineList.length > 0 && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "msgr-section" }, "Online now"), /* @__PURE__ */ React.createElement("div", { className: "msgr-online-row" }, onlineList.map((u) => {
-    const photo = avatarUrl(u);
-    return /* @__PURE__ */ React.createElement("div", { key: u.uid, className: "msgr-online-item", onClick: () => startChat(u.uid, u.name, photo) }, /* @__PURE__ */ React.createElement("div", { className: "msgr-online-avatar-wrap" }, /* @__PURE__ */ React.createElement("img", { src: photo, alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "msgr-online-dot" })), /* @__PURE__ */ React.createElement("div", { className: "msgr-online-name" }, u.name?.split(" ")[0]));
-  }))), mcFolderRows, /* @__PURE__ */ React.createElement("div", { className: "msgr-section" }, recentTitle), filteredChats.length === 0 ? /* @__PURE__ */ React.createElement("div", { style: { padding: 20, color: "var(--text-muted)", fontSize: 14, textAlign: "center" } }, "No conversations yet. Start one!") : filteredChats.map((c) => mcRenderChatRow(c)))));
+    return /* @__PURE__ */ React.createElement("div", { className: "msgr-item", key: u.uid, onClick: () => startChat(u.uid, u.name, photo) }, /* @__PURE__ */ React.createElement("div", { className: "msgr-item-avatar-wrap" }, /* @__PURE__ */ React.createElement("img", { src: photo, alt: "" }), isUserOnline(u, presNow) && /* @__PURE__ */ React.createElement("span", { className: "msgr-item-dot" })), /* @__PURE__ */ React.createElement("div", { className: "msgr-item-body" }, /* @__PURE__ */ React.createElement("div", { className: "msgr-item-name" }, u.name, isVerifiedUid(u.uid, u) && mcVerifiedBadge(14)), /* @__PURE__ */ React.createElement("div", { className: "msgr-item-last" }, "Tap to start chatting")));
+  })), /* @__PURE__ */ React.createElement("div", { className: inShell ? "mc-list" : "msgr-wrap mc-plain" }, /* @__PURE__ */ React.createElement("div", { className: "msgr-list", style: { width: "100%", borderRight: "none" } }, mcNotesRow(), mcFolderRows, /* @__PURE__ */ React.createElement("div", { className: "msgr-section" }, recentTitle), filteredChats.length === 0 ? /* @__PURE__ */ React.createElement("div", { style: { padding: 20, color: "var(--text-muted)", fontSize: 14, textAlign: "center" } }, "No conversations yet. Start one!") : filteredChats.map((c) => mcRenderChatRow(c)))));
   const renderProfilePage = (u, posts, isOwn, friendsList, friendsLoading) => {
     const photo = avatarUrl(u);
     const profileFriends = isOwn ? myFriends : friendsList || [];
@@ -14364,7 +14913,7 @@ ${buildShareUrl(post.id)}`;
         );
       }
       const m = chatMessages.find((x) => x.id === actionMenu.id);
-      const canEditMsg = !!m && m.from === user.uid && !m.type && !!m.text;
+      const canEditMsg = !!m && !m.type && !!m.text;
       const items = [];
       if (m && canEditMsg) {
         items.push({ label: "Edit message", icon: ICON_EDIT, onClick: () => startEditMessage(m) });
@@ -14393,7 +14942,7 @@ ${buildShareUrl(post.id)}`;
           });
         }
       }
-      if (m) {
+      {
         const pinList = chatPrefs.pinMsgs && chatPrefs.pinMsgs[activeChat] || [];
         const isPin = pinList.includes(m.id);
         items.push({
@@ -14414,23 +14963,7 @@ ${buildShareUrl(post.id)}`;
           }
         });
       }
-      if (m) {
-        items.push({
-          label: "Delete for me",
-          icon: ICON_TRASH,
-          danger: true,
-          onClick: () => {
-            updateChatPrefs((p) => {
-              p.hideMsgs = p.hideMsgs || {};
-              p.hideMsgs[activeChat] = p.hideMsgs[activeChat] || {};
-              p.hideMsgs[activeChat][m.id] = 1;
-              return p;
-            });
-            showToast("Deleted for you", "", "success");
-          }
-        });
-      }
-      if (m && m.from === user.uid) items.push({ label: "Unsend message", icon: ICON_TRASH, danger: true, onClick: () => handleDeleteMessage(actionMenu.id) });
+      items.push({ label: "Unsend message", icon: ICON_TRASH, danger: true, onClick: () => handleDeleteMessage(actionMenu.id) });
       return /* @__PURE__ */ React.createElement(ActionSheet, { onClose: close, items });
     })(),
     editPostId && /* @__PURE__ */ React.createElement("div", { className: "mb-modal-backdrop", onClick: closeEditPost }, /* @__PURE__ */ React.createElement("div", { className: "mb-modal", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "mb-modal-head" }, /* @__PURE__ */ React.createElement("b", null, "Edit post"), /* @__PURE__ */ React.createElement("button", { className: "mb-modal-x", onClick: closeEditPost, title: "Close" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" })))), /* @__PURE__ */ React.createElement(
@@ -14506,6 +15039,26 @@ ${buildShareUrl(post.id)}`;
         }
       }
     ),
+    renderMsgMenu(),
+    noteEditor && /* @__PURE__ */ React.createElement(NoteEditor, {
+      initial: activeNote(profile, presNow),
+      avatar: avatarUrl(profile),
+      onClose: () => setNoteEditor(false),
+      onShare: saveMyNote,
+      onDelete: deleteMyNote,
+      showToast
+    }),
+    noteView && activeNote(noteView, presNow) && /* @__PURE__ */ React.createElement(NoteViewer, {
+      note: activeNote(noteView, presNow),
+      name: noteView.name,
+      avatar: avatarUrl(noteView),
+      onClose: () => setNoteView(null),
+      onMessage: () => {
+        const u = noteView;
+        setNoteView(null);
+        startChat(u.uid, u.name, avatarUrl(u));
+      }
+    }),
     /* @__PURE__ */ React.createElement(
       ChatReactionPicker,
       {
@@ -14878,13 +15431,13 @@ ${buildShareUrl(post.id)}`;
           value: friendSearch,
           onChange: (e) => setFriendSearch(e.target.value)
         }
-      )), /* @__PURE__ */ React.createElement("div", { className: "fl-stats-row" }, /* @__PURE__ */ React.createElement("div", { className: "fl-stats-left" }, /* @__PURE__ */ React.createElement("div", { className: "fl-stats-title" }, listFriends.length, " friends"), /* @__PURE__ */ React.createElement("div", { className: "fl-stats-sub" }, Math.min(listFriends.length, 20), " online")), /* @__PURE__ */ React.createElement("button", { className: "fl-sort" }, "Sort")), listLoading ? /* @__PURE__ */ React.createElement("div", { className: "fl-empty" }, "Loading friends...") : listFriends.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "fl-empty" }, "No friends to show") : /* @__PURE__ */ React.createElement("div", { className: "fl-list" }, listFriends.filter((f) => {
+      )), /* @__PURE__ */ React.createElement("div", { className: "fl-stats-row" }, /* @__PURE__ */ React.createElement("div", { className: "fl-stats-left" }, /* @__PURE__ */ React.createElement("div", { className: "fl-stats-title" }, listFriends.length, " friends"), /* @__PURE__ */ React.createElement("div", { className: "fl-stats-sub" }, listFriends.filter((x) => isUserOnline(allUsers.find((y) => y.uid === x.uid), presNow)).length, " online")), /* @__PURE__ */ React.createElement("button", { className: "fl-sort" }, "Sort")), listLoading ? /* @__PURE__ */ React.createElement("div", { className: "fl-empty" }, "Loading friends...") : listFriends.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "fl-empty" }, "No friends to show") : /* @__PURE__ */ React.createElement("div", { className: "fl-list" }, listFriends.filter((f) => {
         const q = friendSearch.trim().toLowerCase();
         if (!q) return true;
         return (f.name || "").toLowerCase().includes(q);
       }).map((f, idx) => {
         const fPhoto = avatarUrl(f);
-        const isOnline = idx % 3 === 0;
+        const isOnline = isUserOnline(allUsers.find((x) => x.uid === f.uid), presNow);
         const showRing = idx % 5 === 0;
         const isOwnFriend = myFriends.some((mf) => mf.uid === f.uid);
         return /* @__PURE__ */ React.createElement(
@@ -14914,7 +15467,7 @@ ${buildShareUrl(post.id)}`;
           )
         );
       }))));
-    })(), currentView === "user-profile" && viewingUser && renderFbProfile(), currentView === "fb-profile-menu" && renderFbMenu(), currentView === "fb-own-menu" && renderFbOwnMenu(), currentView === "fb-settings" && renderFbSettings(), currentView === "fb-view-as" && renderFbProfileCore("preview", profile, myPosts, myFriends, false), currentView === "fb-activity" && renderFbActivity(), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement("div", { className: "mc-listpage" }, mcListPageContent()) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true)), mcBackBtn("in-side")), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" })), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info", onClick: openPartnerOrGroup, style: { cursor: "pointer" } }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, mcNickOf(chatPartner?.uid) || chatPartner?.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "url(#mbTickGrad)" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : "Active now")), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), /* @__PURE__ */ React.createElement(
+    })(), currentView === "user-profile" && viewingUser && renderFbProfile(), currentView === "fb-profile-menu" && renderFbMenu(), currentView === "fb-own-menu" && renderFbOwnMenu(), currentView === "fb-settings" && renderFbSettings(), currentView === "fb-view-as" && renderFbProfileCore("preview", profile, myPosts, myFriends, false), currentView === "fb-activity" && renderFbActivity(), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement("div", { className: "mc-listpage" }, mcListPageContent()) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true)), mcBackBtn("in-side")), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), (!(chatPartner && chatPartner.isGroup) && isUserOnline(allUsers.find((x) => x.uid === (chatPartner && chatPartner.uid)), presNow)) ? /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" }) : null), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info", onClick: openPartnerOrGroup, style: { cursor: "pointer" } }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, mcNickOf(chatPartner?.uid) || chatPartner?.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "url(#mbTickGrad)" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : chatPartner && chatPartner.isGroup ? "Group chat" : presLabel(allUsers.find((x) => x.uid === (chatPartner && chatPartner.uid)), presNow))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), /* @__PURE__ */ React.createElement(
       "div",
       {
         className: "mechat-body",
@@ -14930,33 +15483,38 @@ ${buildShareUrl(post.id)}`;
         const mine = m.from === user.uid;
         const prevMsg = idx > 0 ? visArr[idx - 1] : null;
         const showAvatar = !mine && (!prevMsg || prevMsg.from !== m.from);
-        const isSeenByPartner = mine && !seenTailMode && String(m.id) === String(partnerLastSeenMessageId || "");
+        const isSeenByPartner = mine && !seenTailMode && String(m.id) === String(effSeenId || "");
         const reactions = m.reactions || {};
         const reactionKeys = Object.values(reactions);
         const uniqueReactions = Array.from(new Set(reactionKeys));
         const reactionEmojis = uniqueReactions.map((k) => CHAT_REACTIONS.find((r) => r.key === k)?.emoji || REACTIONS.find((r) => r.key === k)?.emoji).filter(Boolean);
         const myReaction = reactions[user.uid];
-        const isLikeMsg = m.type === "like";
-        const isImageMsg = m.type === "image";
-        const isVoiceMsg = m.type === "voice";
+        const isLikeMsg = m.type === "like" && !m.unsent;
+        const isImageMsg = m.type === "image" && !m.unsent;
+        const isVoiceMsg = m.type === "voice" && !m.unsent;
         const curDay = dayKey(m.at);
         const prevDay = prevMsg ? dayKey(prevMsg.at) : "";
         const dateSep = curDay && curDay !== prevDay ? /* @__PURE__ */ React.createElement("div", { className: "mechat-date-sep" }, /* @__PURE__ */ React.createElement("span", null, dayLabel(m.at))) : null;
-        let sx = 0, sy = 0, cx = 0, dir = "", armed = false, lpT = null;
+        let sx = 0, sy = 0, cx = 0, dir = "", armed = false;
         const onTouchStart = (e) => {
           sx = e.touches[0].clientX; sy = e.touches[0].clientY; cx = sx; dir = ""; armed = false;
-          if (lpT) clearTimeout(lpT);
-          lpT = setTimeout(() => {
-            lpT = null;
-            try { if (navigator.vibrate) navigator.vibrate(15); } catch (er) {}
-            setActionMenu({ kind: "msg", id: m.id });
-          }, 450);
+          const lp = mpLpRef.current;
+          lp.last = Date.now();
+          lp.fired = false;
+          clearTimeout(lp.t);
+          if (m.unsent) return;
+          const wrapEl = e.currentTarget;
+          lp.t = setTimeout(() => {
+            lp.fired = true;
+            try { if (navigator.vibrate) navigator.vibrate(14); } catch (er) {}
+            openMsgMenu(wrapEl, m);
+          }, 420);
         };
         const onTouchMove = (e) => {
           const t = e.touches[0];
           cx = t.clientX;
           const dx = cx - sx, dy = t.clientY - sy;
-          if (lpT && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) { clearTimeout(lpT); lpT = null; }
+          if (Math.abs(dx) > 10 || Math.abs(dy) > 10) clearTimeout(mpLpRef.current.t);
           if (!dir) {
             if (Math.abs(dx) < 16 && Math.abs(dy) < 16) return;
             dir = dx > 0 && dx > Math.abs(dy) * 2 ? "h" : "v";
@@ -14971,10 +15529,15 @@ ${buildShareUrl(post.id)}`;
           } else if (dx < 140) armed = false;
         };
         const onTouchEnd = (e) => {
-          if (lpT) { clearTimeout(lpT); lpT = null; }
           const el = e.currentTarget;
+          clearTimeout(mpLpRef.current.t);
           el.style.transition = "transform .15s ease";
           el.style.transform = "translateX(0)";
+          if (mpLpRef.current.fired) {
+            mpLpRef.current.fired = false;
+            dir = ""; armed = false;
+            return;
+          }
           if (dir === "h" && armed) {
             setChatReplyTo({
               id: m.id,
@@ -14986,7 +15549,9 @@ ${buildShareUrl(post.id)}`;
           dir = ""; armed = false;
         };
         let bubbleContent = null;
-        if (isImageMsg && m.imageUrl) {
+        if (m.unsent) {
+          bubbleContent = /* @__PURE__ */ React.createElement("span", { className: "mechat-unsent-text" }, (mine ? "You" : m.unsentByName || mcSenderName(m)) + " unsent a message");
+        } else if (isImageMsg && m.imageUrl) {
           bubbleContent = /* @__PURE__ */ React.createElement("div", { className: "mechat-bubble-image" }, /* @__PURE__ */ React.createElement(
             "img",
             {
@@ -15057,14 +15622,17 @@ ${buildShareUrl(post.id)}`;
             onTouchStart,
             onTouchMove,
             onTouchEnd,
+            onTouchCancel: () => clearTimeout(mpLpRef.current.t),
             onContextMenu: (e) => {
               e.preventDefault();
-              setActionMenu({ kind: "msg", id: m.id });
+              if (Date.now() - (mpLpRef.current.last || 0) < 1200) return;
+              if (m.unsent) return;
+              openMsgMenu(e.currentTarget, m);
             },
             onDoubleClick: (e) => openChatReactionPicker(e, m.id)
           },
           !mine && /* @__PURE__ */ React.createElement("img", { className: "mechat-bubble-avatar", src: mcSenderAvatar(m), alt: "" }),
-          mine && /* @__PURE__ */ React.createElement(
+          mine && !m.unsent && /* @__PURE__ */ React.createElement(
             "button",
             {
               className: "mechat-msg-more",
@@ -15083,13 +15651,13 @@ ${buildShareUrl(post.id)}`;
           /* @__PURE__ */ React.createElement(
             "div",
             {
-              className: `mechat-bubble ${mine ? "me" : "them"} ${isImageMsg ? "mechat-bubble-image" : ""}`,
+              className: `mechat-bubble ${mine ? "me" : "them"} ${isImageMsg ? "mechat-bubble-image" : ""} ${m.unsent ? "mechat-bubble-unsent" : ""}`,
               style: isImageMsg ? { padding: 3, background: "transparent", maxWidth: "72%" } : void 0
             },
             chatPartner?.isGroup && !mine && /* @__PURE__ */ React.createElement("div", { className: "mc-sender-name" }, mcSenderName(m), isVerifiedUid(m.from, null) && mcVerifiedBadge(12)),
             bubbleContent
           ),
-          !mine && !isLikeMsg && /* @__PURE__ */ React.createElement(
+          !mine && !isLikeMsg && !m.unsent && /* @__PURE__ */ React.createElement(
             "div",
             {
               className: "mechat-side-actions",
@@ -15619,7 +16187,7 @@ ${buildShareUrl(post.id)}`;
           e.target.src = `https://picsum.photos/seed/${m.seed}/80`;
         }
       }
-    ), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "mb-contact-name" }, m.name), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "var(--text-muted)" } }, m.meta))))), /* @__PURE__ */ React.createElement("div", { className: "mb-card" }, /* @__PURE__ */ React.createElement("div", { className: "mb-card-title" }, "\u{1F465} Online Friends"), onlineList.length === 0 ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: "var(--text-muted)", padding: 6 } }, "No other users yet") : onlineList.map((u) => {
+    ), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "mb-contact-name" }, m.name), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "var(--text-muted)" } }, m.meta))))), /* @__PURE__ */ React.createElement("div", { className: "mb-card" }, /* @__PURE__ */ React.createElement("div", { className: "mb-card-title" }, "\u{1F465} Online Friends"), onlineList.length === 0 ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: "var(--text-muted)", padding: 6 } }, "No one is online right now") : onlineList.map((u) => {
       const photo = avatarUrl(u);
       return /* @__PURE__ */ React.createElement("div", { className: "mb-contact", key: u.uid, onClick: () => startChat(u.uid, u.name, photo) }, /* @__PURE__ */ React.createElement("img", { src: photo, alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mb-online" }), /* @__PURE__ */ React.createElement("div", { className: "mb-contact-name" }, u.name));
     }))))
