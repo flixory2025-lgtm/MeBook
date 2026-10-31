@@ -13810,7 +13810,7 @@ ${buildShareUrl(post.id)}`;
   const mcNotesRow = () => {
     const h = React.createElement;
     const myNote = activeNote(profile, presNow);
-    const others = allUsers.filter((u) => u.uid !== user.uid).map((u) => ({ u, note: activeNote(u, presNow), on: isUserOnline(u, presNow) })).filter((x) => x.note || x.on).sort((p, q) => (q.note ? 2 : 0) + (q.on ? 1 : 0) - ((p.note ? 2 : 0) + (p.on ? 1 : 0))).slice(0, 25);
+    const others = allUsers.filter((u) => u.uid !== user.uid).map((u) => ({ u, note: activeNote(u, presNow), on: isUserOnline(u, presNow) })).filter((x) => x.on || presMs(x.u) > 0).sort((p, q) => (q.on ? 1 : 0) - (p.on ? 1 : 0) || presMs(q.u) - presMs(p.u)).slice(0, 10);
     const tile = (key, photo, label, note, on, isMe, onClick) => h(
       "div",
       { key, className: "msgr-online-item mc-ntile", onClick },
