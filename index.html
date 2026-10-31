@@ -16554,109 +16554,94 @@ ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(
 if (!window.__mbNative) document.getElementById("boot") && document.getElementById("boot").remove();
 })();
 </script>
-<!-- ===== MeBook "Download App" popup (web only, hidden inside the app) ===== -->
+<!-- ===== MeBook "Download App" bottom bar (web only · home page only · cannot be closed) ===== -->
 <style id="mbdl-css">
-#mbdl{position:fixed;inset:0;z-index:100001;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0);visibility:hidden;pointer-events:none;transition:background .35s ease,visibility .35s;font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
-#mbdl.open{background:rgba(0,0,0,.55);visibility:visible;pointer-events:auto}
-#mbdl .mbdl-card{position:relative;width:100%;max-width:440px;background:#fff;color:#0f172a;border-radius:24px 24px 0 0;padding:26px 22px calc(22px + env(safe-area-inset-bottom,0px));text-align:center;box-shadow:0 -20px 60px rgba(0,0,0,.35);transform:translate3d(0,100%,0);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
-#mbdl.open .mbdl-card{transform:none}
-#mbdl.dark .mbdl-card{background:#18191a;color:#e4e6eb;border:1px solid rgba(255,255,255,.08)}
-#mbdl .mbdl-x{position:absolute;top:12px;right:12px;width:34px;height:34px;border:0;border-radius:50%;cursor:pointer;background:rgba(100,116,139,.15);color:inherit;font-size:20px;line-height:1;display:grid;place-items:center;transition:background .2s}
-#mbdl .mbdl-x:hover{background:rgba(100,116,139,.3)}
-#mbdl .mbdl-logo{width:78px;height:78px;margin:4px auto 14px;border-radius:22px;background:linear-gradient(135deg,#0b1f14,#0f3d24);display:grid;place-items:center;box-shadow:0 12px 30px rgba(34,197,94,.35);animation:mbdlFloat 3s ease-in-out infinite}
-#mbdl .mbdl-logo img{width:52px;height:52px;object-fit:contain}
-@keyframes mbdlFloat{50%{transform:translateY(-5px)}}
-#mbdl h2{margin:0 0 8px;font-size:21px;font-weight:800;letter-spacing:-.02em;line-height:1.25}
-#mbdl p{margin:0 auto 20px;max-width:34ch;font-size:14.5px;line-height:1.55;color:#64748b}
-#mbdl.dark p{color:#a8abb3}
-#mbdl .mbdl-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:14px 18px;border-radius:14px;border:0;cursor:pointer;font:700 15.5px Inter,system-ui,sans-serif;text-decoration:none;transition:transform .2s,box-shadow .2s,background .2s}
-#mbdl .mbdl-btn svg{width:19px;height:19px}
-#mbdl .mbdl-pri{background:linear-gradient(135deg,#4ade80,#22c55e 55%,#16a34a);color:#052e16;box-shadow:0 10px 26px rgba(34,197,94,.4)}
-#mbdl .mbdl-pri:hover{transform:translateY(-2px)}
-#mbdl .mbdl-pri:active{transform:scale(.98)}
-#mbdl .mbdl-sec{margin-top:8px;background:transparent;color:#64748b;font-weight:600}
-#mbdl .mbdl-sec:hover{background:rgba(100,116,139,.12)}
-#mbdl .mbdl-note{display:none;margin-top:12px;font-size:12px;color:#64748b}
-@media(min-width:700px){
-  #mbdl{align-items:center}
-  #mbdl .mbdl-card{border-radius:24px;padding:32px 30px 26px;transform:translate3d(0,24px,0) scale(.94);opacity:0;transition:transform .4s cubic-bezier(.2,.8,.2,1),opacity .3s}
-  #mbdl.open .mbdl-card{transform:none;opacity:1}
-  #mbdl .mbdl-note{display:block}
-}
+#mbdl{position:fixed;left:0;right:0;bottom:0;z-index:1002;display:flex;justify-content:center;padding:0 12px calc(12px + env(safe-area-inset-bottom,0px));pointer-events:none;transform:translate3d(0,130%,0);visibility:hidden;transition:transform .5s cubic-bezier(.2,.8,.2,1),visibility 0s linear .5s;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+#mbdl.show{transform:none;visibility:visible;transition:transform .5s cubic-bezier(.2,.8,.2,1),visibility 0s}
+#mbdl .mbdl-bar{pointer-events:auto;width:100%;max-width:640px;display:flex;align-items:center;gap:12px;padding:9px 10px 11px 10px;border-radius:999px;color:#1c1e21;
+  background:rgba(255,255,255,.74);-webkit-backdrop-filter:blur(22px) saturate(190%);backdrop-filter:blur(22px) saturate(190%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.8),inset 0 1.5px 2px rgba(255,255,255,.95),inset 0 -1px 2px rgba(0,0,0,.05),0 8px 26px rgba(0,0,0,.18),0 1px 3px rgba(0,0,0,.1)}
+#mbdl.dark .mbdl-bar{color:#f5f5f5;background:rgba(30,30,34,.72);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),inset 0 1.5px 2px rgba(255,255,255,.16),inset 0 -1px 2px rgba(0,0,0,.4),0 8px 28px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.5)}
+#mbdl .mbdl-logo{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#0b1f14,#0f3d24);box-shadow:0 4px 14px rgba(34,197,94,.4)}
+#mbdl .mbdl-logo img{width:30px;height:30px;object-fit:contain}
+#mbdl .mbdl-txt{flex:1;min-width:0;line-height:1.25}
+#mbdl .mbdl-txt b{display:block;font-size:14.5px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mbdl .mbdl-txt small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:11.5px;color:#65676b;overflow:hidden}
+#mbdl.dark .mbdl-txt small{color:#8a8a8a}
+#mbdl .mbdl-btn{position:relative;overflow:hidden;flex:none;display:inline-flex;align-items:center;gap:7px;padding:11px 19px;border-radius:999px;border:0;cursor:pointer;text-decoration:none;font:800 14px 'Inter',system-ui,sans-serif;color:#04210f;-webkit-tap-highlight-color:transparent;
+  background:linear-gradient(180deg,#5cf08f 0%,#22c55e 55%,#16a34a 100%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -2px 0 rgba(0,0,0,.12),0 4px 0 #0f6b32,0 9px 16px rgba(22,163,74,.45);
+  transition:transform .12s ease,box-shadow .12s ease}
+#mbdl .mbdl-btn svg{width:17px;height:17px;flex:none}
+#mbdl .mbdl-btn::after{content:"";position:absolute;top:0;left:-70%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.6),transparent);transform:skewX(-20deg);animation:mbdlShine 3.6s ease-in-out infinite}
+@keyframes mbdlShine{0%,55%{left:-70%}100%{left:130%}}
+#mbdl .mbdl-btn:hover{filter:brightness(1.06)}
+#mbdl .mbdl-btn:active{transform:translateY(4px);box-shadow:inset 0 2px 0 rgba(255,255,255,.45),inset 0 -2px 0 rgba(0,0,0,.12),0 0 0 #0f6b32,0 3px 6px rgba(22,163,74,.4)}
+#mbdl .mbdl-btn:focus-visible{outline:3px solid #86efac;outline-offset:3px}
+html.mbdl-on .mebook-root .mb-layout{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px)) !important}
+@media(max-width:380px){#mbdl .mbdl-btn{padding:11px 15px}#mbdl .mbdl-logo{width:40px;height:40px}}
 @media(prefers-reduced-motion:reduce){#mbdl,#mbdl *{transition:none!important;animation:none!important}}
 </style>
 <script id="mbdl-js">
 (function(){
-  /* ---- settings (change here) ---- */
+  /* ---- settings ---- */
   var APK_URL="https://github.com/flixory2025-lgtm/MeBook/releases/download/v1.0.0/MeBook.apk";
   var LOGO_URL="https://i.postimg.cc/rsBBsQWF/17832-removebg-preview.png";
-  var SHOW_AFTER_MS=4000;            /* popup delay after page load */
-  var HIDE_DAYS_NOT_NOW=1;           /* hide for N days after "Not now" / close */
-  var HIDE_DAYS_DOWNLOADED=14;       /* hide for N days after tapping Download */
-  var KEY="mbdl-hide-until";
+  var TITLE="Get the MeBook app";
+  var SUB="Download app for better experience";
+  var SHOW_ON_LOGIN_SCREEN=false;   /* true = login screen e-o dekhabe */
 
-  /* ---- never show inside the app ---- */
-  function inApp(){
-    try{
-      var ua=navigator.userAgent||"";
-      var C=window.Capacitor;
-      return !!window.__mbNative
-        || document.documentElement.classList.contains("mb-native")
-        || /MeBookApp/i.test(ua)
-        || !!(C&&C.isNativePlatform&&C.isNativePlatform())
-        || /[?&]mbnative=1/.test(location.search);
-    }catch(e){return false;}
+  /* ---- never inside the app ---- */
+  try{
+    var ua=navigator.userAgent||"",C=window.Capacitor;
+    if(window.__mbNative||document.documentElement.classList.contains("mb-native")||/MeBookApp/i.test(ua)||
+       (C&&C.isNativePlatform&&C.isNativePlatform())||/[?&]mbnative=1/.test(location.search))return;
+  }catch(e){}
+
+  var bar=document.createElement("div");
+  bar.id="mbdl";bar.setAttribute("role","region");bar.setAttribute("aria-label","Download MeBook app");
+  bar.innerHTML=
+    '<div class="mbdl-bar">'+
+      '<div class="mbdl-logo"><img src="'+LOGO_URL+'" alt=""></div>'+
+      '<div class="mbdl-txt"><b>'+TITLE+'</b><small>'+SUB+'</small></div>'+
+      '<a class="mbdl-btn" href="'+APK_URL+'" download>'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg>Download</a>'+
+    '</div>';
+  function mount(){if(document.body&&!bar.parentNode)document.body.appendChild(bar);}
+
+  function onHome(){
+    var r=document.querySelector(".mebook-root");
+    if(!r)return false;
+    var c=r.classList;
+    var loggedIn=!!r.querySelector(".mb-navbar");
+    if(!loggedIn)return SHOW_ON_LOGIN_SCREEN&&!!r.querySelector(".auth-wrap");
+    /* any non-home page (reels, profile, chat, search, friends...) adds one of these */
+    if(c.contains("mb-hdr-off")||c.contains("fbp-full")||c.contains("mc-open")||c.contains("sr-open"))return false;
+    return true;
   }
-  if(inApp())return;
-
-  function hiddenNow(){try{return Date.now()<(+localStorage.getItem(KEY)||0);}catch(e){return false;}}
-  function hideFor(days){try{localStorage.setItem(KEY,String(Date.now()+days*864e5));}catch(e){}}
-  if(hiddenNow())return;
-
-  function build(){
-    if(document.getElementById("mbdl"))return;
-    var dark=false;try{dark=localStorage.getItem("mebook-theme")==="dark";}catch(e){}
-    var wrap=document.createElement("div");
-    wrap.id="mbdl";if(dark)wrap.className="dark";
-    wrap.setAttribute("role","dialog");wrap.setAttribute("aria-modal","true");wrap.setAttribute("aria-labelledby","mbdl-t");
-    wrap.innerHTML=
-      '<div class="mbdl-card">'+
-        '<button type="button" class="mbdl-x" aria-label="Close">&times;</button>'+
-        '<div class="mbdl-logo"><img src="'+LOGO_URL+'" alt="MeBook"></div>'+
-        '<h2 id="mbdl-t">Download MeBook app for a better experience</h2>'+
-        '<p>Faster reels, instant chat and smooth scrolling. Get the official MeBook app by MVBDS.</p>'+
-        '<a class="mbdl-btn mbdl-pri" href="'+APK_URL+'" download>'+
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg>Download App</a>'+
-        '<button type="button" class="mbdl-btn mbdl-sec">Not now</button>'+
-        '<div class="mbdl-note">The app is for Android phones. Open this page on your phone to install.</div>'+
-      '</div>';
-    document.body.appendChild(wrap);
-
-    var prevFocus=null;
-    function open(){prevFocus=document.activeElement;requestAnimationFrame(function(){wrap.classList.add("open");var b=wrap.querySelector(".mbdl-pri");b&&b.focus({preventScroll:true});});}
-    function close(days){
-      hideFor(days);wrap.classList.remove("open");
-      setTimeout(function(){if(wrap.parentNode)wrap.parentNode.removeChild(wrap);},450);
-      document.removeEventListener("keydown",onKey);
-      try{prevFocus&&prevFocus.focus&&prevFocus.focus({preventScroll:true});}catch(e){}
-    }
-    function onKey(e){if(e.key==="Escape")close(HIDE_DAYS_NOT_NOW);}
-    wrap.addEventListener("click",function(e){if(e.target===wrap)close(HIDE_DAYS_NOT_NOW);});
-    wrap.querySelector(".mbdl-x").onclick=function(){close(HIDE_DAYS_NOT_NOW);};
-    wrap.querySelector(".mbdl-sec").onclick=function(){close(HIDE_DAYS_NOT_NOW);};
-    wrap.querySelector(".mbdl-pri").addEventListener("click",function(){hideFor(HIDE_DAYS_DOWNLOADED);setTimeout(function(){close(HIDE_DAYS_DOWNLOADED);},400);});
-    document.addEventListener("keydown",onKey);
-    open();
+  function typing(){
+    var a=document.activeElement;
+    return !!a&&(/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)||a.isContentEditable);
   }
-
-  function start(){
-    /* wait until the web splash / login screen has settled, then pop up */
-    setTimeout(function(){if(!inApp()&&!hiddenNow())build();},SHOW_AFTER_MS);
+  var last=null;
+  function sync(){
+    mount();
+    var r=document.querySelector(".mebook-root");
+    bar.classList.toggle("dark",!!(r&&r.classList.contains("dark-mode")));
+    var show=onHome()&&!typing();
+    if(show===last)return;
+    last=show;
+    bar.classList.toggle("show",show);
+    document.documentElement.classList.toggle("mbdl-on",show);
   }
-  if(document.readyState==="complete")start();else window.addEventListener("load",start);
+  /* light polling: cheap, and works with every React re-render / page change */
+  setInterval(function(){if(!document.hidden)sync();},200);
+  document.addEventListener("focusin",sync);document.addEventListener("focusout",function(){setTimeout(sync,50)});
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",sync);else sync();
 })();
 </script>
-<!-- ===== end download popup ===== -->
+<!-- ===== end download bar ===== -->
 
 </body>
 </html>
