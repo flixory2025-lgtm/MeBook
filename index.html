@@ -92,6 +92,25 @@ html.mb-native{--sat:max(env(safe-area-inset-top,0px),var(--safe-area-inset-top,
 html.mb-native body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
 html.mb-native input,html.mb-native textarea,html.mb-native [contenteditable]{-webkit-user-select:text;user-select:text;}
 #boot{transition:opacity .25s ease;}
+#boot{flex-direction:column;gap:28px;padding:20px;box-sizing:border-box;}
+#boot::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(34,197,94,.10) 0%,transparent 50%),radial-gradient(circle at 70% 80%,rgba(34,197,94,.08) 0%,transparent 50%);pointer-events:none;}
+#boot .mbs-logo-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;z-index:2;}
+#boot .mbs-logo-img{width:68px;height:68px;object-fit:contain;filter:drop-shadow(0 4px 20px rgba(34,197,94,.55));animation:mbsFloat 3s ease-in-out infinite;}
+@keyframes mbsFloat{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-4px) scale(1.03);}}
+#boot .mbs-logo-text{font-size:34px;font-weight:900;letter-spacing:-1.2px;line-height:1;display:flex;align-items:baseline;}
+#boot .mbs-logo-text .me{background:linear-gradient(135deg,#22c55e 0%,#86efac 50%,#4ade80 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 30px rgba(34,197,94,.4);}
+#boot .mbs-logo-text .book{color:#fff;text-shadow:0 0 20px rgba(255,255,255,.3);}
+#boot .mbs-dots{display:flex;gap:8px;position:relative;z-index:2;margin-top:8px;}
+#boot .mbs-dots span{width:10px;height:10px;border-radius:50%;background:#22c55e;box-shadow:0 0 12px rgba(34,197,94,.7);animation:mbsBounce 1.4s ease-in-out infinite;}
+#boot .mbs-dots span:nth-child(1){animation-delay:0s;}
+#boot .mbs-dots span:nth-child(2){animation-delay:.15s;}
+#boot .mbs-dots span:nth-child(3){animation-delay:.3s;}
+#boot .mbs-dots span:nth-child(4){animation-delay:.45s;}
+@keyframes mbsBounce{0%,60%,100%{transform:translateY(0);opacity:.5;}30%{transform:translateY(-12px);opacity:1;}}
+#boot .mbs-from{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;z-index:2;animation:mbsFromFade 3s ease-in-out infinite;}
+@keyframes mbsFromFade{0%,100%{opacity:.85;}50%{opacity:1;}}
+#boot .mbs-from .from-label{font-size:10px;font-weight:500;color:#94a3b8;letter-spacing:.12em;text-transform:uppercase;}
+#boot .mbs-from .from-name{font-size:14px;font-weight:800;letter-spacing:.05em;background:linear-gradient(135deg,#22c55e 0%,#86efac 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 15px rgba(34,197,94,.35);}
 html.mb-native .mebook-root::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sat);background:var(--header-bg);z-index:1001;pointer-events:none;}
 html.mb-native .mebook-root.dark-mode::before{background:#000;}
 html.mb-native .mebook-root .mb-header{height:calc(60px + var(--sat));padding-top:var(--sat);box-sizing:border-box;}
@@ -114,7 +133,7 @@ html.mb-native .mebook-root .mb-header.hide{transform:translateY(-100%);}
 </style>
 </head>
 <body>
-<div id="boot"><div style="text-align:center;padding:20px"><div>Loading MeBook...</div><div style="margin-top:10px;font:500 13px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#94a3b8">MeBook – MVBDS Movie Social App. Movie post, reels ও community এক জায়গায়।</div></div></div>
+<div id="boot"><div class="mbs-logo-wrap"><img class="mbs-logo-img" src="https://i.postimg.cc/rsBBsQWF/17832-removebg-preview.png" alt="MeBook"><div class="mbs-logo-text"><span class="me">Me</span><span class="book">Book</span></div></div><div class="mbs-dots"><span></span><span></span><span></span><span></span></div><div class="mbs-from"><span class="from-label">from</span><span class="from-name">ELIX INDUSTRY</span></div><div style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">MeBook – MVBDS Movie Social App. Movie post, reels ও community এক জায়গায়।</div></div>
 <noscript><h1>MeBook – MVBDS Movie Social App</h1><p>MeBook হলো MVBDS এর movie social app। Movie post, reels, comment ও community এক জায়গায়। এটি চালাতে JavaScript চালু করুন।</p></noscript>
 <div id="root"></div>
 
