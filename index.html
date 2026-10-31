@@ -3627,6 +3627,44 @@ html.mb-native .mebook-root.mb-hdr-off .mb-layout{padding-top:calc(62px + var(--
 .mebook-root .mechat-input-icon svg{width:20px;height:20px;}
 .mebook-root .mechat-input-field{font-size:14.5px;padding:8px 14px;min-height:36px;}
 
+/* ===== FIX: 3D glossy buttons (Friends page, Create story +) and 3D "Me" ===== */
+.mebook-root .frx-btn.pri{
+  background:linear-gradient(180deg,#8fd12b 0%,#5db31c 52%,#3f951a 100%) !important;
+  color:#fff !important;
+  border:1px solid #2b6e0e !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 3px 0 #2b6e0e,0 5px 8px rgba(0,0,0,.32) !important;
+  text-shadow:0 -1px 0 rgba(0,0,0,.25);
+  margin-bottom:3px;
+}
+.mebook-root .frx-btn.pri:active{
+  transform:translateY(2px) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 0 #2b6e0e,0 2px 4px rgba(0,0,0,.3) !important;
+}
+.mebook-root .frx-btn.pri:disabled{filter:saturate(.7);}
+.mebook-root .st-plus{
+  background:linear-gradient(180deg,#8fd12b 0%,#5db31c 52%,#3f951a 100%) !important;
+  color:#fff !important;
+  border:2px solid var(--card) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 3px 0 #2b6e0e,0 5px 8px rgba(0,0,0,.35) !important;
+}
+.mebook-root .st-plus svg{filter:drop-shadow(0 -1px 0 rgba(0,0,0,.3));}
+.mebook-root .st-plus:active{
+  transform:translate(-50%,calc(-50% + 2px)) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 0 #2b6e0e,0 2px 4px rgba(0,0,0,.3) !important;
+}
+.mebook-root .mb-logo-text .me,
+.mebook-root .me3d{
+  display:inline-block;
+  background:linear-gradient(180deg,#a6e23a 0%,#6dbd1f 50%,#3f951a 100%) !important;
+  -webkit-background-clip:text !important;background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;color:transparent !important;
+  filter:drop-shadow(0 1px 0 #2b6e0e) drop-shadow(0 2px 0 #2b6e0e) drop-shadow(0 3px 3px rgba(0,0,0,.45));
+}
+.mebook-root .mb-nav-label .me3d{
+  font-weight:800;
+  filter:drop-shadow(0 1px 0 #2b6e0e) drop-shadow(0 1.5px 1px rgba(0,0,0,.45));
+}
+
 `;
 function ToastStack({
   toasts,
@@ -13483,7 +13521,7 @@ ${buildShareUrl(post.id)}`;
         onClick: () => handleNavClick("messages")
       },
       /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.5 2 2 6.14 2 11.25c0 2.88 1.41 5.45 3.62 7.16.12 1.1-.28 2.62-1.05 3.59-.13.16-.02.4.18.38 2.34-.19 4.05-1.25 4.85-1.85.77.16 1.58.25 2.4.25 5.5 0 10-4.14 10-9.25S17.5 2 12 2z" })),
-      /* @__PURE__ */ React.createElement("span", { className: "mb-nav-label" }, "MeChat"),
+      /* @__PURE__ */ React.createElement("span", { className: "mb-nav-label" }, /* @__PURE__ */ React.createElement("span", { className: "me3d" }, "Me"), "Chat"),
       unreadCount > 0 && /* @__PURE__ */ React.createElement("span", { className: "mb-badge-dot" }, unreadCount)
     ), /* @__PURE__ */ React.createElement(
       "button",
