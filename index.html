@@ -48,6 +48,18 @@ html,body{margin:0;padding:0;background:#000;}
       }catch(e){}
     };
     window.__mbSyncStatusBar(true);
+    /* fallback: if no inset value arrives from the shell, assume a standard 32px status bar */
+    function chk(){
+      try{
+        var pr=document.createElement("div");
+        pr.style.cssText="position:fixed;top:0;left:0;width:1px;visibility:hidden;pointer-events:none;height:var(--sat,0px)";
+        document.body.appendChild(pr);
+        var h=pr.getBoundingClientRect().height;
+        document.body.removeChild(pr);
+        if(!h||h<8){ de.style.setProperty("--mb-sat-fallback","32px"); }
+      }catch(e){}
+    }
+    window.addEventListener("load",function(){setTimeout(chk,700);setTimeout(chk,2500);});
     try{ P.SplashScreen&&P.SplashScreen.hide&&P.SplashScreen.hide(); }catch(e){}
     try{
       P.App&&P.App.addListener&&P.App.addListener("backButton",function(){
@@ -68,7 +80,7 @@ html,body{margin:0;padding:0;background:#000;}
 })();
 </script>
 <style id="mb-native-css">
-html.mb-native{--sat:max(env(safe-area-inset-top,0px),var(--mb-sat-native,0px));--sab:max(env(safe-area-inset-bottom,0px),var(--mb-sab-native,0px));
+html.mb-native{--sat:max(env(safe-area-inset-top,0px),var(--safe-area-inset-top,0px),var(--mb-sat-native,0px),var(--mb-sat-fallback,0px));--sab:max(env(safe-area-inset-bottom,0px),var(--safe-area-inset-bottom,0px),var(--mb-sab-native,0px));
  -webkit-tap-highlight-color:transparent;overscroll-behavior:none;}
 html.mb-native body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
 html.mb-native input,html.mb-native textarea,html.mb-native [contenteditable]{-webkit-user-select:text;user-select:text;}
