@@ -32,7 +32,9 @@ html,body{margin:0;padding:0;background:#000;}
 (function(){
   try{
     var C=window.Capacitor;
-    var native=!!(C&&((C.isNativePlatform&&C.isNativePlatform())||(C.getPlatform&&C.getPlatform()!=="web")));
+    var ua=navigator.userAgent||"";
+    var native=!!(C&&((C.isNativePlatform&&C.isNativePlatform())||(C.getPlatform&&C.getPlatform()!=="web")))||/MeBookApp/i.test(ua)||(/Android/i.test(ua)&&/; wv\)/.test(ua))||/[?&]mbnative=1/.test(location.search);
+    C=window.Capacitor||{};
     if(!native)return;
     window.__mbNative=true;
     var de=document.documentElement;
