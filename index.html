@@ -3627,6 +3627,64 @@ html.mb-native .mebook-root.mb-hdr-off .mb-layout{padding-top:calc(62px + var(--
 .mebook-root .mechat-input-icon svg{width:20px;height:20px;}
 .mebook-root .mechat-input-field{font-size:14.5px;padding:8px 14px;min-height:36px;}
 
+/* ===== MeChat: 3D chat, tabs and pages ===== */
+.mebook-root .mc-title span{display:inline-block;background:linear-gradient(180deg,#a6e23a 0%,#6dbd1f 50%,#3f951a 100%) !important;-webkit-background-clip:text !important;background-clip:text !important;-webkit-text-fill-color:transparent !important;color:transparent !important;filter:drop-shadow(0 1px 0 #2b6e0e) drop-shadow(0 2px 0 #2b6e0e) drop-shadow(0 3px 3px rgba(0,0,0,.45));}
+.mebook-root .mechat-page .mechat-bubble,.mebook-root .mechat-page .mechat-bubble::before,.mebook-root .mechat-page .mechat-bubble-wrap,.mebook-root .mechat-page .mechat-seen-avatar,.mebook-root .mechat-page .mechat-reaction-badge{animation:none !important;}
+.mebook-root .mechat-bubble.me{background:linear-gradient(180deg,#8fd12b 0%,#5db31c 52%,#3f951a 100%) !important;border:1px solid #2b6e0e !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 3px 0 #2b6e0e,0 5px 8px rgba(0,0,0,.32) !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;text-shadow:0 -1px 0 rgba(0,0,0,.22);}
+.mebook-root .mechat-bubble.me::before{display:none !important;content:none !important;}
+.mebook-root .mechat-bubble-wrap.me .mechat-bubble{margin-bottom:3px;}
+.mebook-root .mechat-head-btn svg,.mebook-root .mechat-input-icon svg,.mebook-root .mechat-like-btn svg{fill:url(#mbGreenGrad) !important;filter:drop-shadow(0 1px 0 #2b6e0e) drop-shadow(0 2px 1px rgba(0,0,0,.5));}
+.mebook-root .mechat-send-btn svg{filter:drop-shadow(0 -1px 0 rgba(0,0,0,.3));}
+.mebook-root .mc-tabbar{gap:4px;}
+.mebook-root .mc-tab{transition:none;}
+.mebook-root .mc-tab.active{flex:1.7;background:rgba(128,128,128,.16);}
+.mebook-root.dark-mode .mc-tab.active{background:#1c1c1e;}
+.mebook-root .mc-tab svg{fill:currentColor;}
+.mebook-root .mc-tab.active svg{fill:url(#mbGreenGrad);filter:drop-shadow(0 1px 0 #2b6e0e) drop-shadow(0 2px 1px rgba(0,0,0,.45));}
+.mebook-root .mc-tab-count{position:absolute;top:0;left:calc(50% + 4px);min-width:20px;height:20px;border-radius:10px;background:#ef4444;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid #fff;box-sizing:border-box;}
+.mebook-root.dark-mode .mc-tab-count{border-color:#000;}
+.mebook-root .mcx-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:0 0 100px;color:var(--mcl-fg);}
+.mebook-root .mcx-body .st-bar{padding:4px 14px 6px;}
+.mebook-root .mcx-row{display:flex;align-items:center;gap:14px;padding:9px 16px;cursor:pointer;color:var(--mcl-fg);}
+.mebook-root .mcx-row:active{background:rgba(128,128,128,.14);}
+.mebook-root .mcx-row .av{width:54px;height:54px;border-radius:50%;object-fit:cover;flex:0 0 auto;}
+.mebook-root .mcx-ico-av{display:flex;align-items:center;justify-content:center;background:var(--mcl-input);}
+.mebook-root .mcx-ico-av svg,.mebook-root .mcx-ico svg{fill:url(#mbGreenGrad);filter:drop-shadow(0 1px 0 #2b6e0e);}
+.mebook-root .mcx-main{flex:1;min-width:0;}
+.mebook-root .mcx-name{font-size:16px;font-weight:600;display:flex;align-items:center;gap:5px;}
+.mebook-root .mcx-wrap{display:block;font-weight:400;line-height:1.3;}
+.mebook-root .mcx-sub{font-size:13px;color:var(--mcl-sub);margin-top:1px;}
+.mebook-root .mcx-sec{font-size:15px;font-weight:700;padding:16px 16px 4px;color:var(--mcl-sub);}
+.mebook-root .mcx-sec2{padding-top:20px;}
+.mebook-root .mcx-line{height:1px;background:var(--mcl-line);margin:8px 0;}
+.mebook-root .mcx-empty{padding:40px 16px;text-align:center;color:var(--mcl-sub);}
+.mebook-root .mcx-chips{display:flex;gap:8px;padding:6px 16px 10px;overflow-x:auto;scrollbar-width:none;}
+.mebook-root .mcx-chip{padding:9px 16px;border-radius:999px;background:var(--mcl-input);color:var(--mcl-fg);border:none;font-weight:700;font-size:14px;white-space:nowrap;cursor:pointer;}
+.mebook-root .mcx-chip.on{background:rgba(34,197,94,.16);color:#22c55e;}
+.mebook-root .mcx-btns{display:flex;gap:8px;flex:0 0 auto;}
+.mebook-root .mcx-btns.mcx-left{margin-top:8px;}
+.mebook-root .mcx-btn{height:34px;padding:0 14px;border-radius:10px;border:none;font-weight:700;font-size:13px;background:var(--mcl-input);color:var(--mcl-fg);cursor:pointer;white-space:nowrap;}
+.mebook-root .mcx-btn.pri{background:linear-gradient(180deg,#8fd12b 0%,#5db31c 52%,#3f951a 100%);color:#fff;border:1px solid #2b6e0e;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 3px 0 #2b6e0e,0 5px 8px rgba(0,0,0,.32);text-shadow:0 -1px 0 rgba(0,0,0,.25);margin-bottom:3px;}
+.mebook-root .mcx-btn.pri:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 0 #2b6e0e;}
+.mebook-root .mcx-dot{width:10px;height:10px;border-radius:50%;background:#22c55e;flex:0 0 auto;}
+.mebook-root .mcx-mrow{padding:13px 16px;}
+.mebook-root .mcx-ico{width:30px;display:flex;justify-content:center;flex:0 0 auto;}
+.mebook-root .mcx-mrow .mcx-name{font-size:17px;font-weight:500;}
+.mebook-root .mcx-sw{width:46px;height:28px;border-radius:14px;background:#4b4d50;position:relative;flex:0 0 auto;}
+.mebook-root .mcx-sw.on{background:#22c55e;}
+.mebook-root .mcx-sw i{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;}
+.mebook-root .mcx-sw.on i{left:21px;}
+.mebook-root .mcx-me{display:flex;flex-direction:column;align-items:center;padding:14px 0 6px;}
+.mebook-root .mcx-me-av{position:relative;width:132px;height:132px;}
+.mebook-root .mcx-me-av img{width:132px;height:132px;border-radius:50%;object-fit:cover;}
+.mebook-root .mcx-me-cam{position:absolute;right:0;bottom:0;width:44px;height:44px;border-radius:50%;border:3px solid var(--mcl-bg);background:var(--mcl-input);color:var(--mcl-fg);display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;}
+.mebook-root .mcx-me-cam svg{fill:currentColor;}
+.mebook-root .mcx-me-name{font-size:24px;font-weight:800;margin-top:12px;}
+.mebook-root .mcx-shead{justify-content:flex-start;gap:8px;}
+.mebook-root .mcx-to{color:var(--mcl-sub);font-size:16px;}
+.mebook-root .mcx-input{flex:1;min-width:0;background:transparent;border:none;outline:none;color:var(--mcl-fg);font-size:17px;padding:8px 4px;font-family:inherit;}
+.mebook-root .mcx-input.pill{background:var(--mcl-input);border-radius:999px;padding:11px 16px;}
+
 /* ===== FIX: 3D glossy buttons (Friends page, Create story +) and 3D "Me" ===== */
 .mebook-root .frx-btn.pri{
   background:linear-gradient(180deg,#8fd12b 0%,#5db31c 52%,#3f951a 100%) !important;
@@ -7954,7 +8012,7 @@ function McAddMembers(props) {
       "div",
       { className: "mc-sheet mc-add", onClick: (e) => e.stopPropagation() },
       React.createElement("div", { className: "mc-sheet-handle" }),
-      React.createElement("div", { className: "mc-add-title" }, chat.isGroup ? "Add members" : "Create group with " + chat.other.name),
+      React.createElement("div", { className: "mc-add-title" }, props.title || (chat.isGroup ? "Add members" : "Create group with " + chat.other.name)),
       React.createElement("input", { className: "mc-add-search", placeholder: "Search people", value: q, onChange: (e) => setQ(e.target.value) }),
       React.createElement(
         "div",
@@ -7974,7 +8032,7 @@ function McAddMembers(props) {
         className: "mc-add-confirm",
         disabled: sel.length === 0,
         onClick: () => props.onConfirm(sel)
-      }, (chat.isGroup ? "Add" : "Create group") + (sel.length ? " (" + sel.length + ")" : ""))
+      }, (props.confirmLabel || (chat.isGroup ? "Add" : "Create group")) + (sel.length ? " (" + sel.length + ")" : ""))
     )
   );
 }
@@ -8786,6 +8844,12 @@ function MeBookPage({ onExit }) {
   const [commentText, setCommentText] = useState("");
   const [commentBusy, setCommentBusy] = useState(false);
   const [replyTo, setReplyTo] = useState(null);
+  const [mcT, setMcT] = useState("chats");
+  const [mcSub, setMcSub] = useState(null);
+  const [mcPpl, setMcPpl] = useState("friends");
+  const [mcQ, setMcQ] = useState("");
+  const [mcGroupOpen, setMcGroupOpen] = useState(false);
+  const [mcHeadsOn, setMcHeadsOn] = useState(() => { try { return localStorage.getItem("mc-heads") !== "0"; } catch (e) { return true; } });
   const [expandedReplies, setExpandedReplies] = useState(/* @__PURE__ */ new Set());
   const [actionMenu, setActionMenu] = useState(null);
   const [photoViewer, setPhotoViewer] = useState(null);
@@ -12160,19 +12224,199 @@ ${buildShareUrl(post.id)}`;
     React.createElement(
       "div",
       { className: "mc-lp-actions" },
-      React.createElement("button", { className: "mc-lp-btn", onClick: mcFocusSearch, "aria-label": "New message" }, mcSvg("M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z", 24)),
-      React.createElement("button", { className: "mc-lp-btn", onClick: mcFocusSearch, "aria-label": "Search" }, mcSvg("M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z", 26)),
+      React.createElement("button", { className: "mc-lp-btn", onClick: () => { setMcQ(""); setMcSub("newmsg"); }, "aria-label": "New message" }, mcSvg("M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z", 24)),
+      React.createElement("button", { className: "mc-lp-btn", onClick: () => { setMcQ(""); setMcSub("search"); }, "aria-label": "Search" }, mcSvg("M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z", 26)),
       React.createElement("button", { className: "mc-lp-btn mc-lp-logo", onClick: () => goTo("home"), "aria-label": "Back to MeBook" }, React.createElement("img", { src: "https://i.postimg.cc/rsBBsQWF/17832-removebg-preview.png", alt: "MeBook" }))
     )
   );
-  const mcTabBar = () => React.createElement(
-    "nav",
-    { className: "mc-tabbar" },
-    React.createElement("button", { className: "mc-tab active", "aria-label": "Chats" }, mcSvg("M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z", 28)),
-    React.createElement("button", { className: "mc-tab", onClick: () => goTo("friends"), "aria-label": "Friends" }, mcSvg("M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z", 28)),
-    React.createElement("button", { className: "mc-tab", onClick: () => goTo("notifications"), "aria-label": "Notifications" }, mcSvg("M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z", 28), unreadNotifCount > 0 ? React.createElement("span", { className: "mc-tab-badge" }) : null),
-    React.createElement("button", { className: "mc-tab", onClick: () => goTo("home"), "aria-label": "Back to MeBook" }, mcSvg("M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z", 28))
+  const E = React.createElement;
+  const MCP = {
+    chat: "M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z",
+    people: "M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z",
+    bell: "M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z",
+    menu: "M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z",
+    gear: "M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z",
+    out: "M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z",
+    home: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
+    cam: "M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z",
+    moon: "M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z",
+    play: "M8 5v14l11-7z",
+    lock: "M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z",
+    search: "M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+  };
+  const mcHeadBar = (title, backFn, right) => E(
+    "div", { className: "mc-listpage-head" },
+    E("div", { style: { display: "flex", alignItems: "center", gap: 6, minWidth: 0 } },
+      backFn ? E("button", { className: "mc-lp-btn", onClick: backFn, "aria-label": "Back" }, mcSvg(MC_IC.back, 26)) : null,
+      E("h1", { className: "mc-title" }, title)),
+    right || null
   );
+  const mcTabBtn = (id, path, label, badge) => E(
+    "button", { key: id, className: "mc-tab" + (mcT === id ? " active" : ""), onClick: () => { setMcT(id); setMcSub(null); setMcQ(""); }, "aria-label": label },
+    mcSvg(path, 26), badge || null
+  );
+  const mcTabBar = () => E(
+    "nav", { className: "mc-tabbar" },
+    mcTabBtn("chats", MCP.chat, "Chats", unreadCount > 0 ? E("span", { className: "mc-tab-count" }, unreadCount > 50 ? "50+" : unreadCount) : null),
+    mcTabBtn("people", MCP.people, "People", requests.length > 0 ? E("span", { className: "mc-tab-badge" }) : null),
+    mcTabBtn("notifs", MCP.bell, "Notifications", unreadNotifCount > 0 ? E("span", { className: "mc-tab-badge" }) : null),
+    mcTabBtn("menu", MCP.menu, "Menu", null)
+  );
+  const mcFriendIds = () => new Set(myFriends.map((f) => f.uid));
+  const mcSuggestions = () => {
+    const fi = mcFriendIds();
+    const rf = new Set(requests.map((r) => r.from));
+    return allUsers.filter((u) => u && u.uid && u.uid !== user.uid && !fi.has(u.uid) && !rf.has(u.uid)).slice(0, 40);
+  };
+  const mcSentSet = () => new Set(sentFriendRequests.filter((r) => r.status === "pending").map((r) => r.to));
+  const mcPerson = (u, key, sub, btns, onClick) => E(
+    "div", { key, className: "mcx-row", onClick },
+    E("img", { className: "av", src: avatarUrl(u), alt: "", draggable: false }),
+    E("div", { className: "mcx-main" },
+      E("div", { className: "mcx-name" }, u.name || "User", isVerifiedUid(u.uid, u) ? mcVerifiedBadge(14) : null),
+      sub ? E("div", { className: "mcx-sub" }, sub) : null),
+    btns || null
+  );
+  const mcOpenWith = (u) => { setMcSub(null); setMcQ(""); startChat(u.uid, u.name, avatarUrl(u)); };
+  const mcAddBtns = (u) => {
+    const sent = mcSentSet().has(u.uid);
+    return E("div", { className: "mcx-btns", onClick: (e) => e.stopPropagation() },
+      E("button", { className: "mcx-btn " + (sent ? "" : "pri"), onClick: () => sent ? handleCancelRequest(u.uid) : handleSendRequest(u.uid) }, sent ? "Cancel" : "Add friend"));
+  };
+  const mcPeoplePage = () => {
+    const q = mcQ.trim().toLowerCase();
+    const byName = (u) => !q || (u.name || "").toLowerCase().includes(q);
+    let list;
+    if (mcPpl === "friends") list = myFriends.filter((f) => f && f.uid && byName(f)).map((f) => mcPerson(f, f.uid, f.location || "MeBook friend", null, () => mcOpenWith(f)));
+    else if (mcPpl === "requests") list = requests.length === 0 ? [E("div", { key: "e", className: "mcx-empty" }, "No friend requests")] : requests.map((r) => {
+      const u = r.fromUser || { uid: r.from, name: "User" };
+      return mcPerson(u, r.id, "Wants to be your friend", E("div", { className: "mcx-btns", onClick: (e) => e.stopPropagation() },
+        E("button", { className: "mcx-btn pri", onClick: () => handleAcceptRequest(r.id, r.from) }, "Confirm"),
+        E("button", { className: "mcx-btn", onClick: () => handleDeclineRequest(r.id) }, "Delete")), () => openUserProfile(r.from));
+    });
+    else list = mcSuggestions().filter(byName).map((u) => mcPerson(u, u.uid, u.location || "MeBook member", mcAddBtns(u), () => openUserProfile(u.uid)));
+    return E(React.Fragment, null,
+      mcHeadBar("People", null, E("button", { className: "mc-lp-btn", onClick: () => { setMcQ(""); setMcSub("search"); }, "aria-label": "Search" }, mcSvg(MCP.search, 26))),
+      E("div", { className: "mcx-body" },
+        E(StoriesSection, { user, profile, allUsers, myFriends, hiddenAuthors, avatarUrl, showToast, onUnfollow: (uid) => handleUnfollow(uid), onOpenProfile: (uid) => openUserProfile(uid) }),
+        E("div", { className: "mcx-chips" },
+          E("button", { className: "mcx-chip" + (mcPpl === "friends" ? " on" : ""), onClick: () => setMcPpl("friends") }, "Friends " + myFriends.length),
+          E("button", { className: "mcx-chip" + (mcPpl === "requests" ? " on" : ""), onClick: () => setMcPpl("requests") }, "Friend requests" + (requests.length ? " " + requests.length : "")),
+          E("button", { className: "mcx-chip" + (mcPpl === "all" ? " on" : ""), onClick: () => setMcPpl("all") }, "All")),
+        list)
+    );
+  };
+  const mcNotifPage = () => {
+    const unread = notifications.filter((n) => !n.read);
+    const earlier = notifications.filter((n) => n.read).slice(0, 30);
+    const nrow = (n) => {
+      const isReq = n.type === "friend" && n.requestId && !n.read;
+      return E("div", { key: n.id, className: "mcx-row", onClick: () => openNotification(n) },
+        n.fromAvatar ? E("img", { className: "av", src: n.fromAvatar, alt: "" }) : E("div", { className: "av mcx-ico-av" }, mcSvg(MCP.bell, 26)),
+        E("div", { className: "mcx-main" },
+          E("div", { className: "mcx-name mcx-wrap" }, E("b", null, n.title), n.message ? " " + n.message : ""),
+          E("div", { className: "mcx-sub" }, timeAgo(n.createdAt)),
+          isReq ? E("div", { className: "mcx-btns mcx-left", onClick: (e) => e.stopPropagation() },
+            E("button", { className: "mcx-btn pri", onClick: () => { handleAcceptRequest(n.requestId, n.fromUid); markNotificationRead(n.id); } }, "Accept"),
+            E("button", { className: "mcx-btn", onClick: () => { handleDeclineRequest(n.requestId); markNotificationRead(n.id); } }, "Decline")) : null),
+        !n.read ? E("span", { className: "mcx-dot" }) : null);
+    };
+    const sugg = mcSuggestions().slice(0, 8);
+    return E(React.Fragment, null,
+      mcHeadBar("Notifications", null, unread.length ? E("button", { className: "mcx-btn", onClick: markAllNotificationsRead }, "Mark all read") : null),
+      E("div", { className: "mcx-body" },
+        notifications.length === 0 ? E("div", { className: "mcx-empty" }, "No notifications yet") : null,
+        unread.length ? E("div", { className: "mcx-sec" }, "New") : null, unread.map(nrow),
+        earlier.length ? E("div", { className: "mcx-sec" }, "Earlier") : null, earlier.map(nrow),
+        sugg.length ? E("div", { className: "mcx-sec" }, "People you may know") : null,
+        sugg.map((u) => mcPerson(u, "s" + u.uid, u.location || "MeBook member", mcAddBtns(u), () => openUserProfile(u.uid))))
+    );
+  };
+  const mcMRow = (path, label, onClick, right, sub) => E(
+    "div", { key: label, className: "mcx-row mcx-mrow", onClick },
+    E("span", { className: "mcx-ico" }, mcSvg(path, 26)),
+    E("div", { className: "mcx-main" }, E("div", { className: "mcx-name" }, label), sub ? E("div", { className: "mcx-sub" }, sub) : null),
+    right || null
+  );
+  const mcMenuPage = () => E(React.Fragment, null,
+    mcHeadBar("Menu", null, null),
+    E("div", { className: "mcx-body" },
+      E("div", { className: "mcx-row", onClick: () => goTo("profile") },
+        E("img", { className: "av", src: avatarUrl(profile), alt: "" }),
+        E("div", { className: "mcx-main" }, E("div", { className: "mcx-name" }, profile && profile.name || "User", profile && profile.verified === true ? mcVerifiedBadge(14) : null), E("div", { className: "mcx-sub" }, "View profile"))),
+      mcMRow(MCP.gear, "Settings", () => setMcSub("settings")),
+      E("div", { className: "mcx-line" }),
+      mcMRow(MCP.people, "Create group", () => setMcGroupOpen(true)),
+      mcMRow(MC_IC.archive, "Archived chats", () => { setChatListMode("archived"); setMcT("chats"); }),
+      mcMRow(MC_IC.ignore, "Ignored chats", () => { setChatListMode("ignored"); setMcT("chats"); }),
+      E("div", { className: "mcx-line" }),
+      mcMRow(MCP.people, "Friend requests", () => { setMcPpl("requests"); setMcT("people"); }, requests.length ? E("span", { className: "mcx-dot" }) : null),
+      E("div", { className: "mcx-sec mcx-sec2" }, "Also from MeBook"),
+      mcMRow(MCP.home, "MeBook Home", () => goTo("home")),
+      mcMRow(MCP.play, "Shorts", () => goTo("shorts")),
+      mcMRow(MCP.out, "Log out", handleSignOut))
+  );
+  const mcSwitch = (on) => E("span", { className: "mcx-sw" + (on ? " on" : "") }, E("i", null));
+  const mcSettingsPage = () => {
+    const dark = theme === "dark";
+    return E(React.Fragment, null,
+      mcHeadBar("Settings", () => setMcSub(null), null),
+      E("div", { className: "mcx-body" },
+        E("div", { className: "mcx-me" },
+          E("div", { className: "mcx-me-av" }, E("img", { src: avatarUrl(profile), alt: "" }), E("button", { className: "mcx-me-cam", onClick: handleChangeProfilePhoto, "aria-label": "Change profile picture" }, mcSvg(MCP.cam, 20))),
+          E("div", { className: "mcx-me-name" }, profile && profile.name || "User")),
+        E("div", { className: "mcx-sec" }, "Your account"),
+        mcMRow(MCP.lock, "MeBook Account", () => handleResetPassword(), null, (user && user.email ? user.email + " \u00B7 tap to send password reset email" : "Password and security")),
+        E("div", { className: "mcx-sec" }, "Profile"),
+        mcMRow(MCP.cam, "Change profile picture", handleChangeProfilePhoto),
+        mcMRow(MCP.moon, "Dark mode", () => toggleTheme(!dark), mcSwitch(dark), dark ? "On" : "Off"),
+        E("div", { className: "mcx-sec" }, "Preferences"),
+        mcMRow(MCP.chat, "Chat heads", () => { const v = !mcHeadsOn; setMcHeadsOn(v); try { localStorage.setItem("mc-heads", v ? "1" : "0"); } catch (e) {} }, mcSwitch(mcHeadsOn)),
+        mcMRow(MCP.bell, "Notifications", () => setMcT("notifs") || setMcSub(null)),
+        E("div", { className: "mcx-sec" }, "Chats"),
+        mcMRow(MC_IC.archive, "Archived chats", () => { setChatListMode("archived"); setMcSub(null); setMcT("chats"); }),
+        mcMRow(MC_IC.ignore, "Ignored chats", () => { setChatListMode("ignored"); setMcSub(null); setMcT("chats"); }),
+        E("div", { className: "mcx-sec" }, "Session"),
+        mcMRow(MCP.out, "Log out", handleSignOut))
+    );
+  };
+  const mcSearchPage = () => {
+    const q = mcQ.trim().toLowerCase();
+    const fi = mcFriendIds();
+    const pool = q ? allUsers : myFriends.concat(allUsers.filter((u) => !fi.has(u.uid)));
+    const list = pool.filter((u) => u && u.uid && u.uid !== user.uid && (!q || ((u.name || "") + " " + (u.username || "") + " " + u.uid).toLowerCase().includes(q))).slice(0, 60);
+    const isNew = mcSub === "newmsg";
+    return E(React.Fragment, null,
+      E("div", { className: "mc-listpage-head mcx-shead" },
+        E("button", { className: "mc-lp-btn", onClick: () => { setMcSub(null); setMcQ(""); }, "aria-label": "Back" }, mcSvg(MC_IC.back, 26)),
+        isNew ? E("span", { className: "mcx-to" }, "To:") : null,
+        E("input", { className: "mcx-input" + (isNew ? "" : " pill"), autoFocus: true, value: mcQ, placeholder: isNew ? "Type a name or group" : "Search people", onChange: (e) => setMcQ(e.target.value) })),
+      E("div", { className: "mcx-body" },
+        isNew ? E("div", { className: "mcx-row", onClick: () => setMcGroupOpen(true) }, E("div", { className: "av mcx-ico-av" }, mcSvg(MCP.people, 28)), E("div", { className: "mcx-main" }, E("div", { className: "mcx-name" }, "Group chat"))) : null,
+        !q && !isNew ? E("div", { className: "mcx-sec" }, "Suggested") : null,
+        list.length === 0 ? E("div", { className: "mcx-empty" }, "No people found") : list.map((u) => mcPerson(u, u.uid, null, null, () => mcOpenWith(u)))));
+  };
+  const mcListPageContent = () => {
+    if (mcSub === "settings") return mcSettingsPage();
+    if (mcSub === "newmsg" || mcSub === "search") return mcSearchPage();
+    if (mcT === "people") return E(React.Fragment, null, mcPeoplePage(), mcTabBar());
+    if (mcT === "notifs") return E(React.Fragment, null, mcNotifPage(), mcTabBar());
+    if (mcT === "menu") return E(React.Fragment, null, mcMenuPage(), mcTabBar());
+    return E(React.Fragment, null, mcListHead(), E("div", { className: "mc-listpage-body" }, renderChatListPanel(false)), mcTabBar());
+  };
+  const mcCreateGroup = async (uids) => {
+    setMcGroupOpen(false);
+    if (!uids || uids.length < 2) { showToast("Group", "Select at least 2 members", "info"); return; }
+    try {
+      const fb = await getFirebase();
+      const names = uids.map((id) => { const f = allUsers.find((x) => x.uid === id); return f && f.name ? f.name.split(" ")[0] : "User"; });
+      const gname = [profile && profile.name ? profile.name.split(" ")[0] : "Me"].concat(names).join(", ").slice(0, 60);
+      const ref = await fb.addDoc(fb.collection(fb.db, "chats"), { members: [user.uid].concat(uids), isGroup: true, name: gname, createdBy: user.uid, createdAt: fb.serverTimestamp(), lastMessage: null, lastAt: fb.serverTimestamp() });
+      showToast("Group created", gname, "success");
+      setMcSub(null); setMcT("chats");
+      setTimeout(() => openChat(ref.id, ref.id, { uid: ref.id, name: gname, photoURL: "", isGroup: true }), 120);
+    } catch (e) { showToast("Error", e.message, "error"); }
+  };
   const renderFriendsPage = () => {
     const E = React.createElement;
     const q = friendSearch.trim().toLowerCase();
@@ -12273,6 +12517,14 @@ ${buildShareUrl(post.id)}`;
       onNo: () => setChatConfirm(null),
       onYes: runChatConfirm
     }) : null,
+    mcGroupOpen ? React.createElement(McAddMembers, {
+      chat: { isGroup: false, other: { name: "" }, members: [], otherId: "__none" },
+      title: "New group", confirmLabel: "Create group",
+      users: allUsers, me: user.uid, avatarOf: avatarUrl,
+      isVer: (u) => isVerifiedUid(u.uid, u),
+      onClose: () => setMcGroupOpen(false),
+      onConfirm: mcCreateGroup
+    }) : null,
     addMembersFor ? React.createElement(McAddMembers, {
       chat: addMembersFor,
       users: allUsers,
@@ -12282,7 +12534,7 @@ ${buildShareUrl(post.id)}`;
       onClose: () => setAddMembersFor(null),
       onConfirm: (ids) => confirmAddMembers(addMembersFor, ids)
     }) : null,
-    chatHeads.filter((h) => !(currentView === "messages" && activeChat === h.id)).map((h, i) => React.createElement(McChatHead, {
+    (mcHeadsOn ? chatHeads : []).filter((h) => !(currentView === "messages" && activeChat === h.id)).map((h, i) => React.createElement(McChatHead, {
       key: h.id,
       head: h,
       index: i,
@@ -13740,7 +13992,7 @@ ${buildShareUrl(post.id)}`;
           )
         );
       }))));
-    })(), currentView === "user-profile" && viewingUser && renderFbProfile(), currentView === "fb-profile-menu" && renderFbMenu(), currentView === "fb-own-menu" && renderFbOwnMenu(), currentView === "fb-settings" && renderFbSettings(), currentView === "fb-view-as" && renderFbProfileCore("preview", profile, myPosts, myFriends, false), currentView === "fb-activity" && renderFbActivity(), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement("div", { className: "mc-listpage" }, mcListHead(), /* @__PURE__ */ React.createElement("div", { className: "mc-listpage-body" }, renderChatListPanel(false)), mcTabBar()) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true)), mcBackBtn("in-side")), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" })), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, chatPartner?.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "url(#mbTickGrad)" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : "Active now")), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), /* @__PURE__ */ React.createElement(
+    })(), currentView === "user-profile" && viewingUser && renderFbProfile(), currentView === "fb-profile-menu" && renderFbMenu(), currentView === "fb-own-menu" && renderFbOwnMenu(), currentView === "fb-settings" && renderFbSettings(), currentView === "fb-view-as" && renderFbProfileCore("preview", profile, myPosts, myFriends, false), currentView === "fb-activity" && renderFbActivity(), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement("div", { className: "mc-listpage" }, mcListPageContent()) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true)), mcBackBtn("in-side")), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" })), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, chatPartner?.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "url(#mbTickGrad)" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : "Active now")), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), /* @__PURE__ */ React.createElement(
       "div",
       {
         className: "mechat-body",
@@ -13767,27 +14019,32 @@ ${buildShareUrl(post.id)}`;
         const curDay = dayKey(m.at);
         const prevDay = prevMsg ? dayKey(prevMsg.at) : "";
         const dateSep = curDay && curDay !== prevDay ? /* @__PURE__ */ React.createElement("div", { className: "mechat-date-sep" }, /* @__PURE__ */ React.createElement("span", null, dayLabel(m.at))) : null;
-        let touchStartX = 0;
-        let touchCurrentX = 0;
+        let sx = 0, sy = 0, cx = 0, dir = "", armed = false;
         const onTouchStart = (e) => {
-          touchStartX = e.touches[0].clientX;
-          touchCurrentX = touchStartX;
+          sx = e.touches[0].clientX; sy = e.touches[0].clientY; cx = sx; dir = ""; armed = false;
         };
         const onTouchMove = (e) => {
-          touchCurrentX = e.touches[0].clientX;
-          const diff = touchCurrentX - touchStartX;
-          const el = e.currentTarget;
-          if (diff > 0 && diff < 100) {
-            el.style.transform = `translateX(${diff}px)`;
-            el.style.transition = "none";
+          const t = e.touches[0];
+          cx = t.clientX;
+          const dx = cx - sx, dy = t.clientY - sy;
+          if (!dir) {
+            if (Math.abs(dx) < 16 && Math.abs(dy) < 16) return;
+            dir = dx > 0 && dx > Math.abs(dy) * 2 ? "h" : "v";
           }
+          if (dir !== "h") return;
+          const el = e.currentTarget;
+          el.style.transition = "none";
+          el.style.transform = `translateX(${Math.min(Math.max(dx - 16, 0) * 0.5, 64)}px)`;
+          if (dx >= 140 && !armed) {
+            armed = true;
+            try { if (navigator.vibrate) navigator.vibrate(12); } catch (er) {}
+          } else if (dx < 140) armed = false;
         };
         const onTouchEnd = (e) => {
           const el = e.currentTarget;
-          const diff = touchCurrentX - touchStartX;
-          el.style.transition = "transform .2s ease";
+          el.style.transition = "transform .15s ease";
           el.style.transform = "translateX(0)";
-          if (diff > 60) {
+          if (dir === "h" && armed) {
             setChatReplyTo({
               id: m.id,
               from: m.from,
@@ -13795,6 +14052,7 @@ ${buildShareUrl(post.id)}`;
             });
             setTimeout(() => chatInputRef.current?.focus(), 50);
           }
+          dir = ""; armed = false;
         };
         let bubbleContent = null;
         if (isImageMsg && m.imageUrl) {
