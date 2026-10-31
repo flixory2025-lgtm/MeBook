@@ -37,6 +37,11 @@ html,body{margin:0;padding:0;background:#000;}
     C=window.Capacitor||{};
     if(!native)return;
     window.__mbNative=true;
+    window.__mbBootDone=function(){
+      var b=document.getElementById("boot"); if(!b)return;
+      b.style.opacity="0"; setTimeout(function(){var x=document.getElementById("boot"); if(x&&x.parentNode)x.parentNode.removeChild(x);},280);
+    };
+    setTimeout(function(){window.__mbBootDone&&window.__mbBootDone();},12000);
     var de=document.documentElement;
     de.classList.add("mb-native");
     var P=C.Plugins||{};
@@ -86,7 +91,7 @@ html.mb-native{--sat:max(env(safe-area-inset-top,0px),var(--safe-area-inset-top,
  -webkit-tap-highlight-color:transparent;overscroll-behavior:none;}
 html.mb-native body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
 html.mb-native input,html.mb-native textarea,html.mb-native [contenteditable]{-webkit-user-select:text;user-select:text;}
-html.mb-native #boot{display:none!important;}
+#boot{transition:opacity .25s ease;}
 html.mb-native .mebook-root::before{content:"";position:fixed;top:0;left:0;right:0;height:var(--sat);background:var(--header-bg);z-index:1001;pointer-events:none;}
 html.mb-native .mebook-root.dark-mode::before{background:#000;}
 html.mb-native .mebook-root .mb-header{height:calc(60px + var(--sat));padding-top:var(--sat);box-sizing:border-box;}
@@ -8866,6 +8871,7 @@ function MeBookPage({ onExit }) {
               }
             } catch {
             }
+            if (window.__mbBootDone) setTimeout(window.__mbBootDone, 600);
           } else {
             void oneSignalLogout();
             setUser(null);
@@ -8873,12 +8879,14 @@ function MeBookPage({ onExit }) {
             cleanupListeners();
             setAuthBusy(false);
             setPageStack([{ view: "home" }]);
+            if (window.__mbBootDone) setTimeout(window.__mbBootDone, 350);
           }
         });
       } catch (e) {
         console.error("Firebase init failed:", e);
         showToast("Firebase error", "Init failed", "error");
         setAuthBusy(false);
+        if (window.__mbBootDone) window.__mbBootDone();
       }
     })();
     return () => {
@@ -13790,7 +13798,7 @@ function SideItem({
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(MeBookPage, null));
-document.getElementById("boot") && document.getElementById("boot").remove();
+if (!window.__mbNative) document.getElementById("boot") && document.getElementById("boot").remove();
 })();
 </script>
 </body>
