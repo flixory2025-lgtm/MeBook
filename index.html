@@ -3064,9 +3064,9 @@ transition:transform .15s ease,box-shadow .15s ease;-webkit-tap-highlight-color:
 }
 
 /* ===== Profile layout (cover + avatar like reference) ===== */
-.mebook-root .fbp-cover{height:250px;}
+.mebook-root .fbp-cover{height:274px;}
 .mebook-root .fbp-body{margin-top:-34px;border-radius:34px 34px 0 0;}
-.mebook-root .fbp-av-wrap{width:160px;margin:-106px auto 0;}
+.mebook-root .fbp-av-wrap{width:160px;margin:-130px auto 0;}
 .mebook-root .fbp-av{width:160px;height:160px;}
 .mebook-root .fbp-cam-cover{bottom:48px;right:16px;}
 .mebook-root .fbp-top-btn svg{filter:drop-shadow(0 1px 3px rgba(0,0,0,.6));}
@@ -3137,6 +3137,72 @@ transition:transform .15s ease,box-shadow .15s ease;-webkit-tap-highlight-color:
 .mebook-root .ma-item{display:flex;align-items:center;gap:16px;width:100%;padding:20px 16px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);font-size:20px;text-align:left;cursor:pointer;}
 .mebook-root .ma-item:last-child{border-bottom:none;}
 .mebook-root .ma-item span{flex:1;}
+
+/* ===== 3D glossy green buttons + gradient icons ===== */
+.mebook-root .mb-side-item.active,.mebook-root .rx-add-btn,.mebook-root .rx-send,.mebook-root .rx-sticker-cats button.on,.mebook-root .rx-edit-actions button.save,.mebook-root .sh-now,.mebook-root .pm-done,.mebook-root .mb-btn-primary,.mebook-root .mechat-recording-send,.mebook-root .notif-action-btn.accept,.mebook-root .mb-profile-btn-message,.mebook-root .mb-modal-save,.mebook-root .cmt-edit-actions .cmt-edit-save,.mebook-root .mc-add-confirm,.mebook-root .sr-chip.on,.mebook-root .fbp-viewas button,.mebook-root .fbp-btn-msg,.mebook-root .fbp-save,.mebook-root .st-plus,.mebook-root .st-share,.mebook-root .st-rx.like,.mebook-root .st-sbtn,.mebook-root .st-chipb.on,.mebook-root .cp2-next,.mebook-root .cp2 .st-chipb.on,.mebook-root .frx-btn.pri{background:radial-gradient(130% 100% at 50% 0%,rgba(190,224,40,.95) 0%,rgba(190,224,40,0) 62%),linear-gradient(180deg,#63a81a 0%,#3e7d0d 100%);color:#fff;border-color:#2f5f08;box-shadow:inset 0 1px 0 rgba(255,255,255,.38),0 3px 0 #2f5f08,0 5px 9px rgba(0,0,0,.28);text-shadow:0 -1px 0 rgba(0,0,0,.3);}
+.mebook-root .mb-side-item.active:active,.mebook-root .rx-add-btn:active,.mebook-root .rx-send:active,.mebook-root .rx-sticker-cats button.on:active,.mebook-root .rx-edit-actions button.save:active,.mebook-root .sh-now:active,.mebook-root .pm-done:active,.mebook-root .mb-btn-primary:active,.mebook-root .mechat-recording-send:active,.mebook-root .notif-action-btn.accept:active,.mebook-root .mb-profile-btn-message:active,.mebook-root .mb-modal-save:active,.mebook-root .cmt-edit-actions .cmt-edit-save:active,.mebook-root .mc-add-confirm:active,.mebook-root .sr-chip.on:active,.mebook-root .fbp-viewas button:active,.mebook-root .fbp-btn-msg:active,.mebook-root .fbp-save:active,.mebook-root .st-plus:active,.mebook-root .st-share:active,.mebook-root .st-rx.like:active,.mebook-root .st-sbtn:active,.mebook-root .st-chipb.on:active,.mebook-root .cp2-next:active,.mebook-root .cp2 .st-chipb.on:active,.mebook-root .frx-btn.pri:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 0 #2f5f08,0 2px 4px rgba(0,0,0,.3);}
+.mebook-root button[style*="rgb(22, 163, 74)"],.mebook-root button[style*="#16a34a"]{background:radial-gradient(130% 100% at 50% 0%,rgba(190,224,40,.95) 0%,rgba(190,224,40,0) 62%),linear-gradient(180deg,#63a81a 0%,#3e7d0d 100%) !important;border-color:#2f5f08 !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.38),0 3px 0 #2f5f08,0 5px 9px rgba(0,0,0,.28);text-shadow:0 -1px 0 rgba(0,0,0,.3);}
+.mebook-root .mb-menu-ico.green svg,.mebook-root .mb-menu-ico.blue svg,.mebook-root .rx-product svg,.mebook-root .mechat-head-btn svg,.mebook-root .mechat-bubble.them .mechat-voice-play svg,.mebook-root .mechat-input-icon svg,.mebook-root .mechat-like-btn svg,.mebook-root .cmt-img-btn svg,.mebook-root .mb-page-title svg,.mebook-root .mb-info-row svg,.mebook-root .cp-movie-tag svg,.mebook-root .cp-upload-box svg,.mebook-root .mechat-scrolldown svg{fill:url(#mbGreenGrad);}
+
+/* ===== compact (mobile-size) side nav / settings / account ===== */
+.mebook-root .sn-panel{width:min(80vw,320px);padding-top:calc(10px + env(safe-area-inset-top,0px));}
+.mebook-root .sn-card{margin:0 10px;border-radius:16px;}
+.mebook-root .sn-acc{padding:10px 12px;gap:10px;}
+.mebook-root .sn-acc img{width:40px;height:40px;}
+.mebook-root .sn-acc b{font-size:15.5px;}
+.mebook-root .sn-chev{width:32px;height:32px;}
+.mebook-root .sn-chev svg{width:18px;height:18px;}
+.mebook-root .sn-create{padding:9px 14px;font-size:14px;gap:10px;}
+.mebook-root .sn-plus{width:30px;height:30px;}
+.mebook-root .sn-plus svg{width:17px;height:17px;}
+.mebook-root .sn-h{font-size:14.5px;margin:14px 12px 8px;}
+.mebook-root .sn-short{gap:10px;padding:0 12px 2px;}
+.mebook-root .sn-short button{flex:0 0 64px;font-size:11.5px;}
+.mebook-root .sn-short img{width:64px;height:64px;border-radius:11px;margin-bottom:4px;}
+.mebook-root .sn-grid{gap:8px;padding:0 10px;margin-top:12px;}
+.mebook-root .sn-tile{padding:10px;gap:8px;min-height:66px;font-size:13px;border-radius:13px;}
+.mebook-root .sn-tile svg{width:22px;height:22px;}
+.mebook-root .sn-more{margin:12px 10px;width:calc(100% - 20px);padding:10px;font-size:14px;border-radius:10px;}
+.mebook-root .sn-sec-head{padding:12px 14px;font-size:15px;gap:10px;}
+.mebook-root .sn-sec-head>svg{width:18px;height:18px;}
+.mebook-root .sn-row{padding:9px 16px;font-size:14px;gap:12px;}
+.mebook-root .sn-row-ico{width:24px;height:24px;}
+.mebook-root .sn-row-ico svg,.mebook-root .sn-sec-head .sn-row-ico svg{width:20px;height:20px;}
+.mebook-root .sn-foot{padding:10px;}
+.mebook-root .sn-logout{padding:10px;font-size:14px;border-radius:10px;}
+.mebook-root .fbs-head{padding-bottom:4px;}
+.mebook-root .fbs-head b{font-size:15.5px;}
+.mebook-root .fbs-ib{width:36px;height:36px;}
+.mebook-root .fbs-ib svg{width:20px;height:20px;}
+.mebook-root .fbs-search{margin:10px 12px 2px;width:calc(100% - 24px);padding:9px 16px;font-size:14px;border-radius:20px;}
+.mebook-root .fbs-sec-t{font-size:16px;margin:18px 14px 2px;}
+.mebook-root .fbs-sec-s{font-size:12.5px;margin:0 14px 4px;}
+.mebook-root .fbs-item{padding:9px 14px;gap:12px;}
+.mebook-root .fbs-ico{width:24px;}
+.mebook-root .fbs-ico svg,.mebook-root .fbs-ico img{width:21px;height:21px;}
+.mebook-root .fbs-item b{font-size:14.5px;}
+.mebook-root .fbs-item small{font-size:12px;margin-top:1px;}
+.mebook-root .ma-sheet{padding:12px 12px 24px;border-radius:24px 24px 0 0;}
+.mebook-root .ma-top{height:38px;margin-bottom:8px;}
+.mebook-root .ma-top .x{width:38px;height:38px;}
+.mebook-root .ma-top .x svg{width:22px;height:22px;}
+.mebook-root .ma-brand{font-size:20px;}
+.mebook-root .ma-brand img{width:26px;height:26px;}
+.mebook-root .ma-banner{padding:11px;gap:10px;border-radius:16px;margin-bottom:16px;}
+.mebook-root .ma-banner img{width:34px;height:34px;}
+.mebook-root .ma-banner b{font-size:14px;}
+.mebook-root .ma-banner span{font-size:12.5px;}
+.mebook-root .ma-h{font-size:24px;margin-bottom:6px;}
+.mebook-root .ma-p{font-size:13.5px;margin-bottom:14px;}
+.mebook-root .ma-email{padding:11px 12px;gap:10px;border-radius:18px;margin-bottom:10px;}
+.mebook-root .ma-email b{font-size:14.5px;}
+.mebook-root .ma-email small{font-size:13px;}
+.mebook-root .ma-email img.av{width:38px;height:38px;}
+.mebook-root .ma-email>img:first-child{width:28px;height:28px;}
+.mebook-root .ma-list{border-radius:18px;margin-bottom:10px;}
+.mebook-root .ma-item{padding:13px 12px;font-size:14.5px;gap:12px;}
+.mebook-root .ma-item svg:first-child{width:22px;height:22px;}
+.mebook-root .ma-item svg:last-child{width:16px;height:16px;}
 
 /* ===================== STORIES ===================== */
 .mebook-root .st-bar{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;margin:0 0 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
@@ -12536,7 +12602,8 @@ ${buildShareUrl(post.id)}`;
       pushPage("settings");
     }), acctRow("friends", "Cross-profile experiences", () => setUnavail("Cross-profile experiences")), acctRow("terms", "Your information and permissions", () => setUnavail("Your information and permissions")), acctRow("ads", "Ad preferences", () => setUnavail("Ad preferences")), acctRow("pay", "MeBook Pay", () => setUnavail("MeBook Pay")), acctRow("pay", "Subscriptions", () => setUnavail("Subscriptions")), acctRow("feeds", "Your media gallery", () => setUnavail("Your media gallery"))), h("div", { className: "ma-list" }, acctRow("usergear", "Manage account", () => setUnavail("Manage account")))));
     const pop = unavail && h("div", { className: "mb-exit-overlay", onClick: () => setUnavail(null) }, h("div", { className: "mb-exit-dialog", role: "dialog", "aria-modal": "true", onClick: (e) => e.stopPropagation() }, h("div", { className: "mb-exit-icon", style: { background: "rgba(245,158,11,.15)", color: "#f59e0b" } }, SnI("warn", 30)), h("div", { className: "mb-exit-title" }, "Unavailable"), h("div", { className: "mb-exit-text" }, "This feature is currently unavailable for you."), h("div", { className: "mb-exit-actions" }, h("button", { className: "mb-exit-btn cancel", onClick: () => setUnavail(null) }, "OK"))));
-    return h(React.Fragment, null, nav, acct, pop);
+    const defs = h("svg", { width: 0, height: 0, "aria-hidden": "true", style: { position: "absolute", width: 0, height: 0, overflow: "hidden" }, dangerouslySetInnerHTML: { __html: '<defs><linearGradient id="mbGreenGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a6d62c"/><stop offset="1" stop-color="#3f7d0e"/></linearGradient></defs>' } });
+    return h(React.Fragment, null, defs, nav, acct, pop);
   };
   const renderFbSettings = () => {
     const h = React.createElement;
@@ -13636,7 +13703,7 @@ ${buildShareUrl(post.id)}`;
           )
         );
       }))));
-    })(), currentView === "user-profile" && viewingUser && renderFbProfile(), currentView === "fb-profile-menu" && renderFbMenu(), currentView === "fb-own-menu" && renderFbOwnMenu(), currentView === "fb-settings" && renderFbSettings(), currentView === "fb-view-as" && renderFbProfileCore("preview", profile, myPosts, myFriends, false), currentView === "fb-activity" && renderFbActivity(), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement("div", { className: "mc-listpage" }, mcListHead(), /* @__PURE__ */ React.createElement("div", { className: "mc-listpage-body" }, renderChatListPanel(false)), mcTabBar()) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true)), mcBackBtn("in-side")), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" })), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, chatPartner?.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "#16a34a" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : "Active now")), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), /* @__PURE__ */ React.createElement(
+    })(), currentView === "user-profile" && viewingUser && renderFbProfile(), currentView === "fb-profile-menu" && renderFbMenu(), currentView === "fb-own-menu" && renderFbOwnMenu(), currentView === "fb-settings" && renderFbSettings(), currentView === "fb-view-as" && renderFbProfileCore("preview", profile, myPosts, myFriends, false), currentView === "fb-activity" && renderFbActivity(), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement("div", { className: "mc-listpage" }, mcListHead(), /* @__PURE__ */ React.createElement("div", { className: "mc-listpage-body" }, renderChatListPanel(false)), mcTabBar()) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true)), mcBackBtn("in-side")), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" })), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, chatPartner?.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "url(#mbGreenGrad)" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : "Active now")), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), /* @__PURE__ */ React.createElement(
       "div",
       {
         className: "mechat-body",
