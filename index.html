@@ -3730,6 +3730,14 @@ html.mb-native .mebook-root.mb-hdr-off .mb-layout{padding-top:calc(62px + var(--
 .mebook-root .mb-nav-label .me3d{background:none !important;-webkit-background-clip:border-box !important;background-clip:border-box !important;-webkit-text-fill-color:currentColor !important;color:inherit !important;filter:none !important;font-weight:inherit !important;display:inline;}
 
 /* ===== MeChat seen avatar at the very bottom ===== */
+.mebook-root .mechat-typing-row{display:flex;align-items:flex-end;gap:8px;padding:4px 12px 6px;animation:bubbleIn .2s ease;}
+.mebook-root .mechat-typing-row img{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.mebook-root .mechat-typing-bubble{display:flex;align-items:center;gap:5px;padding:14px 16px;border-radius:20px;background:var(--bubble-them-bg,#e4e6eb);box-shadow:0 1px 2px rgba(0,0,0,.12);}
+.mebook-root .mechat-typing-bubble i{width:8px;height:8px;border-radius:50%;background:#8a8d91;display:block;animation:mcTypeDot 1.2s infinite ease-in-out;}
+.mebook-root .mechat-typing-bubble i:nth-child(2){animation-delay:.18s;}
+.mebook-root .mechat-typing-bubble i:nth-child(3){animation-delay:.36s;}
+@keyframes mcTypeDot{0%,60%,100%{transform:translateY(0);opacity:.45;}30%{transform:translateY(-5px);opacity:1;}}
+.mebook-root .msgr-item-last.unread{font-weight:700;color:var(--text);}
 .mebook-root .mechat-like-btn.has-qr svg{display:none;}
 .mebook-root .mechat-like-btn.has-qr::after{content:attr(data-qr);font-size:24px;line-height:1;}
 .mebook-root .mechat-seen-tail{display:flex;justify-content:flex-end;padding:2px 14px 6px;}
@@ -9277,6 +9285,8 @@ function MeBookPage({ onExit }) {
   const [chatConfirm, setChatConfirm] = useState(null);
   const [addMembersFor, setAddMembersFor] = useState(null);
   const [chatInfoOpen, setChatInfoOpen] = useState(false);
+  const chatsRef = useRef([]);
+  chatsRef.current = chats;
   const lastFxRef = useRef(null);
   const fxChatRef = useRef(null);
   const [chatHeads, setChatHeads] = useState([]);
@@ -9468,6 +9478,18 @@ function MeBookPage({ onExit }) {
     if (!chatPartner) return;
     setChatInfoOpen(true);
   };
+  const mcUnreadFields = (fb, chatId) => {
+    const o = {};
+    try {
+      const c = chats.find((x) => x.id === chatId);
+      const ids = c && c.members ? c.members : chatPartner && chatPartner.uid && !chatPartner.isGroup ? [user.uid, chatPartner.uid] : [];
+      ids.forEach((u) => {
+        if (u !== user.uid) o["unread." + u] = fb.increment(1);
+      });
+    } catch (e) {
+    }
+    return o;
+  };
   const mcNickOf = (uid) => {
     const n = chatPrefs.nick && chatPrefs.nick[activeChat];
     return n && n[uid] ? n[uid] : null;
@@ -9594,6 +9616,15 @@ function MeBookPage({ onExit }) {
   const [chatInput, setChatInput] = useState("");
   const [partnerTyping, setPartnerTyping] = useState(false);
   const [partnerLastSeenMessageId, setPartnerLastSeenMessageId] = useState(null);
+  useEffect(() => {
+    if (!partnerTyping) return;
+    const el = chatBodyRef.current;
+    if (el && el.scrollHeight - el.scrollTop - el.clientHeight < 260) {
+      setTimeout(() => {
+        el.scrollTop = el.scrollHeight;
+      }, 30);
+    }
+  }, [partnerTyping]);
   const seenTailMode = (() => {
     try {
       if (!partnerLastSeenMessageId || !chatMessages.length || !user) return false;
@@ -9843,6 +9874,14 @@ function MeBookPage({ onExit }) {
         if (!latestVisiblePartnerMessage?.id) return;
         const messageId = String(latestVisiblePartnerMessage.id);
         if (lastMarkedSeenRef.current === messageId) return;
+        try {
+          const cc0 = chatsRef.current.find((x) => x.id === activeChat);
+          if (cc0 && cc0.unreadN > 0) {
+            getFirebase().then((fb0) => fb0.updateDoc(fb0.doc(fb0.db, "chats", activeChat), { ["unread." + user.uid]: 0 })).catch(() => {
+            });
+          }
+        } catch (e) {
+        }
         if (chatPrefsRef.current.readOff && chatPrefsRef.current.readOff[activeChat]) return;
         lastMarkedSeenRef.current = messageId;
         void (async () => {
@@ -10098,7 +10137,8 @@ function MeBookPage({ onExit }) {
                     last: data.lastMessage || "",
                     lastAt: data.lastAt,
                     isGroup: true,
-                    members: data.members
+                    members: data.members,
+                    unreadN: data.unread && data.unread[uid] || 0
                   };
                 }
                 const otherId = data.members.find((m) => m !== uid);
@@ -10111,7 +10151,8 @@ function MeBookPage({ onExit }) {
                   other: s.data(),
                   last: data.lastMessage || "",
                   lastAt: data.lastAt,
-                  members: data.members
+                  members: data.members,
+                  unreadN: data.unread && data.unread[uid] || 0
                 };
               } catch (e) {
                 return null;
@@ -12345,6 +12386,7 @@ ${buildShareUrl(post.id)}`;
       }
       await fb.addDoc(fb.collection(fb.db, "chats", activeChat, "messages"), payload);
       await fb.updateDoc(fb.doc(fb.db, "chats", activeChat), {
+        ...mcUnreadFields(fb, activeChat),
         lastMessage: { text, from: user.uid },
         lastAt: fb.serverTimestamp()
       });
@@ -12365,6 +12407,7 @@ ${buildShareUrl(post.id)}`;
         at: fb.serverTimestamp()
       });
       await fb.updateDoc(fb.doc(fb.db, "chats", activeChat), {
+        ...mcUnreadFields(fb, activeChat),
         lastMessage: { text: qrE, from: user.uid },
         lastAt: fb.serverTimestamp()
       });
@@ -12386,6 +12429,7 @@ ${buildShareUrl(post.id)}`;
         at: fb.serverTimestamp()
       });
       await fb.updateDoc(fb.doc(fb.db, "chats", activeChat), {
+        ...mcUnreadFields(fb, activeChat),
         lastMessage: { text: "\u{1F4F7} Photo", from: user.uid },
         lastAt: fb.serverTimestamp()
       });
@@ -12480,6 +12524,7 @@ ${buildShareUrl(post.id)}`;
         at: fb.serverTimestamp()
       });
       await fb.updateDoc(fb.doc(fb.db, "chats", activeChat), {
+        ...mcUnreadFields(fb, activeChat),
         lastMessage: { text: "\u{1F3A4} Voice message", from: user.uid },
         lastAt: fb.serverTimestamp()
       });
@@ -12886,13 +12931,19 @@ ${buildShareUrl(post.id)}`;
       myReaction ? REACTIONS.find((r) => r.key === myReaction)?.label || "Like" : "Like"
     ), /* @__PURE__ */ React.createElement("button", { className: "mb-action", onClick: () => setEngageSheet({ postId: post.id, mode: "comments", tab: "all" }) }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z" })), "Comment"), /* @__PURE__ */ React.createElement("button", { className: "mb-action", onClick: () => setShareSheetPostId(post.id) }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z" })), "Share")));
   };
-  const unreadCount = chats.filter((c) => {
+  const mcUnreadOf = (c) => {
     const pr = chatPrefs;
-    if (pr.archived[c.id] || pr.ignored[c.id] || pr.muted[c.id]) return false;
+    if (currentView === "messages" && c.id === activeChat && !pr.unread[c.id]) return 0;
+    const n = c.unreadN || 0;
+    return n > 0 ? n : pr.unread[c.id] ? 1 : 0;
+  };
+  const unreadCount = chats.reduce((a, c) => {
+    const pr = chatPrefs;
+    if (pr.archived[c.id] || pr.ignored[c.id] || pr.muted[c.id]) return a;
     const del = pr.deleted[c.id];
-    if (del && (c.lastAt && c.lastAt.seconds ? c.lastAt.seconds : 0) <= del) return false;
-    return !!pr.unread[c.id] || !!(c.last && c.last.read === false && c.last.from !== user.uid);
-  }).length;
+    if (del && (c.lastAt && c.lastAt.seconds ? c.lastAt.seconds : 0) <= del) return a;
+    return a + mcUnreadOf(c);
+  }, 0);
   const filteredFriends = friends.filter((f) => {
     const q = friendSearch.trim().toLowerCase();
     if (!q) return true;
@@ -12957,7 +13008,7 @@ ${buildShareUrl(post.id)}`;
     const photo = avatarUrl(c.other);
     const pr = chatPrefs;
     const lastObj = c.last;
-    const unread = !!pr.unread[c.id] || !!lastObj && lastObj.read === false && lastObj.from !== user.uid;
+    const unread = mcUnreadOf(c) > 0;
     const flags = [];
     if (pr.pinned[c.id]) flags.push(React.createElement("span", { key: "p", className: "mc-flag" }, mcIcon(MC_IC.pin, 14)));
     if (pr.muted[c.id]) flags.push(React.createElement("span", { key: "m", className: "mc-flag" }, mcIcon(MC_IC.bellOff, 14)));
@@ -12983,7 +13034,7 @@ ${buildShareUrl(post.id)}`;
           React.createElement("span", { className: "mc-name-text" }, c.other.name),
           !c.isGroup && isVerifiedUid(c.otherId, c.other) ? mcVerifiedBadge(14) : null
         ),
-        React.createElement("div", { className: "msgr-item-last" + (unread ? " unread" : "") }, lastObj && lastObj.text || "Say hi \u{1F44B}")
+        React.createElement("div", { className: "msgr-item-last" + (unread ? " unread" : "") }, lastObj && lastObj.text ? (lastObj.from === user.uid ? "You: " : "") + lastObj.text : "Say hi \u{1F44B}")
       ),
       React.createElement(
         "div",
@@ -14605,7 +14656,7 @@ ${buildShareUrl(post.id)}`;
       },
       /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.5 2 2 6.14 2 11.25c0 2.88 1.41 5.45 3.62 7.16.12 1.1-.28 2.62-1.05 3.59-.13.16-.02.4.18.38 2.34-.19 4.05-1.25 4.85-1.85.77.16 1.58.25 2.4.25 5.5 0 10-4.14 10-9.25S17.5 2 12 2z" })),
       /* @__PURE__ */ React.createElement("span", { className: "mb-nav-label" }, /* @__PURE__ */ React.createElement("span", { className: "me3d" }, "Me"), "Chat"),
-      unreadCount > 0 && /* @__PURE__ */ React.createElement("span", { className: "mb-badge-dot" }, unreadCount)
+      unreadCount > 0 && /* @__PURE__ */ React.createElement("span", { className: "mb-badge-dot" }, unreadCount > 99 ? "99+" : unreadCount)
     ), /* @__PURE__ */ React.createElement(
       "button",
       {
@@ -15038,6 +15089,7 @@ ${buildShareUrl(post.id)}`;
           reactionEmojis.length > 0 && /* @__PURE__ */ React.createElement("span", { className: "mechat-reaction-badge" }, reactionEmojis.slice(0, 3).join(""), reactionKeys.length > 1 && ` ${reactionKeys.length}`)
         ));
       }),
+      partnerTyping && !(chatPartner && chatPartner.isGroup) && /* @__PURE__ */ React.createElement("div", { className: "mechat-typing-row", key: "typing-row" }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), /* @__PURE__ */ React.createElement("div", { className: "mechat-typing-bubble" }, /* @__PURE__ */ React.createElement("i", null), /* @__PURE__ */ React.createElement("i", null), /* @__PURE__ */ React.createElement("i", null))),
       seenTailMode && /* @__PURE__ */ React.createElement("div", { className: "mechat-seen-tail" }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }))
     ), showScrollDown && /* @__PURE__ */ React.createElement(
       "button",
