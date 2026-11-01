@@ -2674,6 +2674,12 @@ text-shadow:0 0 15px rgba(34,197,94,.35);
 .mebook-root .mb-yt-stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none;}
 .mebook-root .mb-yt-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
 .mebook-root .mb-yt-shade{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.25),rgba(0,0,0,.05) 40%,rgba(0,0,0,.35));}
+.mebook-root .mb-yt-cover{position:absolute;left:0;right:0;top:0;height:15%;z-index:1;pointer-events:none;background:linear-gradient(to bottom,#000 0,rgba(0,0,0,.92) 45%,rgba(0,0,0,0));}
+.mebook-root .mb-yt-wm,.mebook-root .shp-wm{position:absolute;right:10px;z-index:2;pointer-events:none;padding:3px 9px;border-radius:8px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;font-weight:800;letter-spacing:.2px;animation:mbWmIn .6s ease both;}
+.mebook-root .mb-yt-wm{top:10px;}
+.mebook-root .shp-wm{top:58px;z-index:21;}
+.mebook-root .shp-cover{position:absolute;left:0;right:0;top:0;height:16%;z-index:4;pointer-events:none;background:linear-gradient(to bottom,#000 0,rgba(0,0,0,.9) 50%,rgba(0,0,0,0));}
+@keyframes mbWmIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
 .mebook-root .mb-yt-badge{
 position:absolute;top:10px;left:10px;z-index:2;padding:4px 9px;border-radius:8px;
 background:rgba(0,0,0,.6);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;
@@ -6002,7 +6008,7 @@ function YouTubePost({
       /* @__PURE__ */ React.createElement("div", { ref: mountRef, style: { position: "absolute", inset: 0 } }),
       !started && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("img", { className: "mb-yt-thumb", src: thumbUrl, alt: "", loading: "lazy" }), /* @__PURE__ */ React.createElement("div", { className: "mb-yt-shade" }))
     ),
-    /* @__PURE__ */ React.createElement("span", { className: "mb-yt-badge" }, /* @__PURE__ */ React.createElement("i", null), isShort ? "Shorts" : "Video"),
+    /* @__PURE__ */ React.createElement("span", { className: "mb-yt-badge" }, /* @__PURE__ */ React.createElement("i", null), isShort ? "Shorts" : "Video"), /* @__PURE__ */ React.createElement("div", { className: "mb-yt-cover" }), /* @__PURE__ */ React.createElement("span", { className: "mb-yt-wm" }, "MeBook"),
     !active && /* @__PURE__ */ React.createElement(
       "button",
       {
@@ -6018,7 +6024,7 @@ function YouTubePost({
     active && !started && !err && /* @__PURE__ */ React.createElement("div", { className: "mb-yt-spinner" }),
     active && !err && /* @__PURE__ */ React.createElement("div", { className: "mb-yt-tap", onClick: togglePlay }),
     flash && /* @__PURE__ */ React.createElement("div", { className: "mb-yt-flash", key: flash.n }, flash.label),
-    active && started && !err && /* @__PURE__ */ React.createElement("div", { className: "mb-yt-bar", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement(
+    active && started && !err && !playing && /* @__PURE__ */ React.createElement("div", { className: "mb-yt-bar", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement(
       "input",
       {
         className: "mb-yt-seek",
@@ -6271,7 +6277,7 @@ function ShortItem(props) {
   const audioText = post.music && post.music.title ? `${post.music.title}${post.music.artist ? " \xB7 " + post.music.artist : ""}` : `${post.authorName || "User"} \xB7 Original audio`;
   const showProg = started && !playing && !err;
   const pct = dur ? Math.min(100, cur / dur * 100) : 0;
-  return /* @__PURE__ */ React.createElement("div", { className: "shp-col" }, /* @__PURE__ */ React.createElement("div", { className: "shp-media" }, /* @__PURE__ */ React.createElement("div", { className: "shp-stage" }, /* @__PURE__ */ React.createElement("div", { className: "shp-frame", style: frameStyle }, /* @__PURE__ */ React.createElement("div", { ref: mountRef, className: "shp-mount" }), !started && /* @__PURE__ */ React.createElement("img", { className: "shp-thumb", src: thumbUrl, alt: "" })), active && !err && /* @__PURE__ */ React.createElement("div", { className: "shp-tap", onClick: togglePlay }), active && !started && !err && /* @__PURE__ */ React.createElement("div", { className: "mb-yt-spinner" }), flash && /* @__PURE__ */ React.createElement("div", { className: "mb-yt-flash", key: flash.n }, flash.label), err && /* @__PURE__ */ React.createElement("div", { className: "mb-yt-err" }, /* @__PURE__ */ React.createElement("span", null, "This video can\u2019t be played here."), /* @__PURE__ */ React.createElement("a", { href: post.youtube?.url || `https://www.youtube.com/watch?v=${videoId}`, target: "_blank", rel: "noopener noreferrer" }, "Watch on YouTube")), /* @__PURE__ */ React.createElement("div", { className: "shp-shade" }), /* @__PURE__ */ React.createElement("div", { className: "shp-info" }, /* @__PURE__ */ React.createElement("img", { src: avatar, alt: "", onClick: props.onOpenProfile }), /* @__PURE__ */ React.createElement("div", { className: "shp-itxt" }, /* @__PURE__ */ React.createElement("div", { className: "shp-uname", onClick: props.onOpenProfile }, /* @__PURE__ */ React.createElement("span", null, post.authorName || "User"), props.verified ? /* @__PURE__ */ React.createElement("svg", { width: "15", height: "15", viewBox: "0 0 24 24", style: { fill: "url(#mbTickGrad)" } }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" })) : /* @__PURE__ */ React.createElement("svg", { width: "15", height: "15", viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" }))), /* @__PURE__ */ React.createElement("div", { className: "shp-audio" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" })), /* @__PURE__ */ React.createElement("span", null, audioText))), props.showFollow && /* @__PURE__ */ React.createElement("button", { className: `shp-follow${props.following ? " on" : ""}`, onClick: props.onFollow }, props.following ? "Following" : "Follow")), /* @__PURE__ */ React.createElement("div", { className: "shp-acts" }, /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { className: "shp-col" }, /* @__PURE__ */ React.createElement("div", { className: "shp-media" }, /* @__PURE__ */ React.createElement("div", { className: "shp-stage" }, /* @__PURE__ */ React.createElement("div", { className: "shp-frame", style: frameStyle }, /* @__PURE__ */ React.createElement("div", { ref: mountRef, className: "shp-mount" }), !started && /* @__PURE__ */ React.createElement("img", { className: "shp-thumb", src: thumbUrl, alt: "" })), active && !err && /* @__PURE__ */ React.createElement("div", { className: "shp-tap", onClick: togglePlay }), active && !started && !err && /* @__PURE__ */ React.createElement("div", { className: "mb-yt-spinner" }), flash && /* @__PURE__ */ React.createElement("div", { className: "mb-yt-flash", key: flash.n }, flash.label), err && /* @__PURE__ */ React.createElement("div", { className: "mb-yt-err" }, /* @__PURE__ */ React.createElement("span", null, "This video can\u2019t be played here."), /* @__PURE__ */ React.createElement("a", { href: post.youtube?.url || `https://www.youtube.com/watch?v=${videoId}`, target: "_blank", rel: "noopener noreferrer" }, "Watch on YouTube")), /* @__PURE__ */ React.createElement("div", { className: "shp-cover" }), /* @__PURE__ */ React.createElement("span", { className: "shp-wm" }, "MeBook"), /* @__PURE__ */ React.createElement("div", { className: "shp-shade" }), /* @__PURE__ */ React.createElement("div", { className: "shp-info" }, /* @__PURE__ */ React.createElement("img", { src: avatar, alt: "", onClick: props.onOpenProfile }), /* @__PURE__ */ React.createElement("div", { className: "shp-itxt" }, /* @__PURE__ */ React.createElement("div", { className: "shp-uname", onClick: props.onOpenProfile }, /* @__PURE__ */ React.createElement("span", null, post.authorName || "User"), props.verified ? /* @__PURE__ */ React.createElement("svg", { width: "15", height: "15", viewBox: "0 0 24 24", style: { fill: "url(#mbTickGrad)" } }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" })) : /* @__PURE__ */ React.createElement("svg", { width: "15", height: "15", viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" }))), /* @__PURE__ */ React.createElement("div", { className: "shp-audio" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" })), /* @__PURE__ */ React.createElement("span", null, audioText))), props.showFollow && /* @__PURE__ */ React.createElement("button", { className: `shp-follow${props.following ? " on" : ""}`, onClick: props.onFollow }, props.following ? "Following" : "Follow")), /* @__PURE__ */ React.createElement("div", { className: "shp-acts" }, /* @__PURE__ */ React.createElement(
     "button",
     {
       className: "shp-act",
@@ -6302,6 +6308,35 @@ function ShortItem(props) {
     }
   )), /* @__PURE__ */ React.createElement("button", { className: "shp-cbar", onClick: props.onComment }, /* @__PURE__ */ React.createElement("span", null, "Add a comment"), /* @__PURE__ */ React.createElement("span", { className: "ic" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10h5v-2h-5c-4.34 0-8-3.66-8-8s3.66-8 8-8 8 3.66 8 8v1.43c0 .79-.71 1.57-1.5 1.57s-1.5-.78-1.5-1.57V12c0-2.76-2.24-5-5-5s-5 2.24-5 5 2.24 5 5 5c1.38 0 2.64-.56 3.54-1.47.65.89 1.77 1.47 2.96 1.47 1.97 0 3.5-1.6 3.5-3.57V12c0-5.52-4.48-10-10-10zm0 13c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z" })), /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" })), /* @__PURE__ */ React.createElement("span", { className: "gif" }, "GIF")))));
 }
+function shSeenGet() {
+  try { return JSON.parse(localStorage.getItem("mebook_seen_shorts") || "[]"); } catch (e) { return []; }
+}
+function shSeenAdd(id) {
+  try {
+    const a = shSeenGet().filter((x) => x !== id);
+    a.push(id);
+    localStorage.setItem("mebook_seen_shorts", JSON.stringify(a.slice(-400)));
+  } catch (e) {}
+}
+function shShuffle(a) {
+  const b = a.slice();
+  for (let i = b.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [b[i], b[j]] = [b[j], b[i]];
+  }
+  return b;
+}
+function shSmartOrder(posts, startId) {
+  const seen = new Set(shSeenGet());
+  const ids = posts.map((p) => p.id);
+  const latest = ids.slice(0, 5).filter((id) => !seen.has(id) || id === startId);
+  const rest = ids.filter((id) => !latest.includes(id));
+  const fresh = shShuffle(rest.filter((id) => !seen.has(id)));
+  const old = shShuffle(rest.filter((id) => seen.has(id)));
+  let out = [...latest, ...fresh, ...old];
+  if (startId && out.includes(startId)) out = [startId, ...out.filter((x) => x !== startId)];
+  return out;
+}
 function ShortsPage(props) {
   const wrapRef = useRef(null);
   const [order, setOrder] = useState([]);
@@ -6314,13 +6349,17 @@ function ShortsPage(props) {
   const pausedRef = useRef(props.paused);
   pausedRef.current = props.paused;
   useEffect(() => {
-    if (order.length === 0 && props.posts.length > 0) setOrder(props.posts.map((p) => p.id));
+    if (order.length === 0 && props.posts.length > 0) setOrder(shSmartOrder(props.posts, props.startPostId));
   }, [props.posts, order.length]);
   const byId = {};
   props.posts.forEach((p) => {
     byId[p.id] = p;
   });
   const list = order.map((id) => byId[id]).filter(Boolean);
+  useEffect(() => {
+    const p = list[active];
+    if (p) shSeenAdd(p.id);
+  }, [active, list.length]);
   useEffect(() => {
     if (initRef.current || list.length === 0) return;
     initRef.current = true;
