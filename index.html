@@ -4621,9 +4621,11 @@ function EngageSheet(props) {
   entries.forEach(([, k]) => {
     counts[k] = (counts[k] || 0) + 1;
   });
-  const total = entries.length;
+  const fakeR = Math.max(0, Math.min(50000, Number(post.fakeReactions) || 0));
+  const fakeC = Math.max(0, Math.min(10000, Number(post.fakeComments) || 0));
+  const total = entries.length + fakeR;
   const tabKeys = REACTIONS.map((r) => r.key).filter((k) => counts[k]).sort((a, b) => counts[b] - counts[a]);
-  const topKeys = tabKeys.slice(0, 3);
+  const topKeys = tabKeys.length ? tabKeys.slice(0, 3) : fakeR > 0 ? ["like"] : [];
   const tab = props.tab === "all" || counts[props.tab] ? props.tab : "all";
   const friendIds = new Set(props.myFriends.map((f) => f.uid));
   const pendingIds = new Set(
@@ -4754,9 +4756,9 @@ function EngageSheet(props) {
         className: `rx-head-pill${mode === "comments" ? " active" : ""}`,
         onClick: () => props.onMode("comments")
       },
-      allComments.length,
+      allComments.length + fakeC,
       " ",
-      allComments.length === 1 ? "comment" : "comments"
+      allComments.length + fakeC === 1 ? "comment" : "comments"
     ), /* @__PURE__ */ React.createElement("span", { className: "rx-head-shares" }, sharesCount, " ", sharesCount === 1 ? "share" : "shares"))
   ), mode === "reactions" ? /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "rx-tabs" }, /* @__PURE__ */ React.createElement(
     "button",
@@ -4780,7 +4782,7 @@ function EngageSheet(props) {
       /* @__PURE__ */ React.createElement(ReactionIcon, { k, size: 20 }),
       counts[k]
     );
-  })), /* @__PURE__ */ React.createElement("div", { className: "rx-list" }, rows.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "rx-empty" }, "No reactions yet") : rows.map(({ uid, k, u }) => {
+  })), /* @__PURE__ */ React.createElement("div", { className: "rx-list" }, rows.length === 0 && !(fakeR > 0 && tab === "all") ? /* @__PURE__ */ React.createElement("div", { className: "rx-empty" }, "No reactions yet") : rows.map(({ uid, k, u }) => {
     const isMe = uid === me.uid;
     const isFriend = friendIds.has(uid);
     const pend = pendingIds.has(uid) || !!props.sentRequests[uid];
@@ -4792,7 +4794,7 @@ function EngageSheet(props) {
       },
       pend ? "Requested" : "Add friend"
     ));
-  }))) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "rx-list", style: { display: "flex", flexDirection: "column" } }, allComments.length > 0 && /* @__PURE__ */ React.createElement("button", { className: "rx-sort", onClick: cycleSort }, sortLabel, " \u25BE"), pending && /* @__PURE__ */ React.createElement("div", { className: "rx-cmt" }, /* @__PURE__ */ React.createElement("img", { className: "rx-cmt-av", src: avatarFor(props.profile), alt: "" }), /* @__PURE__ */ React.createElement("div", { className: "rx-cmt-main" }, /* @__PURE__ */ React.createElement("div", { className: "rx-cmt-bubble" }, /* @__PURE__ */ React.createElement("b", null, props.profile?.name || "You"), props.commentText, props.commentImagePreview && /* @__PURE__ */ React.createElement("img", { src: props.commentImagePreview, alt: "" })), /* @__PURE__ */ React.createElement("div", { className: "rx-cmt-meta" }, /* @__PURE__ */ React.createElement("span", null, "Posting\u2026")))), sortedTops.length === 0 && !pending ? /* @__PURE__ */ React.createElement("div", { className: "rx-empty" }, "No comments yet. Be the first to comment.") : sortedTops.map((c) => renderComment(c, false))), /* @__PURE__ */ React.createElement("div", { className: "rx-foot" }, props.lockMsg ? /* @__PURE__ */ React.createElement("div", { className: "rx-lock" }, props.lockMsg) : /* @__PURE__ */ React.createElement(React.Fragment, null, props.replyTo && /* @__PURE__ */ React.createElement("div", { className: "rx-replying" }, /* @__PURE__ */ React.createElement("span", null, "Replying to ", /* @__PURE__ */ React.createElement("b", null, props.replyTo.name)), /* @__PURE__ */ React.createElement("button", { onClick: () => props.setReplyTo(null) }, "Cancel")), /* @__PURE__ */ React.createElement("div", { className: "rx-quick" }, ["\u2764\uFE0F", "\u{1F64C}", "\u{1F525}", "\u{1F44F}", "\u{1F622}", "\u{1F60D}", "\u{1F62E}", "\u{1F602}"].map((em) => /* @__PURE__ */ React.createElement("button", { key: em, type: "button", onClick: () => props.onQuickEmoji(em) }, em))), props.commentImagePreview && /* @__PURE__ */ React.createElement("div", { className: "rx-img-prev" }, /* @__PURE__ */ React.createElement("img", { src: props.commentImagePreview, alt: "" }), /* @__PURE__ */ React.createElement("button", { onClick: props.onRemoveImage, title: "Remove photo" }, /* @__PURE__ */ React.createElement(PmIcon, { d: PM_IC.close }))), /* @__PURE__ */ React.createElement("div", { className: "rx-write" }, /* @__PURE__ */ React.createElement(
+  }), fakeR > 0 && tab === "all" && /* @__PURE__ */ React.createElement("div", { className: "rx-empty", style: { fontSize: 13, padding: "14px 16px" } }, "+", fakeR.toLocaleString(), " more ", fakeR === 1 ? "reaction" : "reactions", " \u00B7 you are not seen this reactions"))) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "rx-list", style: { display: "flex", flexDirection: "column" } }, allComments.length > 0 && /* @__PURE__ */ React.createElement("button", { className: "rx-sort", onClick: cycleSort }, sortLabel, " \u25BE"), pending && /* @__PURE__ */ React.createElement("div", { className: "rx-cmt" }, /* @__PURE__ */ React.createElement("img", { className: "rx-cmt-av", src: avatarFor(props.profile), alt: "" }), /* @__PURE__ */ React.createElement("div", { className: "rx-cmt-main" }, /* @__PURE__ */ React.createElement("div", { className: "rx-cmt-bubble" }, /* @__PURE__ */ React.createElement("b", null, props.profile?.name || "You"), props.commentText, props.commentImagePreview && /* @__PURE__ */ React.createElement("img", { src: props.commentImagePreview, alt: "" })), /* @__PURE__ */ React.createElement("div", { className: "rx-cmt-meta" }, /* @__PURE__ */ React.createElement("span", null, "Posting\u2026")))), sortedTops.length === 0 && !pending && fakeC === 0 ? /* @__PURE__ */ React.createElement("div", { className: "rx-empty" }, "No comments yet. Be the first to comment.") : sortedTops.map((c) => renderComment(c, false)), fakeC > 0 && /* @__PURE__ */ React.createElement("div", { className: "rx-empty", style: { fontSize: 13, padding: "14px 16px" } }, fakeC.toLocaleString(), " more ", fakeC === 1 ? "comment" : "comments", " \u00B7 this comments can't available for you")), /* @__PURE__ */ React.createElement("div", { className: "rx-foot" }, props.lockMsg ? /* @__PURE__ */ React.createElement("div", { className: "rx-lock" }, props.lockMsg) : /* @__PURE__ */ React.createElement(React.Fragment, null, props.replyTo && /* @__PURE__ */ React.createElement("div", { className: "rx-replying" }, /* @__PURE__ */ React.createElement("span", null, "Replying to ", /* @__PURE__ */ React.createElement("b", null, props.replyTo.name)), /* @__PURE__ */ React.createElement("button", { onClick: () => props.setReplyTo(null) }, "Cancel")), /* @__PURE__ */ React.createElement("div", { className: "rx-quick" }, ["\u2764\uFE0F", "\u{1F64C}", "\u{1F525}", "\u{1F44F}", "\u{1F622}", "\u{1F60D}", "\u{1F62E}", "\u{1F602}"].map((em) => /* @__PURE__ */ React.createElement("button", { key: em, type: "button", onClick: () => props.onQuickEmoji(em) }, em))), props.commentImagePreview && /* @__PURE__ */ React.createElement("div", { className: "rx-img-prev" }, /* @__PURE__ */ React.createElement("img", { src: props.commentImagePreview, alt: "" }), /* @__PURE__ */ React.createElement("button", { onClick: props.onRemoveImage, title: "Remove photo" }, /* @__PURE__ */ React.createElement(PmIcon, { d: PM_IC.close }))), /* @__PURE__ */ React.createElement("div", { className: "rx-write" }, /* @__PURE__ */ React.createElement(
     "input",
     {
       ref: inputRef,
@@ -6381,7 +6383,7 @@ function ShortsPage(props) {
   return /* @__PURE__ */ React.createElement("div", { className: "shp-root" }, /* @__PURE__ */ React.createElement("div", { className: "shp-top" }, /* @__PURE__ */ React.createElement("div", { className: "shp-title" }, /* @__PURE__ */ React.createElement("i", null), "Shorts"), /* @__PURE__ */ React.createElement("button", { className: "shp-mute", onClick: userToggleMute, title: muted ? "Unmute" : "Mute", "aria-label": muted ? "Unmute" : "Mute" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, muted ? /* @__PURE__ */ React.createElement("path", { d: "M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.8 8.8 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" }) : /* @__PURE__ */ React.createElement("path", { d: "M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" })))), /* @__PURE__ */ React.createElement("div", { className: "shp-wrap", ref: wrapRef, onScroll }, list.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "shp-empty" }, /* @__PURE__ */ React.createElement("b", null, "No shorts yet"), /* @__PURE__ */ React.createElement("span", null, "YouTube Shorts shared on MeBook will show up here.")) : list.map((p, i) => {
     const reacts = p.reactions || props.postReactions[p.id] || {};
     const myReaction = props.me?.uid ? reacts[props.me.uid] : void 0;
-    const likesCount = Object.keys(reacts).length || (Array.isArray(p.likes) ? p.likes.length : 0);
+    const likesCount = Object.keys(reacts).length + Math.max(0, Math.min(50000, Number(p.fakeReactions) || 0)) || (Array.isArray(p.likes) ? p.likes.length : 0);
     return /* @__PURE__ */ React.createElement("div", { className: "shp-item", key: p.id }, Math.abs(i - active) <= 1 && /* @__PURE__ */ React.createElement(
       ShortItem,
       {
@@ -6392,7 +6394,7 @@ function ShortsPage(props) {
         setMuted: setMutedState,
         myReaction,
         likesCount,
-        commentsCount: Array.isArray(p.comments) ? p.comments.length : 0,
+        commentsCount: (Array.isArray(p.comments) ? p.comments.length : 0) + Math.max(0, Math.min(10000, Number(p.fakeComments) || 0)),
         sharesCount: p.shares || 0,
         saved: props.savedIds.includes(p.id),
         verified: props.isVerifiedPost(p),
@@ -13963,10 +13965,10 @@ ${buildShareUrl(post.id)}`;
     });
     const sortedReactionKeys = Object.keys(reactionCounts).sort((a, b) => reactionCounts[b] - reactionCounts[a]);
     const topReactionKeys = sortedReactionKeys.length ? sortedReactionKeys.slice(0, 3) : ["like"];
-    const totalLikes = reactionEntries.length;
+    const totalLikes = reactionEntries.length + Math.max(0, Math.min(50000, Number(post.fakeReactions) || 0));
     const liked = Array.isArray(post.likes) && post.likes.includes(user?.uid);
     const likesCount = totalLikes || (Array.isArray(post.likes) ? post.likes.length : 0);
-    const commentsCount = Array.isArray(post.comments) ? post.comments.length : 0;
+    const commentsCount = (Array.isArray(post.comments) ? post.comments.length : 0) + Math.max(0, Math.min(10000, Number(post.fakeComments) || 0));
     const sharesCount = post.shares || 0;
     const isOfficial = post.isOfficial === true;
     const authorAvatar = isOfficial ? LOGO_URL : post.authorAvatar || `https://ui-avatars.com/api/?background=16a34a&color=fff&name=${encodeURIComponent(post.authorName || "User")}`;
@@ -16440,7 +16442,8 @@ ${buildShareUrl(post.id)}`;
       }
       const allComments = post.comments || [];
       const { tops, repliesMap } = buildCommentTree(allComments);
-      const totalCount = allComments.length;
+      const fakeCmtCount = Math.max(0, Math.min(10000, Number(post.fakeComments) || 0));
+      const totalCount = allComments.length + fakeCmtCount;
       const renderReactionBadge = (reactions) => {
         const entries = Object.entries(reactions || {});
         if (entries.length === 0) return null;
