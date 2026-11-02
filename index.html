@@ -593,19 +593,115 @@ const MBCall = (() => {
   const fmt = (s) => { const m = Math.floor(s/60), r = s%60; return String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); };
   const esc = (s) => String(s||'').replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
-  function stopTone(){ clearInterval(toneT); toneT = null; if(navigator.vibrate) navigator.vibrate(0); }
+  /* ---------- ringtones (built-in synthesized + your own file) ---------- */
+  let ringAudio = null, pvT = null, pvAudio = null, customUrl = null, customName = '', sheetEl = null;
+  const RT_KEY = 'mb-ringtone';
+  const N = { E4:329.63, G4:392, C5:523.25, D5:587.33, E5:659.25, F5:698.46, G5:783.99, A5:880, B5:987.77, C6:1046.5, E6:1318.5 };
+  function nt(ctx, t, f, d, o){ o = o || {};
+    const os = ctx.createOscillator(), g = ctx.createGain(); os.type = o.type || 'sine'; os.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(o.vol || .2, t + (o.att || .012)); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+    os.connect(g); g.connect(ctx.destination); os.start(t); os.stop(t + d + .05); }
+  const RINGS = [
+    { id: 'classic', name: 'Classic', len: 2.2, play(c, t){ nt(c, t, 523, .5, { vol: .22 }); nt(c, t + .55, 440, .55, { vol: .22 }); } },
+    { id: 'marimba', name: 'Marimba', len: 2.4, play(c, t){ [['E5','G5','C6','G5'], ['D5','F5','B5','F5']].forEach((ph, k) => ph.forEach((n, i) => nt(c, t + k*1.1 + i*.16, N[n], .55, { type: 'triangle', vol: .3 }))); } },
+    { id: 'chime', name: 'Bell chime', len: 3.2, play(c, t){ [['C6',0],['G5',.55],['E6',1.1]].forEach(([n, d]) => [[1,.22],[2.76,.09],[5.4,.04]].forEach(([m, v]) => nt(c, t + d, N[n]*m, 1.5, { vol: v, att: .004 }))); } },
+    { id: 'pulse', name: 'Digital pulse', len: 1.8, play(c, t){ [0,.2,.4].forEach((d) => nt(c, t + d, 1046, .12, { type: 'square', vol: .07, att: .004 })); nt(c, t + .6, 1318, .25, { type: 'square', vol: .07, att: .004 }); } },
+    { id: 'bounce', name: 'Bounce', len: 2.2, play(c, t){ ['C5','E5','G5','C6','E6','C6','G5','E5'].forEach((n, i) => nt(c, t + i*.1, N[n], .28, { type: 'triangle', vol: .26 })); } },
+    { id: 'soft', name: 'Soft rise', len: 3.2, play(c, t){ ['C5','E5','G5','C6'].forEach((n, i) => nt(c, t + i*.3, N[n], 1.1, { vol: .24, att: .03 })); } },
+    { id: 'retro', name: 'Retro phone', len: 3, play(c, t){ [0,.65].forEach((d) => { const g = c.createGain(), l = c.createOscillator(), lg = c.createGain();
+        g.gain.value = 0; l.type = 'square'; l.frequency.value = 20; lg.gain.value = .07; l.connect(lg); lg.connect(g.gain);
+        const env = c.createGain(); env.gain.setValueAtTime(0, t + d); env.gain.linearRampToValueAtTime(1, t + d + .02); env.gain.setValueAtTime(1, t + d + .5); env.gain.linearRampToValueAtTime(0, t + d + .56);
+        [440, 480].forEach((f) => { const o = c.createOscillator(); o.frequency.value = f; o.connect(g); o.start(t + d); o.stop(t + d + .6); });
+        g.connect(env); env.connect(c.destination); const boost = c.createGain(); boost.gain.value = 1; l.start(t + d); l.stop(t + d + .6); }); } }
+  ];
+  const getRt = () => { try{ return localStorage.getItem(RT_KEY) || 'classic'; }catch(_){ return 'classic'; } };
+  const setRt = (v) => { try{ localStorage.setItem(RT_KEY, v); }catch(_){} };
+  const rtName = () => { const id = getRt(); if(id === 'custom') return customName ? 'My file: ' + customName : 'My file'; const r = RINGS.find((x) => x.id === id) || RINGS[0]; return r.name; };
+  const idb = (m, k, v) => new Promise((res, rej) => { const q = indexedDB.open('mb-ring', 1); q.onupgradeneeded = () => q.result.createObjectStore('f'); q.onerror = () => rej(q.error);
+    q.onsuccess = () => { const s = q.result.transaction('f', m === 'get' ? 'readonly' : 'readwrite').objectStore('f'); const r = m === 'get' ? s.get(k) : s.put(v, k); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }; });
+  async function loadCustom(){ try{ const x = await idb('get', 'custom'); if(x && x.blob){ if(customUrl) URL.revokeObjectURL(customUrl); customUrl = URL.createObjectURL(x.blob); customName = x.name || ''; } }catch(_){} }
+  function ctxOk(){ ac2 = ac2 || new (window.AudioContext||window.webkitAudioContext)(); if(ac2.state === 'suspended') ac2.resume(); return ac2; }
+
+  function stopTone(){ clearInterval(toneT); toneT = null; if(ringAudio){ try{ ringAudio.pause(); }catch(_){} ringAudio = null; } if(navigator.vibrate) navigator.vibrate(0); }
+  function playRing(id, loop){
+    /* returns a stopper; loop=true for real incoming calls */
+    let stopped = false, iv = null, au = null;
+    const stop = () => { stopped = true; clearInterval(iv); if(au){ try{ au.pause(); }catch(_){} au = null; } };
+    if(id === 'custom' && customUrl){
+      au = new Audio(customUrl); au.loop = !!loop; au.play().catch(() => { au = null; const f = playRing('classic', loop); stop.inner = f; });
+      return stop;
+    }
+    const r = RINGS.find((x) => x.id === id) || RINGS[0];
+    try{ const c = ctxOk(); const beat = () => { if(!stopped) r.play(c, c.currentTime + .02); }; beat(); if(loop) iv = setInterval(beat, r.len * 1000); }catch(_){}
+    return stop;
+  }
   function tone(kind){
     stopTone();
+    if(kind === 'in'){
+      const id = getRt(); const stop = playRing(id, true);
+      toneT = setInterval(() => { if(navigator.vibrate) navigator.vibrate([350,200,350]); }, 2200); if(navigator.vibrate) navigator.vibrate([350,200,350]);
+      const ts = toneT; ringAudio = { pause: () => { stop(); if(stop.inner) stop.inner(); } }; return;
+    }
     try{
-      ac2 = ac2 || new (window.AudioContext||window.webkitAudioContext)(); if(ac2.state === 'suspended') ac2.resume();
-      const beat = () => { const t = ac2.currentTime; (kind==='in' ? [[0,.45,523],[.55,1,440]] : [[0,1.3,425]]).forEach(([a,b,f]) => {
-        const o = ac2.createOscillator(), g = ac2.createGain(); o.type = 'sine'; o.frequency.value = f;
-        g.gain.setValueAtTime(0, t+a); g.gain.linearRampToValueAtTime(kind==='in' ? .2 : .07, t+a+.05); g.gain.linearRampToValueAtTime(0, t+b);
-        o.connect(g); g.connect(ac2.destination); o.start(t+a); o.stop(t+b+.05); });
-        if(kind==='in' && navigator.vibrate) navigator.vibrate([350,200,350]); };
-      beat(); toneT = setInterval(beat, kind==='in' ? 2200 : 3200);
+      const ac = ctxOk();
+      const beat = () => { const t = ac.currentTime; [[0,1.3,425]].forEach(([a,b,f]) => {
+        const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = f;
+        g.gain.setValueAtTime(0, t+a); g.gain.linearRampToValueAtTime(.07, t+a+.05); g.gain.linearRampToValueAtTime(0, t+b);
+        o.connect(g); g.connect(ac.destination); o.start(t+a); o.stop(t+b+.05); }); };
+      beat(); toneT = setInterval(beat, 3200);
     }catch(_){}
   }
+  function stopPreview(){ clearTimeout(pvT); if(pvAudio){ try{ pvAudio.stop(); }catch(_){} pvAudio = null; } }
+  function preview(id){
+    stopPreview(); pvAudio = playRing(id, false); const r = RINGS.find((x) => x.id === id);
+    pvT = setTimeout(stopPreview, id === 'custom' ? 8000 : ((r ? r.len : 3) * 1000));
+  }
+  function closeSheet(){ stopPreview(); if(sheetEl){ const s = sheetEl; sheetEl = null; s.classList.add('out'); setTimeout(() => s.remove(), 220); } }
+  function ringtoneSheet(){
+    if(sheetEl) return; loadCustom();
+    if(!document.getElementById('mbrt-css')){ const st = document.createElement('style'); st.id = 'mbrt-css'; st.textContent = `
+      .mbrt{position:fixed;inset:0;z-index:2147483200;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;animation:mbrtF .2s ease both;}
+      .mbrt.out{opacity:0;transition:opacity .2s;}
+      @keyframes mbrtF{from{opacity:0;}to{opacity:1;}}@keyframes mbrtU{from{transform:translateY(40px);opacity:.4;}to{transform:none;opacity:1;}}
+      .mbrt .sh{width:100%;max-width:520px;max-height:84vh;overflow:auto;background:#fff;color:#111;border-radius:22px 22px 0 0;padding:10px 0 calc(16px + env(safe-area-inset-bottom,0px));animation:mbrtU .28s cubic-bezier(.2,1,.3,1) both;}
+      .mbrt.dk .sh{background:#242526;color:#f1f1f1;}
+      .mbrt .hd{display:flex;align-items:center;justify-content:space-between;padding:8px 20px 12px;font-size:19px;font-weight:700;}
+      .mbrt .hd button{border:0;background:none;color:#16a34a;font-size:15px;font-weight:700;padding:6px 0;cursor:pointer;font-family:inherit;}
+      .mbrt .it{display:flex;align-items:center;gap:14px;padding:13px 20px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+      .mbrt .it:active{background:rgba(128,128,128,.15);}
+      .mbrt .rd{width:22px;height:22px;border-radius:50%;border:2px solid #9aa0a6;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+      .mbrt .it.on .rd{border-color:#16a34a;}.mbrt .it.on .rd::after{content:"";width:12px;height:12px;border-radius:50%;background:#16a34a;}
+      .mbrt .tx{flex:1;min-width:0;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+      .mbrt .tx small{display:block;font-size:12.5px;opacity:.6;margin-top:2px;}
+      .mbrt .pl{width:34px;height:34px;border-radius:50%;background:rgba(22,163,74,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+      .mbrt .pl svg{width:18px;height:18px;fill:#16a34a;}
+      .mbrt .up{margin:10px 20px 4px;padding:13px;border-radius:14px;border:1.5px dashed #16a34a;color:#16a34a;text-align:center;font-weight:700;font-size:15px;cursor:pointer;}
+    `; document.head.appendChild(st); }
+    const dark = !!document.querySelector('.dark-mode, [data-theme=dark]');
+    const o = document.createElement('div'); o.className = 'mbrt' + (dark ? ' dk' : ''); sheetEl = o;
+    const draw = () => {
+      const cur_ = getRt();
+      const items = RINGS.map((r) => ({ id: r.id, name: r.name, sub: '' }));
+      if(customUrl) items.push({ id: 'custom', name: 'My file', sub: customName });
+      o.innerHTML = `<div class="sh"><div class="hd"><span>Call ringtone</span><button data-x="close">Done</button></div>` +
+        items.map((r) => `<div class="it ${cur_ === r.id ? 'on' : ''}" data-id="${r.id}"><span class="rd"></span><span class="tx">${esc(r.name)}${r.sub ? '<small>' + esc(r.sub) + '</small>' : ''}</span><span class="pl" data-p="${r.id}"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>`).join('') +
+        `<div class="up" data-x="up">+ Choose from phone</div><input type="file" accept="audio/*" style="display:none"></div>`;
+    };
+    draw(); document.body.appendChild(o);
+    const fi = () => o.querySelector('input[type=file]');
+    o.addEventListener('click', async (e) => {
+      if(e.target === o){ closeSheet(); return; }
+      const x = e.target.closest('[data-x]'); if(x){ if(x.dataset.x === 'close') closeSheet(); else fi().click(); return; }
+      const p = e.target.closest('[data-p]'); if(p){ e.stopPropagation(); preview(p.dataset.p); return; }
+      const it = e.target.closest('.it'); if(it){ setRt(it.dataset.id); draw(); preview(it.dataset.id); }
+    });
+    o.addEventListener('change', async (e) => {
+      const f = e.target.files && e.target.files[0]; if(!f) return;
+      if(f.size > 6 * 1024 * 1024){ toast('File is too big (max 6 MB)'); return; }
+      try{ await idb('put', 'custom', { blob: f, name: f.name }); await loadCustom(); setRt('custom'); draw(); preview('custom'); toast('Ringtone saved'); }catch(_){ toast('Could not save this file'); }
+    });
+  }
+  window.mbCloseRingSheet = closeSheet;
 
   /* ---------- background colour taken from the profile picture ---------- */
   const hueOf = (s) => { let h = 0; for(const ch of String(s||'U')) h = (h*31 + ch.charCodeAt(0)) % 360; return h; };
@@ -954,7 +1050,7 @@ const MBCall = (() => {
     let inner;
     try{
       Object.defineProperty(window, '__mebookBack', { configurable: true, enumerable: true,
-        get(){ return function(){ if(cur && !cur.ending){ if(cur.state === 'in') return true; if(!cur.min){ minimize(true); return true; } } return inner ? inner() : false; }; },
+        get(){ return function(){ if(sheetEl){ closeSheet(); return true; } if(cur && !cur.ending){ if(cur.state === 'in') return true; if(!cur.min){ minimize(true); return true; } } return inner ? inner() : false; }; },
         set(v){ inner = v; } });
     }catch(_){}
   })();
@@ -971,8 +1067,8 @@ const MBCall = (() => {
       });
     }catch(e){ console.warn('MBCall init failed', e); }
   }
-  setTimeout(init, 1200);
-  return { start, minimize: () => minimize(), restore };
+  setTimeout(init, 1200); setTimeout(loadCustom, 800);
+  return { start, minimize: () => minimize(), restore, ringtoneSheet, ringtoneName: rtName };
 })();
 window.MBCall = MBCall;
 })();
@@ -15546,6 +15642,7 @@ ${buildShareUrl(post.id)}`;
         E("div", { className: "mcx-sec" }, "Preferences"),
         mcMRow(MCP.chat, "Chat heads", () => { const v = !mcHeadsOn; setMcHeadsOn(v); try { localStorage.setItem("mc-heads", v ? "1" : "0"); } catch (e) {} }, mcSwitch(mcHeadsOn)),
         mcMRow(MCP.bell, "Notifications", () => setMcT("notifs") || setMcSub(null)),
+        mcMRow(MCP.bell, "Call ringtone", () => { window.MBCall && window.MBCall.ringtoneSheet && window.MBCall.ringtoneSheet(); }, null, (window.MBCall && window.MBCall.ringtoneName ? window.MBCall.ringtoneName() : "Classic") + " \u00B7 tap to change"),
         E("div", { className: "mcx-sec" }, "Chats"),
         mcMRow(MC_IC.archive, "Archived chats", () => { setChatListMode("archived"); setMcSub(null); setMcT("chats"); }),
         mcMRow(MC_IC.ignore, "Ignored chats", () => { setChatListMode("ignored"); setMcSub(null); setMcT("chats"); }),
