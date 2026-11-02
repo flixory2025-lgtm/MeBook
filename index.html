@@ -557,7 +557,7 @@ window.MBVoice = MBVoice;
 const MBCall = (() => {
   /* Optional but recommended: free account at metered.ca -> paste your TURN credentials URL here, e.g.
      https://YOURAPP.metered.live/api/v1/turn/credentials?apiKey=XXXXXXXX  (makes calls work on every mobile network) */
-  const TURN_API_URL = "";
+  const TURN_API_URL = "https://mebook.metered.live/api/v1/turn/credentials?apiKey=6a6779d7a4d95187e3ab5f7ab5e6df9cb2c5";
   const OR = { username: 'openrelayproject', credential: 'openrelayproject' };
   const ICE = { iceServers: [
     { urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }, { urls: 'stun:stun.cloudflare.com:3478' }, { urls: 'stun:openrelay.metered.ca:80' },
