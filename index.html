@@ -306,62 +306,64 @@ const CSS = `
 .mebook-root .mechat-head-btn:active{transform:scale(.85);}
 @media (prefers-reduced-motion:reduce){.mebook-root .mechat-bubble-wrap .mechat-bubble,.mebook-root .mechat-voice-wave span{animation:none !important;}}
 
-/* ---------- voice recorder overlay ---------- */
-.mbv{position:fixed;left:0;right:0;bottom:0;z-index:2147482000;padding:0 0 calc(18px + env(safe-area-inset-bottom,0px));
-  background:linear-gradient(to top,rgba(4,10,7,.96) 0%,rgba(4,10,7,.9) 55%,rgba(4,10,7,0) 100%);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#fff;touch-action:none;user-select:none;-webkit-user-select:none;
-  animation:mbvUp .38s cubic-bezier(.2,1,.3,1) both;font-family:inherit;}
-.mbv.out{animation:mbvDown .32s ease forwards;}
-@keyframes mbvUp{from{transform:translateY(60%);opacity:0;}to{transform:none;opacity:1;}}
-@keyframes mbvDown{to{transform:translateY(40%);opacity:0;}}
-.mbv-top{display:flex;justify-content:center;align-items:center;gap:8px;padding-top:44px;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;}
-.mbv-top i{width:9px;height:9px;border-radius:50%;background:#ef4444;animation:mbvDot 1s ease-in-out infinite;}
-@keyframes mbvDot{50%{opacity:.25;transform:scale(1.5);}}
-.mbv-row{display:flex;align-items:center;justify-content:space-between;padding:8px 26px 0;height:176px;}
-.mbv-zone{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;
-  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);transition:transform .25s cubic-bezier(.3,1.6,.5,1),background .2s,box-shadow .25s;}
-.mbv-zone svg{width:26px;height:26px;fill:#fff;transition:transform .25s cubic-bezier(.3,1.6,.5,1);}
-.mbv-zone.del.hot{background:#ef4444;transform:scale(1.28);box-shadow:0 0 0 10px rgba(239,68,68,.18),0 0 38px rgba(239,68,68,.6);}
-.mbv-zone.snd.hot{background:#22c55e;transform:scale(1.28);box-shadow:0 0 0 10px rgba(34,197,94,.18),0 0 38px rgba(34,197,94,.65);}
-.mbv-zone.del.hot svg{animation:mbvShake .3s ease-in-out infinite;}
-.mbv-zone.snd.hot svg{transform:translateX(2px) rotate(-8deg);}
+/* ---------- voice recorder (telegram style, compact) ---------- */
+.mbv{position:fixed;z-index:2147482000;display:flex;align-items:center;justify-content:space-between;padding:0 10px;box-sizing:border-box;
+  background:rgba(14,20,17,.97);color:#fff;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid rgba(255,255,255,.06);
+  touch-action:none;user-select:none;-webkit-user-select:none;font-family:inherit;animation:mbvIn .34s cubic-bezier(.2,1,.3,1) both;}
+.mbv.out{animation:mbvOut .26s ease forwards;}
+@keyframes mbvIn{from{opacity:.4;clip-path:inset(0 0 0 100%);}to{opacity:1;clip-path:inset(0 0 0 0);}}
+@keyframes mbvOut{to{opacity:0;transform:translateY(10px);}}
+.mbv .z{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;
+  background:rgba(255,255,255,.08);transition:transform .25s cubic-bezier(.3,1.6,.5,1),background .2s,box-shadow .25s;}
+.mbv .z svg{width:22px;height:22px;fill:#fff;transition:transform .25s cubic-bezier(.3,1.6,.5,1);}
+.mbv .z.del.hot{background:#ef4444;transform:scale(1.3);box-shadow:0 0 0 8px rgba(239,68,68,.2),0 0 30px rgba(239,68,68,.6);}
+.mbv .z.snd.hot{background:#22c55e;transform:scale(1.3);box-shadow:0 0 0 8px rgba(34,197,94,.2),0 0 30px rgba(34,197,94,.65);}
+.mbv .z.del.hot svg{animation:mbvShake .3s ease-in-out infinite;}
+.mbv .z.snd.hot svg{transform:translateX(2px) rotate(-8deg);}
 @keyframes mbvShake{25%{transform:rotate(-14deg);}75%{transform:rotate(14deg);}}
-.mbv-zone.burst{animation:mbvBurst .5s ease-out;}
-@keyframes mbvBurst{40%{transform:scale(1.5);}100%{transform:scale(1);}}
-.mbv-zone.bin{animation:mbvBin .45s ease-out;}
-@keyframes mbvBin{20%{transform:scale(1.5) rotate(-12deg);}50%{transform:scale(1.35) rotate(10deg);}100%{transform:scale(1) rotate(0);}}
-.mbv.lock .mbv-zone{cursor:pointer;width:62px;height:62px;}
-.mbv.lock .mbv-zone.snd{background:#22c55e;box-shadow:0 8px 26px rgba(34,197,94,.45);}
-.mbv.lock .mbv-zone.del{background:rgba(239,68,68,.16);border-color:rgba(239,68,68,.5);}
-.mbv-stage{flex:1;display:flex;align-items:center;justify-content:center;position:relative;height:100%;}
-.mbv-orb{position:relative;width:104px;height:104px;--lv:0;transition:transform .12s linear,opacity .4s,filter .4s;will-change:transform;}
-.mbv-orb.drag{transition:none;}
-.mbv-orb>*{position:absolute;inset:0;border-radius:50%;}
-.mbv-orb .c{background:radial-gradient(circle at 34% 28%,#d9fbe5 0%,#4ade80 34%,#16a34a 66%,#064e3b 100%);
-  transform:scale(calc(.9 + var(--lv)*.3));box-shadow:0 0 calc(28px + var(--lv)*60px) rgba(34,197,94,.65),inset 0 -8px 18px rgba(0,60,30,.5);transition:transform .08s linear;}
-.mbv-orb .sp{animation:mbvSpin 9s linear infinite;}
-.mbv-orb .sp.r{animation-duration:13s;animation-direction:reverse;}
-.mbv-orb .b{position:absolute;inset:-6px;background:radial-gradient(circle at 50% 40%,rgba(74,222,128,.5),rgba(16,185,129,0) 68%);
-  animation:mbvMorph 5s ease-in-out infinite;transform:scale(calc(1.05 + var(--lv)*.75));transition:transform .1s linear;}
-.mbv-orb .sp.r .b{animation-delay:-2s;background:radial-gradient(circle at 40% 60%,rgba(45,212,191,.42),rgba(16,185,129,0) 68%);}
-.mbv-orb .rg{border:1.5px solid rgba(74,222,128,.55);animation:mbvRing 2.4s ease-out infinite;}
-.mbv-orb .rg.b2{animation-delay:1.2s;}
+.mbv .z.burst{animation:mbvBurst .5s ease-out;}
+@keyframes mbvBurst{40%{transform:scale(1.55);background:#22c55e;}100%{transform:scale(1);}}
+.mbv .z.bin{animation:mbvBin .45s ease-out;}
+@keyframes mbvBin{20%{transform:scale(1.5) rotate(-12deg);background:#ef4444;}50%{transform:scale(1.35) rotate(10deg);}100%{transform:scale(1);}}
+.mbv.lock .z{cursor:pointer;}
+.mbv.lock .z.snd{background:#22c55e;box-shadow:0 6px 18px rgba(34,197,94,.45);}
+.mbv.lock .z.del{background:rgba(239,68,68,.18);}
+.mbv .mid{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;}
+.mbv .tmr{display:flex;align-items:center;gap:7px;font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;}
+.mbv .tmr i{width:9px;height:9px;border-radius:50%;background:#ef4444;animation:mbvDot 1s ease-in-out infinite;}
+@keyframes mbvDot{50%{opacity:.25;transform:scale(1.5);}}
+.mbv .hint{display:flex;gap:16px;font-size:12px;color:rgba(255,255,255,.55);transition:opacity .25s;white-space:nowrap;}
+.mbv .hint b{font-weight:500;animation:mbvNudge 1.6s ease-in-out infinite;}
+.mbv .hint b.l{animation-name:mbvNudgeL;}
+@keyframes mbvNudge{50%{transform:translateX(4px);opacity:.45;}}
+@keyframes mbvNudgeL{50%{transform:translateX(-4px);opacity:.45;}}
+.mbv.lock .hint{opacity:0;}
+.mbo{position:fixed;width:52px;height:52px;z-index:2147482100;--lv:0;pointer-events:none;will-change:transform;animation:mbvPop .38s cubic-bezier(.3,1.7,.5,1) both;}
+@keyframes mbvPop{from{scale:.4;opacity:.2;}to{scale:1;opacity:1;}}
+.mbo.tr{transition:transform .46s cubic-bezier(.3,1.15,.4,1),opacity .42s ease-in,filter .42s;}
+.mbo>*{position:absolute;inset:0;border-radius:50%;}
+.mbo .c{background:radial-gradient(circle at 34% 28%,#d9fbe5 0%,#4ade80 34%,#16a34a 66%,#064e3b 100%);transform:scale(calc(.95 + var(--lv)*.3));
+  box-shadow:0 0 calc(10px + var(--lv)*34px) rgba(34,197,94,.7),inset 0 -4px 9px rgba(0,60,30,.5);transition:transform .08s linear;}
+.mbo .sp{animation:mbvSpin 8s linear infinite;}.mbo .sp.r{animation-duration:12s;animation-direction:reverse;}
+.mbo .b{position:absolute;inset:-9px;background:radial-gradient(circle at 50% 40%,rgba(74,222,128,.5),rgba(16,185,129,0) 68%);animation:mbvMorph 5s ease-in-out infinite;transform:scale(calc(1 + var(--lv)*.8));transition:transform .1s linear;}
+.mbo .sp.r .b{animation-delay:-2s;background:radial-gradient(circle at 40% 60%,rgba(45,212,191,.42),rgba(16,185,129,0) 68%);}
+.mbo .rg{border:1.5px solid rgba(74,222,128,.55);animation:mbvRing 2.2s ease-out infinite;}.mbo .rg.b2{animation-delay:1.1s;}
 @keyframes mbvSpin{to{transform:rotate(360deg);}}
-@keyframes mbvMorph{0%,100%{border-radius:50% 50% 50% 50%/50% 50% 50% 50%;}25%{border-radius:58% 42% 46% 54%/46% 56% 44% 54%;}50%{border-radius:44% 56% 56% 44%/56% 44% 56% 44%;}75%{border-radius:52% 48% 40% 60%/42% 58% 42% 58%;}}
-@keyframes mbvRing{0%{transform:scale(.9);opacity:.8;}100%{transform:scale(2.1);opacity:0;}}
-.mbv-orb .mic{display:flex;align-items:center;justify-content:center;}
-.mbv-orb .mic svg{width:34px;height:34px;fill:#fff;filter:drop-shadow(0 2px 6px rgba(0,60,30,.5));}
-.mbv-orb.fly-send{transition:transform .46s cubic-bezier(.5,-.2,.9,.5),opacity .42s ease-in;opacity:0;}
-.mbv-orb.fly-del{transition:transform .5s cubic-bezier(.5,0,.8,.4),opacity .46s ease-in,filter .46s;opacity:0;filter:blur(3px) grayscale(1);}
-.mbv-hint{display:flex;justify-content:center;gap:10px;font-size:13px;color:rgba(255,255,255,.62);padding-top:2px;align-items:center;}
-.mbv-hint b{font-weight:600;display:inline-flex;gap:4px;align-items:center;animation:mbvNudge 1.6s ease-in-out infinite;}
-.mbv-hint b.l{animation-name:mbvNudgeL;}
-@keyframes mbvNudge{50%{transform:translateX(5px);opacity:.5;}}
-@keyframes mbvNudgeL{50%{transform:translateX(-5px);opacity:.5;}}
-.mbv.lock .mbv-hint{opacity:0;}
-.mbv-lockhint{display:none;text-align:center;font-size:13px;color:rgba(255,255,255,.6);}
-.mbv.lock .mbv-lockhint{display:block;}
-
+@keyframes mbvMorph{0%,100%{border-radius:50%;}25%{border-radius:58% 42% 46% 54%/46% 56% 44% 54%;}50%{border-radius:44% 56% 56% 44%/56% 44% 56% 44%;}75%{border-radius:52% 48% 40% 60%/42% 58% 42% 58%;}}
+@keyframes mbvRing{0%{transform:scale(.9);opacity:.8;}100%{transform:scale(2);opacity:0;}}
+.mbo .mic{display:flex;align-items:center;justify-content:center;}.mbo .mic svg{width:24px;height:24px;fill:#fff;}
+/* voice player */
+.mebook-root .mechat-voice.playing .mechat-voice-wave span{opacity:.3 !important;transition:opacity .15s;}
+.mebook-root .mechat-voice.playing .mechat-voice-wave span.pl{opacity:1 !important;}
+/* call log bubble */
+.mebook-root .mbcm{display:flex;align-items:center;gap:10px;min-width:170px;cursor:pointer;position:relative;padding:2px 2px 0;}
+.mebook-root .mbcm-ic{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.22);flex-shrink:0;}
+.mebook-root .mechat-bubble.them .mbcm-ic{background:rgba(22,163,74,.15);}
+.mebook-root .mbcm-ic svg{width:20px;height:20px;fill:currentColor;}
+.mebook-root .mbcm.miss .mbcm-ic{background:rgba(239,68,68,.18);color:#ef4444;}
+.mebook-root .mbcm-tx{display:flex;flex-direction:column;line-height:1.25;flex:1;}
+.mebook-root .mbcm-tx b{font-size:14.5px;font-weight:700;}.mebook-root .mbcm-tx small{font-size:12px;opacity:.75;}
+.mebook-root .mbcm .mechat-bubble-time{align-self:flex-end;}
 /* ---------- call screen ---------- */
 .mbc{position:fixed;inset:0;z-index:2147483000;color:#fff;overflow:hidden;font-family:inherit;
   background:radial-gradient(120% 70% at 50% 30%,#0f4733 0%,#08150f 48%,#040605 100%);
@@ -459,69 +461,95 @@ const IC = {
 const svg = (k) => `<svg viewBox="0 0 24 24"><path d="${IC[k]}"/></svg>`;
 function toast(m){const t=document.createElement('div');t.className='mbtoast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>{t.style.transition='opacity .3s';t.style.opacity=0;setTimeout(()=>t.remove(),300);},2400);}
 
-/* =================== VOICE RECORDER (orb) =================== */
+/* =================== VOICE RECORDER (telegram-style orb) + PLAYER =================== */
 const MBVoice = (() => {
-  let ox = 0, ov, orb, an, ac, raf, t0, h, sx, dx, ready, pend, locked, closed, timerEl, delZ, sndZ, btn, buf;
-  const TH = 64;
+  let ox = 0, ov, orb, an, ac, cs, raf, t0, h, sx, sy, cx, cy, ready, pend, locked, closed, timerEl, delZ, sndZ, btn, buf;
   const fmt = (s) => Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
-  function attach(stream){ try{ ac = new (window.AudioContext||window.webkitAudioContext)(); const s = ac.createMediaStreamSource(stream); an = ac.createAnalyser(); an.fftSize = 256; s.connect(an); buf = new Uint8Array(an.frequencyBinCount); }catch(e){ an = null; } }
+  function attach(stream){
+    try{ cs = stream.clone(); ac = new (window.AudioContext||window.webkitAudioContext)(); if(ac.resume) ac.resume();
+      const s = ac.createMediaStreamSource(cs); an = ac.createAnalyser(); an.fftSize = 256; s.connect(an); buf = new Uint8Array(an.frequencyBinCount); }catch(e){ an = null; }
+  }
   function loop(){
     if(closed) return; let lv;
-    if(an){ an.getByteFrequencyData(buf); let sum = 0; for(let i=0;i<buf.length;i++) sum += buf[i]; lv = Math.min(1, (sum/buf.length)/90); }
-    else lv = .25 + .2*Math.sin(Date.now()/220);
-    const cur = parseFloat(orb.style.getPropertyValue('--lv')||0); orb.style.setProperty('--lv', (cur + (lv-cur)*.3).toFixed(3));
-    timerEl.textContent = fmt(Math.floor((Date.now()-t0)/1000));
-    raf = requestAnimationFrame(loop);
+    if(an){ an.getByteFrequencyData(buf); let sum = 0; for(let i=0;i<buf.length;i++) sum += buf[i]; lv = Math.min(1, (sum/buf.length)/80); }
+    else lv = .3 + .2*Math.sin(Date.now()/220);
+    const c = parseFloat(orb.style.getPropertyValue('--lv')||0); orb.style.setProperty('--lv', (c + (lv-c)*.3).toFixed(3));
+    timerEl.textContent = fmt(Math.floor((Date.now()-t0)/1000)); raf = requestAnimationFrame(loop);
   }
   function build(){
+    const bar = document.querySelector('.mechat-input-bar'); const r = bar ? bar.getBoundingClientRect() : { left: 0, width: innerWidth, top: innerHeight - 64, height: 64 };
     ov = document.createElement('div'); ov.className = 'mbv';
-    ov.innerHTML = `<div class="mbv-top"><i></i><span class="t">0:00</span></div>
-    <div class="mbv-row"><div class="mbv-zone del">${svg('trash')}</div>
-    <div class="mbv-stage"><div class="mbv-orb drag"><div class="rg"></div><div class="rg b2"></div><div class="sp"><i class="b"></i></div><div class="sp r"><i class="b"></i></div><div class="c"></div><div class="mic">${svg('mic')}</div></div></div>
-    <div class="mbv-zone snd">${svg('send')}</div></div>
-    <div class="mbv-hint"><b class="l">‹ Slide left to delete</b><b>Slide right to send ›</b></div><div class="mbv-lockhint">Recording… tap send or delete</div>`;
+    ov.style.cssText = `left:${r.left}px;width:${r.width}px;top:${r.top}px;height:${Math.max(r.height,56)}px;`;
+    ov.innerHTML = `<div class="z del">${svg('trash')}</div><div class="mid"><div class="tmr"><i></i><span class="t">0:00</span></div><div class="hint"><b class="l">‹ delete</b><b>send ›</b></div></div><div class="z snd">${svg('send')}</div>`;
     document.body.appendChild(ov);
-    orb = ov.querySelector('.mbv-orb'); timerEl = ov.querySelector('.t'); delZ = ov.querySelector('.del'); sndZ = ov.querySelector('.snd');
+    const b = btn.getBoundingClientRect(); cx = b.left + b.width/2; cy = b.top + b.height/2;
+    orb = document.createElement('div'); orb.className = 'mbo'; orb.style.left = (cx-26) + 'px'; orb.style.top = (cy-26) + 'px';
+    orb.innerHTML = `<div class="rg"></div><div class="rg b2"></div><div class="sp"><i class="b"></i></div><div class="sp r"><i class="b"></i></div><div class="c"></div><div class="mic">${svg('mic')}</div>`;
+    document.body.appendChild(orb);
+    timerEl = ov.querySelector('.t'); delZ = ov.querySelector('.del'); sndZ = ov.querySelector('.snd');
     delZ.addEventListener('click', () => locked && doDelete()); sndZ.addEventListener('click', () => locked && doSend());
   }
   async function press(e, hd){
-    if(ov) return; h = hd; sx = e.clientX; dx = 0; ox = 0; ready = false; pend = false; locked = false; closed = false; an = null; t0 = Date.now();
+    if(ov) return; h = hd; sx = e.clientX; sy = e.clientY; ready = false; pend = false; locked = false; closed = false; an = null; t0 = Date.now();
     btn = e.currentTarget; try{ btn.setPointerCapture(e.pointerId); }catch(_){}
     build(); raf = requestAnimationFrame(loop);
     btn.addEventListener('pointermove', mv); btn.addEventListener('pointerup', up); btn.addEventListener('pointercancel', up);
     try{ await h.start(); }catch(_){}
-    if(!h.isRec()){ close(true); return; }
+    if(!h.isRec()){ closed = true; unbind(); teardown(); return; }
     t0 = Date.now(); ready = true; if(pend) decide();
   }
+  function over(z){ const a = orb.getBoundingClientRect(), b = z.getBoundingClientRect(); return Math.hypot(a.left+a.width/2-(b.left+b.width/2), a.top+a.height/2-(b.top+b.height/2)) < 46; }
   function mv(e){
-    if(locked || closed) return; dx = Math.max(-150, Math.min(150, e.clientX - sx));
-    ox = dx*.9; orb.style.transform = `translateX(${dx*.9}px) scale(${1 + Math.min(Math.abs(dx),TH)/TH*.08})`;
-    delZ.classList.toggle('hot', dx <= -TH); sndZ.classList.toggle('hot', dx >= TH);
-    if(navigator.vibrate && Math.abs(dx) >= TH && !mv.f){ mv.f = 1; navigator.vibrate(12); } if(Math.abs(dx) < TH) mv.f = 0;
+    if(locked || closed) return;
+    const dx = Math.max(-cx+26, Math.min(innerWidth-cx-26, e.clientX - sx)), dy = Math.max(-cy+26, Math.min(innerHeight-cy-26, e.clientY - sy));
+    orb.style.transform = `translate(${dx}px,${dy}px) scale(1.1)`;
+    const d = over(delZ), s = over(sndZ); delZ.classList.toggle('hot', d); sndZ.classList.toggle('hot', s);
+    const hot = d || s; if(hot && !mv.f && navigator.vibrate) navigator.vibrate(12); mv.f = hot;
   }
   function up(){ unbind(); if(!ready){ pend = true; return; } decide(); }
   function unbind(){ if(!btn) return; btn.removeEventListener('pointermove', mv); btn.removeEventListener('pointerup', up); btn.removeEventListener('pointercancel', up); }
   function decide(){
-    if(closed) return;
-    if(dx >= TH) return doSend(); if(dx <= -TH) return doDelete();
-    locked = true; ov.classList.add('lock'); orb.classList.remove('drag'); orb.style.transform = ''; ox = 0; delZ.classList.remove('hot'); sndZ.classList.remove('hot');
+    if(closed) return; if(over(sndZ)) return doSend(); if(over(delZ)) return doDelete();
+    locked = true; ov.classList.add('lock'); delZ.classList.remove('hot'); sndZ.classList.remove('hot');
+    const s = sndZ.getBoundingClientRect(); orb.classList.add('tr'); orb.style.transform = `translate(${s.left+s.width/2-62-cx}px,${s.top+s.height/2-cy}px)`;
   }
-  function target(z){ const a = orb.getBoundingClientRect(), b = z.getBoundingClientRect(); return [b.left+b.width/2-(a.left+a.width/2)+ox, b.top+b.height/2-(a.top+a.height/2)]; }
+  function tgt(z){ const b = z.getBoundingClientRect(); return [b.left+b.width/2-cx, b.top+b.height/2-cy]; }
   function doSend(){
-    if(closed) return; closed = true; unbind(); const [tx,ty] = target(sndZ); sndZ.classList.add('hot');
-    orb.classList.remove('drag'); orb.classList.add('fly-send'); orb.style.transform = `translate(${tx}px,${ty-6}px) scale(.18) rotate(18deg)`;
-    setTimeout(() => { sndZ.classList.remove('hot'); sndZ.classList.add('burst'); if(navigator.vibrate) navigator.vibrate(18); }, 330);
-    setTimeout(() => { try{ h.send(); }catch(_){} teardown(); }, 520);
+    if(closed) return; closed = true; unbind(); const [tx,ty] = tgt(sndZ); sndZ.classList.add('hot');
+    orb.classList.add('tr'); orb.style.transform = `translate(${tx}px,${ty}px) scale(.15) rotate(20deg)`; orb.style.opacity = 0;
+    setTimeout(() => { sndZ.classList.remove('hot'); sndZ.classList.add('burst'); if(navigator.vibrate) navigator.vibrate(18); }, 300);
+    setTimeout(() => { try{ h.send(); }catch(_){} teardown(); }, 500);
   }
   function doDelete(){
-    if(closed) return; closed = true; unbind(); const [tx,ty] = target(delZ); delZ.classList.add('hot');
-    orb.classList.remove('drag'); orb.classList.add('fly-del'); orb.style.transform = `translate(${tx}px,${ty}px) scale(.12) rotate(-300deg)`;
-    setTimeout(() => { delZ.classList.remove('hot'); delZ.classList.add('bin'); if(navigator.vibrate) navigator.vibrate([10,40,10]); }, 360);
-    setTimeout(() => { try{ h.cancel(); }catch(_){} teardown(); }, 560);
+    if(closed) return; closed = true; unbind(); const [tx,ty] = tgt(delZ); delZ.classList.add('hot');
+    orb.classList.add('tr'); orb.style.transform = `translate(${tx}px,${ty}px) scale(.12) rotate(-320deg)`; orb.style.opacity = 0; orb.style.filter = 'grayscale(1) blur(2px)';
+    setTimeout(() => { delZ.classList.remove('hot'); delZ.classList.add('bin'); if(navigator.vibrate) navigator.vibrate([10,40,10]); }, 340);
+    setTimeout(() => { try{ h.cancel(); }catch(_){} teardown(); }, 540);
   }
-  function close(){ closed = true; unbind(); teardown(); }
-  function teardown(){ cancelAnimationFrame(raf); const o = ov; ov = null; if(!o) return; o.classList.add('out'); setTimeout(() => o.remove(), 340); try{ ac && ac.close(); }catch(_){} an = null; }
-  return { press, attach };
+  function teardown(){
+    cancelAnimationFrame(raf); const o = ov, r = orb; ov = null; orb = null;
+    if(o){ o.classList.add('out'); setTimeout(() => o.remove(), 300); } if(r) setTimeout(() => r.remove(), 300);
+    try{ cs && cs.getTracks().forEach((t) => t.stop()); }catch(_){} try{ ac && ac.close(); }catch(_){} an = null; cs = null; ac = null;
+  }
+  /* ----- voice message player (play/pause + progress) ----- */
+  const PLAY = 'M8 5v14l11-7z', PAUSE = 'M6 19h4V5H6v14zm8-14v14h4V5h-4z';
+  let au = null, pb = null, praf = 0;
+  const parts = (b) => { const w = b.closest('.mechat-voice'); return { w, bars: [...w.querySelectorAll('.mechat-voice-wave span')], dur: w.querySelector('.mechat-voice-duration'), path: b.querySelector('path') }; };
+  function preset(){ cancelAnimationFrame(praf); if(!pb) return; try{ const p = parts(pb); p.path.setAttribute('d', PLAY); p.w.classList.remove('playing'); p.bars.forEach((s) => s.classList.remove('pl')); if(p.dur && pb._d != null) p.dur.textContent = pb._d; }catch(_){} }
+  function play(b, url, dur){
+    if(pb === b && au){ const p = parts(b); if(au.paused){ au.play().catch(() => {}); p.path.setAttribute('d', PAUSE); ptick(dur); } else { au.pause(); p.path.setAttribute('d', PLAY); cancelAnimationFrame(praf); } return; }
+    if(au){ au.pause(); preset(); au = null; }
+    pb = b; const p = parts(b); pb._d = p.dur ? p.dur.textContent : null; au = new Audio(); au.preload = 'auto'; au.src = url; const mine = au;
+    au.onended = () => { if(au !== mine) return; preset(); au = null; pb = null; };
+    au.onerror = () => { if(au !== mine) return; toast('Voice message could not be played'); preset(); au = null; pb = null; };
+    au.play().then(() => { if(au !== mine) return; p.path.setAttribute('d', PAUSE); p.w.classList.add('playing'); ptick(dur); }).catch(() => { if(au !== mine) return; toast('Voice message could not be played'); preset(); au = null; pb = null; });
+  }
+  function ptick(dur){
+    cancelAnimationFrame(praf); const step = () => { if(!au || !pb) return; const p = parts(pb); const d = (au.duration && isFinite(au.duration)) ? au.duration : (dur || 1);
+      const r = Math.min(1, au.currentTime / d), n = Math.floor(r * p.bars.length); p.bars.forEach((s, i) => s.classList.toggle('pl', i < n));
+      if(p.dur) p.dur.textContent = fmt(Math.max(0, Math.round(d - au.currentTime))); praf = requestAnimationFrame(step); }; step();
+  }
+  return { press, attach, play };
 })();
 window.MBVoice = MBVoice;
 
@@ -554,7 +582,7 @@ const MBCall = (() => {
     const c = cur, r = document.createElement('div'); r.className = 'mbc'; r.dataset.type = c.type; r.dataset.state = c.state;
     r.innerHTML = `<video class="rv" autoplay playsinline></video><div class="shade"></div>
     <div class="tm"><i></i><span class="tt">00:00</span></div><div class="vname">${esc(c.peer.name)}</div>
-    <div class="stage"><div class="av"><i class="rp"></i><i class="rp"></i><i class="rp"></i><i class="ring"></i><img alt="" src="${esc(c.peer.photo||'')}"></div>
+    <div class="stage"><div class="av"><i class="rp"></i><i class="rp"></i><i class="rp"></i><i class="ring"></i><img alt="" src="${esc(c.peer.photo||'data:,')}"></div>
       <div class="nm">${esc(c.peer.name||'User')}</div><div class="st"><span class="stt"></span><span class="d"><i></i><i></i><i></i></span></div></div>
     <div class="pip mir"><video class="lv" autoplay playsinline muted></video></div>
     <div class="bar"><div class="incoming"><div class="lbl"><button class="no" data-a="no">${svg('phone')}</button>Decline</div><div class="lbl"><button class="yes" data-a="yes">${svg('phone')}</button>Accept</div></div>
@@ -563,6 +591,7 @@ const MBCall = (() => {
         <div class="endw"><button class="end" data-a="end">${svg('phone')}</button></div>
         <button class="cb vonly" data-a="flip">${svg('flip')}</button></div></div></div>`;
     document.body.appendChild(r); ui = { r, rv: r.querySelector('.rv'), lv: r.querySelector('.lv'), pip: r.querySelector('.pip'), stt: r.querySelector('.stt'), tt: r.querySelector('.tt'), bar: r.querySelector('.bar') };
+    const im = r.querySelector('.av img'); im.onerror = function(){ this.onerror = null; this.src = 'https://ui-avatars.com/api/?background=16a34a&color=fff&name=' + encodeURIComponent(c.peer.name || 'User'); }; if(!c.peer.photo) im.onerror();
     r.addEventListener('click', onClick); pipDrag(ui.pip);
     r.addEventListener('pointerdown', (e) => { if(c.type==='video' && r.dataset.state==='live'){ ui.bar.classList.remove('hide'); clearTimeout(c.hideT); c.hideT = setTimeout(() => { if(cur===c) ui.bar.classList.add('hide'); }, 4200); } });
     setState(c.state);
@@ -579,13 +608,32 @@ const MBCall = (() => {
   }
   function hangup(){ const c = cur; if(!c) return; if(c.state==='live') finish('Call ended', 'ended'); else finish('Call ended', c.role==='caller' ? 'ended' : 'declined'); }
   async function flip(){
-    const c = cur; if(!c || !c.local || !c.pc) return;
+    const c = cur; if(!c || !c.local || !c.pc || c.flipping) return; c.flipping = true;
+    const want = c.facing === 'user' ? 'environment' : 'user'; const old = c.local.getVideoTracks()[0]; const was = old ? old.enabled : true;
+    const gum = (v) => navigator.mediaDevices.getUserMedia({ video: v, audio: false });
+    const put = async (ns, face) => {
+      const nt = ns.getVideoTracks()[0]; nt.enabled = was; const sd = c.pc.getSenders().find((s) => s.track && s.track.kind === 'video' || s.track === null);
+      const vs = c.pc.getSenders().find((s) => (s.track && s.track.kind === 'video')); if(vs) await vs.replaceTrack(nt); else if(sd) await sd.replaceTrack(nt);
+      c.local.getVideoTracks().forEach((t) => { c.local.removeTrack(t); t.stop(); }); c.local.addTrack(nt);
+      const real = (nt.getSettings && nt.getSettings().facingMode) || face; c.facing = real === 'environment' ? 'environment' : 'user';
+      ui.lv.srcObject = c.local; ui.lv.play && ui.lv.play().catch(() => {}); ui.pip.classList.toggle('mir', c.facing === 'user');
+    };
     try{
-      c.facing = c.facing === 'user' ? 'environment' : 'user';
-      const ns = await navigator.mediaDevices.getUserMedia({ video: { facingMode: c.facing } }); const nt = ns.getVideoTracks()[0];
-      const old = c.local.getVideoTracks()[0]; const sd = c.pc.getSenders().find((s) => s.track && s.track.kind === 'video'); if(sd) await sd.replaceTrack(nt);
-      if(old){ c.local.removeTrack(old); old.stop(); } c.local.addTrack(nt); ui.lv.srcObject = c.local; ui.pip.classList.toggle('mir', c.facing === 'user');
-    }catch(_){ toast('Could not switch camera'); }
+      if(old) old.stop();                       /* release the camera first (Android can open only one) */
+      let ns; try{ ns = await gum({ facingMode: { exact: want } }); }catch(_){
+        try{ ns = await gum({ facingMode: want }); }catch(__){
+          const ds = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'videoinput');
+          const back = ds.find((d) => /back|rear|environment/i.test(d.label)) || (want === 'environment' ? ds[ds.length-1] : ds[0]);
+          if(!back) throw new Error('nocam'); ns = await gum({ deviceId: { exact: back.deviceId } });
+        }
+      }
+      await put(ns, want);
+      if(ns.getVideoTracks()[0] && c.facing !== want) toast('This device has only one camera');
+    }catch(e){
+      try{ await put(await gum({ facingMode: c.facing }), c.facing); }catch(_){}
+      toast('Could not switch camera');
+    }
+    c.flipping = false;
   }
   function pipDrag(p){
     let sx, sy, ox = 0, oy = 0, mv = false;
@@ -633,30 +681,32 @@ const MBCall = (() => {
       if(c.role === 'caller' && d.answer && !c.pc.currentRemoteDescription){
         setState('conn'); stopTone(); try{ await c.pc.setRemoteDescription(d.answer); await flush(c); }catch(_){}
       }
+      if(c.role === 'caller' && d.ringing && c.state === 'out' && !c.ringShown){ c.ringShown = true; setState('out', 'Ringing'); }
       if(['ended','declined','busy','missed'].includes(d.status) && !c.ending){
         const m = { declined: 'Call declined', busy: 'User is busy', missed: 'No answer', ended: 'Call ended' }[d.status]; finish(m, null);
       }
     }));
   }
 
-  async function start(peer, type){
+  async function start(peer, type, chatId){
     try{
       if(!peer || !peer.uid){ toast('Calls work in 1-to-1 chats'); return; }
       if(cur){ toast('You are already in a call'); return; }
       fb = fb || await getFirebase(); me = fb.auth.currentUser; if(!me){ toast('Please log in first'); return; }
       if(!window.RTCPeerConnection || !navigator.mediaDevices){ toast('Calls are not supported on this browser'); return; }
-      const c = cur = { role: 'caller', type, peer, state: 'out', unsubs: [] }; render();
+      const c = cur = { role: 'caller', type, peer, chatId, state: 'out', unsubs: [] }; render();
       try{ c.local = await media(type); }catch(e){ cleanup(c, true); toast(type==='video' ? 'Allow camera & microphone to call' : 'Allow microphone to call'); return; }
       const id = fb.doc(col('calls')).id; c.id = id; const pc = makePC(c);
       const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
-      await fb.setDoc(dref(id), { from: me.uid, to: peer.uid, fromName: me.displayName || 'User', fromPhoto: me.photoURL || '', type, status: 'ringing', offer: { type: offer.type, sdp: offer.sdp }, ts: Date.now() });
+      let nm = me.displayName, ph = me.photoURL; try{ const us = await fb.getDoc(fb.doc(fb.db, 'users', me.uid)); const u = (us && us.data && us.data()) || {}; nm = u.name || nm; ph = u.photoURL || u.photo || u.avatar || ph; }catch(_){}
+      await fb.setDoc(dref(id), { from: me.uid, to: peer.uid, fromName: nm || 'User', fromPhoto: ph || '', type, status: 'ringing', offer: { type: offer.type, sdp: offer.sdp }, ts: Date.now() });
       watchDoc(c); listenCands(c, 'calleeCandidates'); tone('out');
       c.ringT = setTimeout(() => { if(cur === c && c.state === 'out') finish('No answer', 'missed'); }, 45000);
     }catch(e){ console.error(e); if(cur) cleanup(cur, true); toast('Could not start the call'); }
   }
   function incoming(id, d){
     const c = cur = { id, role: 'callee', type: d.type || 'audio', peer: { uid: d.from, name: d.fromName || 'User', photo: d.fromPhoto }, offer: d.offer, state: 'in', unsubs: [] };
-    render(); tone('in'); c.ringT = setTimeout(() => { if(cur === c && c.state === 'in') finish('Missed call', 'missed'); }, 45000);
+    render(); tone('in'); fb.updateDoc(dref(id), { ringing: true }).catch(() => {}); c.ringT = setTimeout(() => { if(cur === c && c.state === 'in') finish('Missed call', 'missed'); }, 45000);
     c.unsubs.push(fb.onSnapshot(dref(id), (s) => { if(cur !== c || c.ending) return; const x = s.data(); if(x && ['ended','missed'].includes(x.status)) finish('Missed call', null); }));
   }
   async function accept(){
@@ -670,8 +720,20 @@ const MBCall = (() => {
       c.unsubs.push(fb.onSnapshot(dref(c.id), (s) => { const x = s.data(); if(x && x.status === 'ended' && !c.ending) finish('Call ended', null); }));
     }catch(e){ console.error(e); toast('Allow microphone/camera to answer'); finish('Call failed', 'declined'); }
   }
+  async function logCall(c, label){
+    if(c.role !== 'caller' || !c.chatId || c.logged) return; let st; const dur = c.liveAt ? Math.round((Date.now() - c.liveAt)/1000) : 0;
+    if(c.liveAt) st = 'ended'; else if(/no answer/i.test(label)) st = 'missed'; else if(/declined/i.test(label)) st = 'declined'; else if(/busy/i.test(label)) st = 'busy'; else if(label === 'Call ended') st = 'cancelled'; else return;
+    c.logged = true;
+    try{
+      const v = c.type === 'video' ? 'video' : 'voice'; const text = st === 'ended' ? (v === 'video' ? 'Video' : 'Voice') + ' call \u00B7 ' + fmt(dur) : 'Missed ' + v + ' call';
+      await fb.addDoc(col('chats', c.chatId, 'messages'), { from: me.uid, text, type: 'call', callType: c.type, callStatus: st, duration: dur, at: fb.serverTimestamp() });
+      const up = { lastMessage: { text: (c.type === 'video' ? '\u{1F4F9} ' : '\u{1F4DE} ') + text, from: me.uid }, lastAt: fb.serverTimestamp() };
+      if(st !== 'ended') up['unread.' + c.peer.uid] = fb.increment(1);
+      await fb.updateDoc(fb.doc(fb.db, 'chats', c.chatId), up);
+    }catch(e){ console.warn('call log failed', e); }
+  }
   function finish(label, status){
-    const c = cur; if(!c || c.ending) return; c.ending = true; stopTone(); clearTimeout(c.ringT);
+    const c = cur; if(!c || c.ending) return; c.ending = true; stopTone(); clearTimeout(c.ringT); logCall(c, label);
     if(status && c.id) fb.updateDoc(dref(c.id), { status, endedAt: Date.now() }).catch(() => {});
     if(ui.r){ setState('ended', label); }
     setTimeout(() => cleanup(c), 1100);
@@ -14099,9 +14161,10 @@ ${buildShareUrl(post.id)}`;
         showToast("Not supported", "Voice recording not supported", "error");
         return;
       }
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
       if (window.MBVoice) window.MBVoice.attach(stream);
-      const mr = new MediaRecorder(stream);
+      const _mt = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"].find((t) => window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t));
+      const mr = _mt ? new MediaRecorder(stream, { mimeType: _mt }) : new MediaRecorder(stream);
       mediaRecorderRef.current = mr;
       recordChunksRef.current = [];
       mr.ondataavailable = (e) => {
@@ -14150,7 +14213,7 @@ ${buildShareUrl(post.id)}`;
           mr.stream.getTracks().forEach((t) => t.stop());
         } catch {
         }
-        resolve(new Blob(chunks, { type: "audio/webm" }));
+        resolve(new Blob(chunks, { type: (mr.mimeType || "audio/webm").split(";")[0] }));
       };
     });
     try {
@@ -14168,7 +14231,8 @@ ${buildShareUrl(post.id)}`;
     }
     try {
       showToast("Uploading voice...", "Please wait", "info");
-      const file = new File([blob], `voice-${Date.now()}.webm`, { type: "audio/webm" });
+      const _ext = /mp4|aac/.test(blob.type) ? "m4a" : /ogg/.test(blob.type) ? "ogg" : "webm";
+      const file = new File([blob], `voice-${Date.now()}.${_ext}`, { type: blob.type || "audio/webm" });
       const url = await cloudinaryUpload(file, void 0, "video");
       const fb = await getFirebase();
       await fb.addDoc(fb.collection(fb.db, "chats", activeChat, "messages"), {
@@ -16505,7 +16569,7 @@ ${buildShareUrl(post.id)}`;
           )
         );
       }))));
-    })(), currentView === "user-profile" && viewingUser && renderFbProfile(), currentView === "fb-profile-menu" && renderFbMenu(), currentView === "fb-own-menu" && renderFbOwnMenu(), currentView === "fb-settings" && renderFbSettings(), currentView === "fb-view-as" && renderFbProfileCore("preview", profile, myPosts, myFriends, false), currentView === "fb-activity" && renderFbActivity(), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement("div", { className: "mc-listpage" }, mcListPageContent()) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true)), mcBackBtn("in-side")), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), (!(chatPartner && chatPartner.isGroup) && isUserOnline(allUsers.find((x) => x.uid === (chatPartner && chatPartner.uid)), presNow)) ? /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" }) : null), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info", onClick: openPartnerOrGroup, style: { cursor: "pointer" } }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, mcNickOf(chatPartner?.uid) || chatPartner?.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "url(#mbTickGrad)" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : chatPartner && chatPartner.isGroup ? "Group chat" : presLabel(allUsers.find((x) => x.uid === (chatPartner && chatPartner.uid)), presNow))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call", onClick: () => window.MBCall && window.MBCall.start(chatPartner && !chatPartner.isGroup ? { uid: chatPartner.uid, name: chatPartner.name, photo: avatarUrl(chatPartner) } : null, "audio") }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call", onClick: () => window.MBCall && window.MBCall.start(chatPartner && !chatPartner.isGroup ? { uid: chatPartner.uid, name: chatPartner.name, photo: avatarUrl(chatPartner) } : null, "video") }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), mcPinBar(), /* @__PURE__ */ React.createElement(
+    })(), currentView === "user-profile" && viewingUser && renderFbProfile(), currentView === "fb-profile-menu" && renderFbMenu(), currentView === "fb-own-menu" && renderFbOwnMenu(), currentView === "fb-settings" && renderFbSettings(), currentView === "fb-view-as" && renderFbProfileCore("preview", profile, myPosts, myFriends, false), currentView === "fb-activity" && renderFbActivity(), currentView === "messages" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, !activeChat ? /* @__PURE__ */ React.createElement("div", { className: "mc-listpage" }, mcListPageContent()) : /* @__PURE__ */ React.createElement("div", { className: "mc-shell", style: kbUp && vvh ? { height: vvh } : void 0 }, /* @__PURE__ */ React.createElement("aside", { className: "mc-side" }, /* @__PURE__ */ React.createElement("div", { className: "mc-side-head" }, /* @__PURE__ */ React.createElement("button", { className: "mc-side-back", onClick: () => goTo("home"), title: "Back to MeBook" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("h2", { className: "mc-title" }, /* @__PURE__ */ React.createElement("span", null, "Me"), "Chat")), /* @__PURE__ */ React.createElement("div", { className: "mc-side-body" }, renderChatListPanel(true)), mcBackBtn("in-side")), /* @__PURE__ */ React.createElement("section", { className: "mc-main" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-page" }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-back", onClick: closeChat }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-avatar-wrap", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("img", { src: chatPartner ? avatarUrl(chatPartner) : "", alt: "" }), (!(chatPartner && chatPartner.isGroup) && isUserOnline(allUsers.find((x) => x.uid === (chatPartner && chatPartner.uid)), presNow)) ? /* @__PURE__ */ React.createElement("span", { className: "mechat-head-online" }) : null), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-info", onClick: openPartnerOrGroup, style: { cursor: "pointer" } }, /* @__PURE__ */ React.createElement("div", { className: "mechat-head-name" }, mcNickOf(chatPartner?.uid) || chatPartner?.name, isVerified(chatPartner) && /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "url(#mbTickGrad)" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-status" }, partnerTyping ? /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-text" }, "typing", /* @__PURE__ */ React.createElement("span", { className: "mechat-typing-dots" }, "...")) : chatPartner && chatPartner.isGroup ? "Group chat" : presLabel(allUsers.find((x) => x.uid === (chatPartner && chatPartner.uid)), presNow))), /* @__PURE__ */ React.createElement("div", { className: "mechat-head-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Audio call", onClick: () => window.MBCall && window.MBCall.start(chatPartner && !chatPartner.isGroup ? { uid: chatPartner.uid, name: chatPartner.name, photo: avatarUrl(chatPartner) } : null, "audio", activeChat) }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Video call", onClick: () => window.MBCall && window.MBCall.start(chatPartner && !chatPartner.isGroup ? { uid: chatPartner.uid, name: chatPartner.name, photo: avatarUrl(chatPartner) } : null, "video", activeChat) }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" }))), /* @__PURE__ */ React.createElement("button", { className: "mechat-head-btn", title: "Info", onClick: openPartnerOrGroup }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" }))))), mcPinBar(), /* @__PURE__ */ React.createElement(
       "div",
       {
         className: "mechat-body",
@@ -16613,8 +16677,7 @@ ${buildShareUrl(post.id)}`;
               className: "mechat-voice-play",
               onClick: (e) => {
                 e.stopPropagation();
-                const audio = new Audio(m.voiceUrl);
-                audio.play();
+                if (window.MBVoice) window.MBVoice.play(e.currentTarget, m.voiceUrl, m.duration); else new Audio(m.voiceUrl).play();
               }
             },
             /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M8 5v14l11-7z" }))
@@ -16628,6 +16691,14 @@ ${buildShareUrl(post.id)}`;
               }
             }
           ))), /* @__PURE__ */ React.createElement("span", { className: "mechat-voice-duration" }, formatVoiceDuration(m.duration || 0)));
+        } else if (m.type === "call" && !m.unsent) {
+          const _cv = m.callType === "video", _ok = m.callStatus === "ended";
+          const _title = _ok || mine ? (_cv ? "Video call" : "Voice call") : "Missed " + (_cv ? "video" : "voice") + " call";
+          const _sub = _ok ? formatVoiceDuration(m.duration || 0) : mine ? { missed: "No answer", declined: "Declined", busy: "Busy", cancelled: "Cancelled" }[m.callStatus] || "Not answered" : "Tap to call back";
+          bubbleContent = React.createElement("div", { className: "mbcm" + (_ok || mine && m.callStatus === "cancelled" ? "" : " miss"), onClick: (e) => {
+            e.stopPropagation();
+            if (window.MBCall && chatPartner && !chatPartner.isGroup) window.MBCall.start({ uid: chatPartner.uid, name: chatPartner.name, photo: avatarUrl(chatPartner) }, _cv ? "video" : "audio", activeChat);
+          } }, React.createElement("span", { className: "mbcm-ic" }, React.createElement("svg", { viewBox: "0 0 24 24" }, React.createElement("path", { d: _cv ? "M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" : "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" }))), React.createElement("span", { className: "mbcm-tx" }, React.createElement("b", null, _title), React.createElement("small", null, _sub)), React.createElement("span", { className: `mechat-bubble-time ${mine ? "me" : "them"}` }, chatTime(m.at)));
         } else if (isLikeMsg) {
           bubbleContent = /* @__PURE__ */ React.createElement("div", { style: { fontSize: 40, lineHeight: 1, padding: "2px 4px" } }, m.emoji || "\u{1F44D}");
         } else {
