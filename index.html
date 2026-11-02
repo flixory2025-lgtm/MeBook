@@ -555,10 +555,28 @@ window.MBVoice = MBVoice;
 
 /* =================== CALLS (WebRTC + Firestore signaling) =================== */
 const MBCall = (() => {
+  /* Optional but recommended: free account at metered.ca -> paste your TURN credentials URL here, e.g.
+     https://YOURAPP.metered.live/api/v1/turn/credentials?apiKey=XXXXXXXX  (makes calls work on every mobile network) */
+  const TURN_API_URL = "";
+  const OR = { username: 'openrelayproject', credential: 'openrelayproject' };
   const ICE = { iceServers: [
-    { urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: ['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turn:openrelay.metered.ca:443?transport=tcp'], username: 'openrelayproject', credential: 'openrelayproject' }
-  ] };
+    { urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }, { urls: 'stun:stun.cloudflare.com:3478' }, { urls: 'stun:openrelay.metered.ca:80' },
+    { urls: 'turn:openrelay.metered.ca:80', ...OR },
+    { urls: 'turn:openrelay.metered.ca:443', ...OR },
+    { urls: 'turn:openrelay.metered.ca:80?transport=tcp', ...OR },
+    { urls: 'turn:openrelay.metered.ca:443?transport=tcp', ...OR },
+    { urls: 'turns:openrelay.metered.ca:443?transport=tcp', ...OR }
+  ], iceCandidatePoolSize: 2 };
+  let turnAt = 0;
+  async function loadTurn(){
+    if(!TURN_API_URL || Date.now() - turnAt < 3600000) return;
+    try{
+      const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 3500);
+      const r = await fetch(TURN_API_URL, { signal: ctl.signal }); clearTimeout(tm);
+      const j = await r.json();
+      if(Array.isArray(j) && j.length){ ICE.iceServers = ICE.iceServers.slice(0, 4).concat(j); turnAt = Date.now(); }
+    }catch(_){}
+  }
   let fb, me, cur = null, inUn = null, ac2, toneT, ui = {};
   const col = (...p) => fb.collection(fb.db, ...p);
   const dref = (id) => fb.doc(fb.db, 'calls', id);
@@ -655,7 +673,11 @@ const MBCall = (() => {
     ui.lv.srcObject = c.local; ui.lv.play && ui.lv.play().catch(() => {});
     pc.ontrack = (e) => { ui.rv.srcObject = e.streams[0]; ui.rv.play && ui.rv.play().catch(() => {}); };
     const side = c.role === 'caller' ? 'callerCandidates' : 'calleeCandidates';
-    pc.onicecandidate = (e) => { if(e.candidate) fb.setDoc(fb.doc(col('calls', c.id, side)), e.candidate.toJSON()).catch(() => {}); };
+    c.candQ = []; c.docReady = c.role !== 'caller';
+    const putCand = (j) => fb.setDoc(fb.doc(col('calls', c.id, side)), j).catch((er) => console.warn('cand write failed', er));
+    pc.onicecandidate = (e) => { if(!e.candidate) return; const j = JSON.parse(JSON.stringify(e.candidate.toJSON())); if(!c.docReady){ c.candQ.push(j); return; } putCand(j); };
+    c.sendCands = () => { c.docReady = true; c.candQ.splice(0).forEach(putCand); };
+    pc.oniceconnectionstatechange = () => { const s = pc.iceConnectionState; if(s === 'connected' || s === 'completed') goLive(c); };
     pc.onconnectionstatechange = () => {
       const s = pc.connectionState;
       if(s === 'connected') goLive(c);
@@ -678,8 +700,8 @@ const MBCall = (() => {
   function watchDoc(c){
     c.unsubs.push(fb.onSnapshot(dref(c.id), async (s) => {
       if(!s.exists() || cur !== c) return; const d = s.data();
-      if(c.role === 'caller' && d.answer && !c.pc.currentRemoteDescription){
-        setState('conn'); stopTone(); try{ await c.pc.setRemoteDescription(d.answer); await flush(c); }catch(_){}
+      if(c.role === 'caller' && d.answer && !c.gotAns && !c.pc.currentRemoteDescription){ c.gotAns = true;
+        setState('conn'); stopTone(); try{ await c.pc.setRemoteDescription(d.answer); await flush(c); }catch(err){ console.error('setRemote(answer) failed', err); finish('Call failed', 'ended'); }
       }
       if(c.role === 'caller' && d.ringing && c.state === 'out' && !c.ringShown){ c.ringShown = true; setState('out', 'Ringing'); }
       if(['ended','declined','busy','missed'].includes(d.status) && !c.ending){
@@ -696,11 +718,11 @@ const MBCall = (() => {
       if(!window.RTCPeerConnection || !navigator.mediaDevices){ toast('Calls are not supported on this browser'); return; }
       const c = cur = { role: 'caller', type, peer, chatId, state: 'out', unsubs: [] }; render();
       try{ c.local = await media(type); }catch(e){ cleanup(c, true); toast(type==='video' ? 'Allow camera & microphone to call' : 'Allow microphone to call'); return; }
-      const id = fb.doc(col('calls')).id; c.id = id; const pc = makePC(c);
+      const id = fb.doc(col('calls')).id; c.id = id; await loadTurn(); const pc = makePC(c);
       const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
       let nm = me.displayName, ph = me.photoURL; try{ const us = await fb.getDoc(fb.doc(fb.db, 'users', me.uid)); const u = (us && us.data && us.data()) || {}; nm = u.name || nm; ph = u.photoURL || u.photo || u.avatar || ph; }catch(_){}
       await fb.setDoc(dref(id), { from: me.uid, to: peer.uid, fromName: nm || 'User', fromPhoto: ph || '', type, status: 'ringing', offer: { type: offer.type, sdp: offer.sdp }, ts: Date.now() });
-      watchDoc(c); listenCands(c, 'calleeCandidates'); tone('out');
+      c.sendCands(); watchDoc(c); listenCands(c, 'calleeCandidates'); tone('out');
       c.ringT = setTimeout(() => { if(cur === c && c.state === 'out') finish('No answer', 'missed'); }, 45000);
     }catch(e){ console.error(e); if(cur) cleanup(cur, true); toast('Could not start the call'); }
   }
@@ -712,7 +734,7 @@ const MBCall = (() => {
   async function accept(){
     const c = cur; if(!c || c.state !== 'in') return; clearTimeout(c.ringT); stopTone(); setState('conn');
     try{
-      c.local = await media(c.type); const pc = makePC(c);
+      c.local = await media(c.type); await loadTurn(); const pc = makePC(c);
       await pc.setRemoteDescription(c.offer); await flush(c);
       const ans = await pc.createAnswer(); await pc.setLocalDescription(ans);
       await fb.updateDoc(dref(c.id), { answer: { type: ans.type, sdp: ans.sdp }, status: 'accepted' });
