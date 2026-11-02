@@ -829,14 +829,23 @@ const MBCall = (() => {
   /* ---------- speaker / earpiece ---------- */
   async function setSpeaker(on, silent){
     const c = cur; if(!c || !ui.ra) return false;
-    if(!ui.ra.setSinkId){ if(!silent) toast('Earpiece mode is not supported on this device'); return false; }
-    try{
-      const outs = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'audiooutput');
-      const ear = outs.find((o) => /earpiece|handset|receiver/i.test(o.label));
-      const spk = outs.find((o) => /speaker/i.test(o.label) && !/earpiece/i.test(o.label));
-      if(!on && !ear){ if(!silent) toast('Earpiece mode is not supported on this device'); return false; }
-      await ui.ra.setSinkId(on ? (spk ? spk.deviceId : 'default') : ear.deviceId); c.speaker = on; paintBtns(); return true;
-    }catch(_){ if(!silent) toast('Could not switch audio output'); return false; }
+    const done = () => { c.speaker = on; paintBtns(); return true; };
+    /* 1) native Cordova/Capacitor AudioToggle plugin (if the app wrapper has it) */
+    try{ const AT = window.AudioToggle; if(AT && AT.setAudioMode){ AT.setAudioMode(on ? AT.SPEAKER : AT.EARPIECE); return done(); } }catch(_){}
+    /* 2) browser: pick the earpiece / speaker output device */
+    if(ui.ra.setSinkId){
+      try{
+        const outs = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'audiooutput');
+        const ear = outs.find((o) => /earpiece|handset|receiver|phone/i.test(o.label));
+        const spk = outs.find((o) => /speaker/i.test(o.label) && !/earpiece/i.test(o.label));
+        const target = on ? (spk || null) : (ear || null);
+        if(target){ await ui.ra.setSinkId(target.deviceId); return done(); }
+        if(!on){ await ui.ra.setSinkId('default'); return done(); }
+        await ui.ra.setSinkId('default'); return done();
+      }catch(_){}
+    }
+    if(!silent) toast(on ? 'Loud speaker switch is not supported on this device/app' : 'Earpiece switch is not supported on this device/app');
+    return false;
   }
 
   /* ---------- camera / screen share ---------- */
@@ -960,7 +969,7 @@ const MBCall = (() => {
   function goLive(c){
     if(cur !== c || c.state === 'live' || c.ending) return; stopTone(); setState('live'); c.liveAt = Date.now();
     const upd = () => { const t = fmt(Math.floor((Date.now() - c.liveAt)/1000)); if(ui.stt) ui.stt.textContent = t; if(ui.mt) ui.mt.textContent = t; };
-    c.tick = setInterval(upd, 500); upd(); wake(); session(c); setSpeaker(true, true); paintLocal();
+    c.tick = setInterval(upd, 500); upd(); wake(); session(c); setSpeaker(!!c.speaker, true); paintLocal();
   }
   async function flush(c){ c.hasRemote = true; for(const x of c.pending.splice(0)) try{ await c.pc.addIceCandidate(x); }catch(_){} }
   function listenCands(c, side){
@@ -988,7 +997,7 @@ const MBCall = (() => {
       if(cur){ toast('You are already in a call'); return; }
       fb = fb || await getFirebase(); me = fb.auth.currentUser; if(!me){ toast('Please log in first'); return; }
       if(!window.RTCPeerConnection || !navigator.mediaDevices){ toast('Calls are not supported on this browser'); return; }
-      const c = cur = { role: 'caller', type, peer, chatId, state: 'out', unsubs: [], speaker: true, facing: 'user' }; render();
+      const c = cur = { role: 'caller', type, peer, chatId, state: 'out', unsubs: [], speaker: type === 'video', facing: 'user' }; render();
       try{ c.local = await media(type); }catch(e){ cleanup(c, true); toast(type==='video' ? 'Allow camera & microphone to call' : 'Allow microphone to call'); return; }
       c.camTrack = c.local.getVideoTracks()[0] || null; c.cam = !!c.camTrack;
       const id = fb.doc(col('calls')).id; c.id = id; await loadTurn(); const pc = makePC(c);
@@ -1000,7 +1009,7 @@ const MBCall = (() => {
     }catch(e){ console.error(e); if(cur) cleanup(cur, true); toast('Could not start the call'); }
   }
   function incoming(id, d){
-    const c = cur = { id, role: 'callee', type: d.type || 'audio', peer: { uid: d.from, name: d.fromName || 'User', photo: d.fromPhoto }, offer: d.offer, state: 'in', unsubs: [], speaker: true, facing: 'user' };
+    const c = cur = { id, role: 'callee', type: d.type || 'audio', peer: { uid: d.from, name: d.fromName || 'User', photo: d.fromPhoto }, offer: d.offer, state: 'in', unsubs: [], speaker: (d.type === 'video'), facing: 'user' };
     render(); tone('in'); fb.updateDoc(dref(id), { ringing: true }).catch(() => {}); c.ringT = setTimeout(() => { if(cur === c && c.state === 'in') finish('Missed call', 'missed'); }, 45000);
     c.unsubs.push(fb.onSnapshot(dref(id), (s) => { if(cur !== c || c.ending || c.state !== 'in') return; const x = s.data(); if(x && ['ended','missed'].includes(x.status)) finish('Missed call', null); }));
   }
