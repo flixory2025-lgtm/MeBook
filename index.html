@@ -774,8 +774,59 @@ function setPushSenderName(name) {
   if (name) _pushSenderName = name;
 }
 let _osPromise = null;
+let _nativeOsInit = false;
+let _pendingPushData = null;
+function isNativeApp() {
+  return typeof window !== "undefined" && !!window.__mbNative;
+}
+function getNativeOS() {
+  try {
+    const w = window;
+    const os = (w.plugins && w.plugins.OneSignal) || w.OneSignal || (w.Capacitor && w.Capacitor.Plugins && w.Capacitor.Plugins.OneSignal) || null;
+    return os && os.login ? os : null;
+  } catch {
+    return null;
+  }
+}
+function handlePushData(d) {
+  if (!d) return;
+  _pendingPushData = d;
+  try {
+    if (typeof window.__mbHandlePush === "function") window.__mbHandlePush(d);
+  } catch {
+  }
+}
+function initNativeOneSignal() {
+  const os = getNativeOS();
+  if (!os) return null;
+  if (_nativeOsInit) return os;
+  _nativeOsInit = true;
+  try {
+    if (os.initialize) os.initialize(ONESIGNAL_APP_ID);
+  } catch {
+  }
+  try {
+    os.Notifications.addEventListener("click", (e) => {
+      try {
+        const n = e?.notification || {};
+        const d = n.additionalData || n.additional_data || {};
+        handlePushData(d);
+      } catch {
+      }
+    });
+    os.Notifications.addEventListener("foregroundWillDisplay", (e) => {
+      try {
+        if (document.visibilityState === "visible") e.preventDefault();
+      } catch {
+      }
+    });
+  } catch {
+  }
+  return os;
+}
 function loadOneSignal() {
   if (typeof window === "undefined" || !PUSH_ENABLED) return Promise.resolve(null);
+  if (isNativeApp()) return Promise.resolve(null);
   if (_osPromise) return _osPromise;
   _osPromise = new Promise((resolve) => {
     const w = window;
@@ -817,6 +868,11 @@ function loadOneSignal() {
 }
 async function oneSignalLogin(uid) {
   try {
+    if (isNativeApp()) {
+      const nos = initNativeOneSignal();
+      if (nos) nos.login(uid);
+      return;
+    }
     const os = await loadOneSignal();
     if (os) await os.login(uid);
   } catch (e) {
@@ -825,17 +881,48 @@ async function oneSignalLogin(uid) {
 }
 async function oneSignalLogout() {
   try {
+    if (isNativeApp()) {
+      const nos = initNativeOneSignal();
+      if (nos) nos.logout();
+      return;
+    }
     const os = await loadOneSignal();
     if (os) await os.logout();
   } catch {
   }
 }
+async function getPushPermissionAsync() {
+  if (!PUSH_ENABLED) return "disabled";
+  if (isNativeApp()) {
+    try {
+      const nos = initNativeOneSignal();
+      if (!nos) return "unsupported";
+      const ok = await nos.Notifications.getPermissionAsync();
+      return ok ? "granted" : "default";
+    } catch {
+      return "default";
+    }
+  }
+  return getPushPermission();
+}
 function getPushPermission() {
   if (!PUSH_ENABLED) return "disabled";
+  if (isNativeApp()) return "default";
   if (typeof window === "undefined" || !("Notification" in window)) return "unsupported";
   return Notification.permission;
 }
 async function requestPush() {
+  if (isNativeApp()) {
+    try {
+      const nos = initNativeOneSignal();
+      if (!nos) return "unsupported";
+      const ok = await nos.Notifications.requestPermission(true);
+      return ok ? "granted" : "denied";
+    } catch (e) {
+      console.warn("Native push permission failed:", e);
+      return "default";
+    }
+  }
   try {
     const os = await loadOneSignal();
     if (!os) return getPushPermission();
@@ -883,7 +970,10 @@ async function pushAfterAddDoc(ref, data, fsMod) {
       title: data.title || "MoviesVerseBD",
       message: data.message || "",
       type: data.type,
-      url: pushUrlFor(data)
+      url: pushUrlFor(data),
+      data: { type: data.type || "notification", fromUid: data.fromUid || data.from || "", postId: data.postId || "", mb: data.type === "friend" ? "friends" : "notifications" },
+      channel: "mebook_default",
+      priority: 10
     });
     return;
   }
@@ -893,14 +983,19 @@ async function pushAfterAddDoc(ref, data, fsMod) {
     const members = chatSnap.exists() ? chatSnap.data()?.members || [] : [];
     const tos = members.filter((x) => x !== data.from);
     if (!tos.length) return;
-    const message = data.type === "image" ? "\u{1F4F7} Photo" : data.type === "voice" ? "\u{1F3A4} Voice message" : data.text || "\u{1F44D}";
+    const isCall = data.type === "call";
+    if (isCall && data.callStatus !== "missed") return;
+    const message = isCall ? (data.callType === "video" ? "\u{1F4F9} Missed video call" : "\u{1F4DE} Missed voice call") : data.type === "image" ? "\u{1F4F7} Photo" : data.type === "voice" ? "\u{1F3A4} Voice message" : data.text || "\u{1F44D}";
     for (const to of tos) {
       await sendPush({
         uid: to,
         title: _pushSenderName,
         message,
-        type: "chat",
-        url: `${pushBaseUrl()}?mb=messages`
+        type: isCall ? "missed_call" : "chat",
+        url: `${pushBaseUrl()}?mb=messages&chat=${encodeURIComponent(m[1])}&u=${encodeURIComponent(data.from || "")}`,
+        data: { type: isCall ? "missed_call" : "chat", chatId: m[1], fromUid: data.from || "", fromName: _pushSenderName, mb: "messages" },
+        channel: isCall ? "mebook_calls" : "mebook_chat",
+        priority: 10
       });
     }
   }
@@ -10900,7 +10995,13 @@ function MeBookPage({ onExit }) {
   const [unreadNotifCount, setUnreadNotifCount] = useState(0);
   const [pushPerm, setPushPerm] = useState("disabled");
   useEffect(() => {
-    setPushPerm(getPushPermission());
+    let alive = true;
+    getPushPermissionAsync().then((r) => {
+      if (alive) setPushPerm(r);
+    });
+    return () => {
+      alive = false;
+    };
   }, [user]);
   const enablePush = async () => {
     const r = await requestPush();
@@ -11843,6 +11944,12 @@ function MeBookPage({ onExit }) {
             void oneSignalLogin(u.uid);
             try {
               const sp = new URLSearchParams(window.location.search);
+              const chatParam = sp.get("chat");
+              if (sp.get("mb") === "messages" && chatParam) {
+                const fromU = sp.get("u") || chatParam.split("_").find((x) => x !== u.uid) || "";
+                if (fromU) _pendingPushData = { type: "chat", chatId: chatParam, fromUid: fromU };
+                window.history.replaceState({}, "", window.location.pathname);
+              }
               const pu = sp.get("u");
               if (sp.get("mb") === "profile" && pu) {
                 pendingProfileRef.current = pu;
@@ -13087,6 +13194,43 @@ function MeBookPage({ onExit }) {
   const openFriendsList = (uid, name) => {
     pushPage("friends-list", { uid, name });
   };
+  useEffect(() => {
+    if (!user) return;
+    const handle = async (d) => {
+      try {
+        if (!d) return;
+        _pendingPushData = null;
+        if (d.type === "chat" || d.type === "missed_call" || d.chatId) {
+          let other = d.fromUid || (d.chatId || "").split("_").find((x) => x !== user.uid);
+          if (!other) {
+            goTo("messages");
+            return;
+          }
+          let name = d.fromName || "", photo = "";
+          try {
+            const fb = await getFirebase();
+            const us = await fb.getDoc(fb.doc(fb.db, "users", other));
+            if (us.exists()) {
+              const ud = us.data();
+              name = ud.name || name;
+              photo = ud.photoURL || ud.photo || "";
+            }
+          } catch {
+          }
+          void startChat(other, name || "Chat", photo);
+        } else if (d.mb && ["notifications", "friends", "messages", "home"].includes(d.mb)) {
+          goTo(d.mb);
+        }
+      } catch (e) {
+        console.warn("push tap handling failed", e);
+      }
+    };
+    window.__mbHandlePush = handle;
+    if (_pendingPushData) setTimeout(() => handle(_pendingPushData), 400);
+    return () => {
+      if (window.__mbHandlePush === handle) window.__mbHandlePush = null;
+    };
+  }, [user]);
   useEffect(() => {
     if (!user || !pendingProfileRef.current) return;
     const pu = pendingProfileRef.current;
