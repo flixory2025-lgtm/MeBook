@@ -364,84 +364,88 @@ const CSS = `
 .mebook-root .mbcm-tx{display:flex;flex-direction:column;line-height:1.25;flex:1;}
 .mebook-root .mbcm-tx b{font-size:14.5px;font-weight:700;}.mebook-root .mbcm-tx small{font-size:12px;opacity:.75;}
 .mebook-root .mbcm .mechat-bubble-time{align-self:flex-end;}
-/* ---------- call screen ---------- */
-.mbc{position:fixed;inset:0;z-index:2147483000;color:#fff;overflow:hidden;font-family:inherit;
-  background:radial-gradient(120% 70% at 50% 30%,#0f4733 0%,#08150f 48%,#040605 100%);
-  animation:mbcIn .45s cubic-bezier(.2,1,.3,1) both;touch-action:manipulation;}
-.mbc.out{animation:mbcOut .35s ease forwards;}
-@keyframes mbcIn{from{opacity:0;transform:scale(1.06);}to{opacity:1;transform:none;}}
+/* ---------- call screen (Messenger style) ---------- */
+@keyframes mbcIn{from{opacity:0;transform:scale(1.05);}to{opacity:1;transform:none;}}
 @keyframes mbcOut{to{opacity:0;transform:scale(.96);}}
-.mbc video{position:absolute;display:block;background:#000;}
-.mbc .rv{inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s;}
-.mbc[data-type=video][data-state=live] .rv{opacity:1;}
-.mbc .shade{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .4s;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,0) 26%,rgba(0,0,0,0) 62%,rgba(0,0,0,.6));}
-.mbc[data-type=video][data-state=live] .shade{opacity:1;}
-.mbc .tm{position:absolute;left:16px;top:calc(14px + env(safe-area-inset-top,0px));display:none;align-items:center;gap:7px;
-  background:rgba(239,68,68,.92);padding:6px 12px;border-radius:999px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;box-shadow:0 4px 16px rgba(239,68,68,.35);}
-.mbc .tm i{width:7px;height:7px;border-radius:50%;background:#fff;animation:mbvDot 1.2s infinite;}
-.mbc[data-state=live] .tm{display:flex;}
-.mbc .vname{position:absolute;right:16px;top:calc(16px + env(safe-area-inset-top,0px));display:none;font-size:15px;font-weight:600;text-shadow:0 1px 8px rgba(0,0,0,.6);}
-.mbc[data-type=video][data-state=live] .vname{display:block;}
-.mbc .stage{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;padding-top:calc(16vh + env(safe-area-inset-top,0px));transition:opacity .5s,transform .5s;}
-.mbc[data-type=video][data-state=live] .stage{opacity:0;transform:scale(.9);pointer-events:none;}
-.mbc .av{position:relative;width:150px;height:150px;display:flex;align-items:center;justify-content:center;}
-.mbc .av .rp{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(74,222,128,.5);animation:mbcRipple 3.2s ease-out infinite;opacity:0;}
+@keyframes mbcRipple{0%{transform:scale(.9);opacity:.55;}100%{transform:scale(1.9);opacity:0;}}
+@keyframes mbcDots{0%,60%,100%{opacity:.25;transform:none;}30%{opacity:1;transform:translateY(-3px);}}
+@keyframes mbcRing{0%,100%{box-shadow:0 10px 30px rgba(34,197,94,.55),0 0 0 0 rgba(34,197,94,.5);}50%{box-shadow:0 10px 30px rgba(34,197,94,.55),0 0 0 16px rgba(34,197,94,0);}}
+@keyframes mbcWig{0%,60%,100%{transform:rotate(0);}10%{transform:rotate(-14deg);}20%{transform:rotate(12deg);}30%{transform:rotate(-10deg);}40%{transform:rotate(8deg);}}
+.mbc{--t1:#8f8f78;--t2:#cfd89c;--t3:#a0bc4a;--btn:rgba(40,52,22,.92);--sa:max(env(safe-area-inset-top,0px),var(--sat,0px));--sb:max(env(safe-area-inset-bottom,0px),var(--sab,0px));
+  position:fixed;inset:0;z-index:2147483000;color:#fff;overflow:hidden;font-family:inherit;
+  background:linear-gradient(180deg,var(--t1) 0%,var(--t2) 26%,var(--t3) 100%);
+  animation:mbcIn .4s cubic-bezier(.2,1,.3,1) both;touch-action:manipulation;-webkit-user-select:none;user-select:none;}
+.mbc.out{animation:mbcOut .35s ease forwards;}
+.mbc.min{opacity:0;visibility:hidden;pointer-events:none;transform:scale(.92);animation:none;transition:opacity .25s,transform .25s,visibility 0s .25s;}
+.mbc .bgimg{position:absolute;left:-25%;top:-25%;width:150%;height:150%;object-fit:cover;filter:blur(60px) saturate(1.5);display:none;pointer-events:none;}
+.mbc.blurbg .bgimg{display:block;opacity:.9;}
+.mbc.blurbg::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.28),rgba(255,255,255,.08) 28%,rgba(0,0,0,.2));pointer-events:none;}
+.mbc video{display:block;}
+.mbc .rv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s;background:#000;pointer-events:none;}
+.mbc[data-rv=cam] .rv{opacity:1;}
+.mbc[data-rv=screen] .rv{opacity:1;object-fit:contain;}
+.mbc .shade{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .4s;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,0) 24%,rgba(0,0,0,0) 62%,rgba(0,0,0,.6));}
+.mbc:not([data-rv=none]) .shade{opacity:1;}
+.mbc .top{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;gap:4px;padding:calc(var(--sa) + 14px) 14px 0 14px;z-index:5;transition:opacity .3s,transform .3s;}
+.mbc .tb{width:46px;height:46px;border:0;background:none;color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;padding:0;cursor:pointer;filter:drop-shadow(0 1px 3px rgba(0,0,0,.35));}
+.mbc .tb:active{background:rgba(255,255,255,.18);}
+.mbc .tb svg{width:27px;height:27px;fill:currentColor;}
+.mbc .tn{flex:1;min-width:0;font-size:21px;font-weight:700;text-shadow:0 1px 6px rgba(0,0,0,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-left:6px;}
+.mbc .menu{position:absolute;right:14px;top:calc(var(--sa) + 64px);background:#fff;color:#111;border-radius:14px;min-width:200px;box-shadow:0 12px 40px rgba(0,0,0,.35);overflow:hidden;display:none;}
+.mbc .menu.show{display:block;}
+.mbc .menu button{display:block;width:100%;padding:14px 18px;border:0;background:none;text-align:left;font-size:15px;color:#111;cursor:pointer;font-family:inherit;}
+.mbc .menu button:active{background:#eee;}
+.mbc .stage{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding-top:calc(var(--sa) + 17vh);pointer-events:none;transition:opacity .4s,transform .4s;}
+.mbc:not([data-rv=none]) .stage{opacity:0;transform:scale(.92);}
+.mbc .av{position:relative;width:clamp(112px,32vw,170px);height:clamp(112px,32vw,170px);}
+.mbc .av .rp{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(255,255,255,.55);animation:mbcRipple 3.2s ease-out infinite;opacity:0;}
 .mbc .av .rp:nth-child(2){animation-delay:1.05s;}.mbc .av .rp:nth-child(3){animation-delay:2.1s;}
-.mbc[data-state=live] .av .rp{animation-duration:4.5s;border-color:rgba(255,255,255,.18);}
-.mbc[data-state=ended] .av .rp{animation:none;}
-@keyframes mbcRipple{0%{transform:scale(.8);opacity:.7;}100%{transform:scale(2);opacity:0;}}
-.mbc .av .ring{position:absolute;inset:-8px;border-radius:50%;background:rgba(0,0,0,.28);box-shadow:0 0 0 1px rgba(255,255,255,.07),0 0 60px rgba(34,197,94,.25);}
-.mbc .av img{position:relative;width:132px;height:132px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.14);background:#1f2a24;animation:mbcBreath 3.4s ease-in-out infinite;}
-@keyframes mbcBreath{50%{transform:scale(1.035);}}
-.mbc .nm{margin-top:34px;font-size:26px;font-weight:700;letter-spacing:-.2px;max-width:80%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.mbc .st{margin-top:8px;font-size:14.5px;color:rgba(255,255,255,.6);display:flex;gap:2px;align-items:center;}
-.mbc .st .d{display:inline-flex;gap:3px;margin-left:4px;}
+.mbc[data-state=live] .av .rp,.mbc[data-state=ended] .av .rp{animation:none;}
+.mbc .av img{position:relative;width:100%;height:100%;border-radius:50%;object-fit:cover;background:#1f2a24;box-shadow:0 8px 30px rgba(0,0,0,.22);}
+.mbc .nm{margin-top:30px;font-size:34px;font-weight:700;max-width:86%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 2px 10px rgba(0,0,0,.3);}
+.mbc .st{margin-top:6px;font-size:19px;letter-spacing:.4px;text-shadow:0 1px 6px rgba(0,0,0,.3);display:flex;align-items:center;font-variant-numeric:tabular-nums;}
+.mbc .st .d{display:inline-flex;gap:3px;margin-left:5px;}
 .mbc .st .d i{width:4px;height:4px;border-radius:50%;background:currentColor;animation:mbcDots 1.2s infinite;}
 .mbc .st .d i:nth-child(2){animation-delay:.15s;}.mbc .st .d i:nth-child(3){animation-delay:.3s;}
 .mbc[data-state=live] .st .d,.mbc[data-state=ended] .st .d{display:none;}
-@keyframes mbcDots{0%,60%,100%{opacity:.25;transform:none;}30%{opacity:1;transform:translateY(-3px);}}
-.mbc .bar{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;gap:26px;padding:0 20px calc(34px + env(safe-area-inset-bottom,0px));transition:opacity .35s,transform .35s;}
-.mbc .row{display:flex;align-items:center;justify-content:center;gap:22px;}
-.mbc .cb{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.08);
-  background:rgba(255,255,255,.09);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:transform .2s cubic-bezier(.3,1.6,.5,1),background .25s;cursor:pointer;color:#fff;padding:0;}
-.mbc .cb:active{transform:scale(.84);}
-.mbc .cb svg{width:25px;height:25px;fill:currentColor;}
-.mbc .cb.off{background:#fff;color:#111;}
-.mbc .cb .on{display:block;}.mbc .cb .offi{display:none;}
-.mbc .cb.off .on{display:none;}.mbc .cb.off .offi{display:block;}
-.mbc .endw{width:92px;height:92px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(239,68,68,.14);box-shadow:0 0 0 1px rgba(239,68,68,.3);}
-.mbc .end,.mbc .no,.mbc .yes{width:68px;height:68px;border-radius:50%;border:0;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;padding:0;transition:transform .2s cubic-bezier(.3,1.6,.5,1);}
-.mbc .end,.mbc .no{background:#ef4444;box-shadow:0 10px 30px rgba(239,68,68,.5);}
-.mbc .yes{background:#22c55e;box-shadow:0 10px 30px rgba(34,197,94,.55);animation:mbcRing 1.4s ease-in-out infinite;}
-.mbc .end:active,.mbc .no:active,.mbc .yes:active{transform:scale(.86);}
-.mbc .end svg,.mbc .no svg,.mbc .yes svg{width:30px;height:30px;fill:#fff;}
-.mbc .end svg,.mbc .no svg{transform:rotate(135deg);}
-@keyframes mbcRing{0%,100%{box-shadow:0 10px 30px rgba(34,197,94,.55),0 0 0 0 rgba(34,197,94,.5);}50%{box-shadow:0 10px 30px rgba(34,197,94,.55),0 0 0 16px rgba(34,197,94,0);}}
+.mbc .bar{position:absolute;left:0;right:0;bottom:0;padding:0 16px calc(var(--sb) + 36px);z-index:5;transition:opacity .3s,transform .3s;}
+.mbc .active{display:flex;justify-content:space-between;align-items:center;max-width:470px;margin:0 auto;}
+.mbc .cb{width:clamp(54px,16.5vw,70px);aspect-ratio:1;border-radius:50%;border:0;background:var(--btn);color:#fff;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;
+  transition:transform .2s cubic-bezier(.3,1.6,.5,1),background .25s,color .25s;-webkit-tap-highlight-color:transparent;}
+.mbc .cb:active{transform:scale(.86);}
+.mbc .cb svg{width:46%;height:46%;fill:currentColor;}
+.mbc .cb.act{background:#fff;color:#111;}
+.mbc .cb.end{background:#e5233a;color:#fff;}
+.mbc .cb.end svg{transform:rotate(135deg);}
+.mbc .incoming{display:none;justify-content:space-around;align-items:flex-end;max-width:420px;margin:0 auto;}
+.mbc .lbl{display:flex;flex-direction:column;align-items:center;gap:10px;font-size:14px;text-shadow:0 1px 5px rgba(0,0,0,.35);}
+.mbc .no,.mbc .yes{width:74px;height:74px;border-radius:50%;border:0;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;padding:0;transition:transform .2s cubic-bezier(.3,1.6,.5,1);}
+.mbc .no{background:#e5233a;box-shadow:0 10px 30px rgba(229,35,58,.5);}
+.mbc .yes{background:#22c55e;animation:mbcRing 1.4s ease-in-out infinite;}
+.mbc .no:active,.mbc .yes:active{transform:scale(.86);}
+.mbc .no svg,.mbc .yes svg{width:32px;height:32px;fill:#fff;}
+.mbc .no svg{transform:rotate(135deg);}
 .mbc .yes svg{animation:mbcWig 1.4s ease-in-out infinite;}
-@keyframes mbcWig{0%,60%,100%{transform:rotate(0);}10%{transform:rotate(-14deg);}20%{transform:rotate(12deg);}30%{transform:rotate(-10deg);}40%{transform:rotate(8deg);}}
-.mbc .incoming,.mbc .active{display:none;}
-.mbc[data-state=in] .incoming{display:flex;gap:84px;align-items:flex-end;}
-.mbc[data-state=in] .lbl{display:flex;flex-direction:column;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,.65);}
-.mbc:not([data-state=in]) .active{display:flex;flex-direction:column;align-items:center;gap:26px;}
-.mbc .vonly{display:none;}
-.mbc[data-type=video] .vonly{display:flex;}
-.mbc[data-state=live][data-type=video] .bar.hide{opacity:0;transform:translateY(30px);pointer-events:none;}
-.mbc[data-type=video][data-state=live] .active .row{background:rgba(25,25,25,.5);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:10px 14px;border-radius:999px;gap:12px;border:1px solid rgba(255,255,255,.08);}
-.mbc[data-type=video][data-state=live] .endw{width:auto;height:auto;background:none;box-shadow:none;}
-.mbc[data-type=video][data-state=live] .end{width:54px;height:54px;}
-.mbc[data-type=video][data-state=live] .end svg{width:26px;height:26px;}
-.mbc[data-type=video][data-state=live] .cb{width:48px;height:48px;background:rgba(255,255,255,.1);}
-.mbc[data-type=video][data-state=live] .cb.off{background:#fff;}
-.mbc[data-state=ended] .bar{opacity:.0;pointer-events:none;}
-.mbc .pip{position:absolute;right:14px;top:calc(62px + env(safe-area-inset-top,0px));width:108px;height:152px;border-radius:20px;overflow:hidden;display:none;
-  box-shadow:0 10px 34px rgba(0,0,0,.5),0 0 0 2px rgba(255,255,255,.22);touch-action:none;transition:transform .35s cubic-bezier(.2,1,.3,1);z-index:3;}
-.mbc[data-type=video]:not([data-state=in]):not([data-state=ended]) .pip{display:block;}
-.mbc[data-type=video][data-state=out] .pip,.mbc[data-type=video][data-state=conn] .pip{opacity:.9;}
+.mbc[data-state=in] .incoming{display:flex;}
+.mbc[data-state=in] .active,.mbc[data-state=in] .tb[data-a=min],.mbc[data-state=in] .tb[data-a=add]{display:none;}
+.mbc[data-state=ended] .bar{opacity:.35;pointer-events:none;}
+.mbc.hideui .top,.mbc.hideui .bar{opacity:0;pointer-events:none;}
+.mbc.hideui .bar{transform:translateY(30px);}
+.mbc .sharebn{position:absolute;left:50%;top:calc(var(--sa) + 72px);transform:translateX(-50%);display:none;align-items:center;gap:10px;background:rgba(20,20,20,.8);padding:7px 7px 7px 15px;border-radius:999px;font-size:13px;font-weight:600;z-index:6;white-space:nowrap;}
+.mbc.sharing .sharebn{display:flex;}
+.mbc .sharebn button{background:#e5233a;color:#fff;border:0;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.mbc .pip{position:absolute;right:14px;top:calc(var(--sa) + 120px);width:104px;height:148px;border-radius:18px;overflow:hidden;display:none;background:#1b1f1d;
+  box-shadow:0 10px 34px rgba(0,0,0,.5),0 0 0 2px rgba(255,255,255,.25);touch-action:none;transition:transform .35s cubic-bezier(.2,1,.3,1);z-index:4;}
+.mbc .pip.on{display:block;}
+.mbc[data-state=in] .pip,.mbc[data-state=ended] .pip{display:none !important;}
 .mbc .pip.dragging{transition:none;}
-.mbc .pip video{inset:0;width:100%;height:100%;object-fit:cover;}
+.mbc .pip video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
 .mbc .pip.mir video{transform:scaleX(-1);}
-.mbc .pip.camoff video{opacity:0;}
-.mbc .pip.camoff{background:#1b1f1d;}
+.mbmini{position:fixed;left:calc(100vw - 78px);top:110px;width:64px;height:64px;border-radius:50%;z-index:2147483000;background:#222;box-shadow:0 8px 24px rgba(0,0,0,.4),0 0 0 3px #22c55e;touch-action:none;
+  transition:left .3s cubic-bezier(.2,1,.3,1),top .3s cubic-bezier(.2,1,.3,1);animation:mbvPop .35s cubic-bezier(.3,1.7,.5,1) both;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.mbmini.drag{transition:none;}
+.mbmini img{width:100%;height:100%;border-radius:50%;object-fit:cover;pointer-events:none;display:block;}
+.mbmini .mt{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);background:#22c55e;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none;}
 .mbtoast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:2147483600;background:rgba(20,24,22,.94);color:#fff;
   padding:10px 16px;border-radius:14px;font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.4);animation:mbvUp .3s ease both;max-width:86vw;text-align:center;}
 @media (prefers-reduced-motion:reduce){.mbc *,.mbv *{animation-duration:.01s !important;animation-iteration-count:1 !important;}}
@@ -456,7 +460,13 @@ const IC = {
   camoff:'M21 6.5l-4 4V7c0-.55-.45-1-1-1H9.82L21 17.18V6.5zM3.27 2L2 3.27 4.73 6H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.21 0 .39-.08.54-.18L19.73 21 21 19.73 3.27 2z',
   flip:'M20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 13c-2.76 0-5-2.24-5-5H5l2.5-2.5L10 12H8c0 2.21 1.79 4 4 4 .74 0 1.4-.2 2-.55l.73.73C13.87 16.7 12.97 17 12 17zm4.5-4.5L14 12h2c0-2.21-1.79-4-4-4-.74 0-1.4.2-2 .55l-.73-.73C10.13 7.3 11.03 7 12 7c2.76 0 5 2.24 5 5h2l-2.5 2.5z',
   trash:'M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z',
-  send:'M2.01 21L23 12 2.01 3 2 10l15 2-15 2z'
+  send:'M2.01 21L23 12 2.01 3 2 10l15 2-15 2z',
+  spk:'M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z',
+  ear:'M7 9v6h4l5 5V4l-5 5H7z',
+  screen:'M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.11-.9-2-2-2H4c-1.11 0-2 .89-2 2v10c0 1.1.89 2 2 2H0v2h24v-2h-4zm-7-3.53v-2.19c-2.78 0-4.61.85-6 2.72.56-2.67 2.11-5.33 6-5.87V7l4 3.73-4 3.74z',
+  add:'M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z',
+  more:'M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z',
+  min:'M22 3.41L16.71 8.7 20 12h-8V4l3.29 3.29L20.59 2 22 3.41zM3.41 22l5.29-5.29L12 20v-8H4l3.29 3.29L2 20.59 3.41 22z'
 };
 const svg = (k) => `<svg viewBox="0 0 24 24"><path d="${IC[k]}"/></svg>`;
 function toast(m){const t=document.createElement('div');t.className='mbtoast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>{t.style.transition='opacity .3s';t.style.opacity=0;setTimeout(()=>t.remove(),300);},2400);}
@@ -553,7 +563,7 @@ const MBVoice = (() => {
 })();
 window.MBVoice = MBVoice;
 
-/* =================== CALLS (WebRTC + Firestore signaling) =================== */
+/* =================== CALLS (WebRTC + Firestore signaling) - Messenger style UI =================== */
 const MBCall = (() => {
   /* Optional but recommended: free account at metered.ca -> paste your TURN credentials URL here, e.g.
      https://YOURAPP.metered.live/api/v1/turn/credentials?apiKey=XXXXXXXX  (makes calls work on every mobile network) */
@@ -577,10 +587,11 @@ const MBCall = (() => {
       if(Array.isArray(j) && j.length){ ICE.iceServers = ICE.iceServers.slice(0, 4).concat(j); turnAt = Date.now(); }
     }catch(_){}
   }
-  let fb, me, cur = null, inUn = null, ac2, toneT, ui = {};
+  let fb, me, cur = null, inUn = null, ac2, toneT, ui = {}, popSkip = false, wl = null;
   const col = (...p) => fb.collection(fb.db, ...p);
   const dref = (id) => fb.doc(fb.db, 'calls', id);
   const fmt = (s) => { const m = Math.floor(s/60), r = s%60; return String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0'); };
+  const esc = (s) => String(s||'').replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
   function stopTone(){ clearInterval(toneT); toneT = null; if(navigator.vibrate) navigator.vibrate(0); }
   function tone(kind){
@@ -596,82 +607,241 @@ const MBCall = (() => {
     }catch(_){}
   }
 
+  /* ---------- background colour taken from the profile picture ---------- */
+  const hueOf = (s) => { let h = 0; for(const ch of String(s||'U')) h = (h*31 + ch.charCodeAt(0)) % 360; return h; };
+  function setTheme(r, h, s){
+    s = Math.max(.22, Math.min(.75, s)); const st = r.style;
+    st.setProperty('--t1', 'hsl(' + h + ',' + Math.round(s*28) + '%,52%)');
+    st.setProperty('--t2', 'hsl(' + h + ',' + Math.round(s*62) + '%,76%)');
+    st.setProperty('--t3', 'hsl(' + h + ',' + Math.round(s*88) + '%,52%)');
+    st.setProperty('--btn', 'hsla(' + h + ',' + Math.round(s*60) + '%,17%,.92)');
+  }
+  function theme(c, r){
+    setTheme(r, hueOf(c.peer.name), .4);
+    if(!c.peer.photo){ return; }
+    const im = new Image(); im.crossOrigin = 'anonymous';
+    im.onload = () => {
+      try{
+        const cv = document.createElement('canvas'); cv.width = cv.height = 24; const x = cv.getContext('2d'); x.drawImage(im, 0, 0, 24, 24);
+        const d = x.getImageData(0, 0, 24, 24).data; let R = 0, G = 0, B = 0, W = 0;
+        for(let i = 0; i < d.length; i += 4){
+          const a = d[i], b = d[i+1], e = d[i+2], mx = Math.max(a,b,e), mn = Math.min(a,b,e), sat = mx ? (mx-mn)/mx : 0, lum = (a+b+e)/3;
+          let w = .08 + sat*sat*3; if(lum < 28 || lum > 236) w *= .08; R += a*w; G += b*w; B += e*w; W += w;
+        }
+        R /= W; G /= W; B /= W; const r1 = R/255, g1 = G/255, b1 = B/255, mx = Math.max(r1,g1,b1), mn = Math.min(r1,g1,b1), dl = mx - mn;
+        let h = 0; if(dl){ if(mx === r1) h = ((g1-b1)/dl) % 6; else if(mx === g1) h = (b1-r1)/dl + 2; else h = (r1-g1)/dl + 4; h = Math.round(h*60); if(h < 0) h += 360; }
+        const l = (mx+mn)/2, s = dl ? dl/(1-Math.abs(2*l-1)) : 0;
+        if(cur === c) setTheme(r, h, s);
+      }catch(_){ r.classList.add('blurbg'); }
+    };
+    im.onerror = () => { r.classList.add('blurbg'); };
+    im.src = c.peer.photo;
+  }
+
+  /* ---------- UI ---------- */
   function render(){
-    const c = cur, r = document.createElement('div'); r.className = 'mbc'; r.dataset.type = c.type; r.dataset.state = c.state;
-    r.innerHTML = `<video class="rv" autoplay playsinline></video><div class="shade"></div>
-    <div class="tm"><i></i><span class="tt">00:00</span></div><div class="vname">${esc(c.peer.name)}</div>
-    <div class="stage"><div class="av"><i class="rp"></i><i class="rp"></i><i class="rp"></i><i class="ring"></i><img alt="" src="${esc(c.peer.photo||'data:,')}"></div>
-      <div class="nm">${esc(c.peer.name||'User')}</div><div class="st"><span class="stt"></span><span class="d"><i></i><i></i><i></i></span></div></div>
+    const c = cur, r = document.createElement('div'); r.className = 'mbc'; r.dataset.type = c.type; r.dataset.state = c.state; r.dataset.rv = 'none';
+    const photo = esc(c.peer.photo || 'data:,');
+    r.innerHTML = `<img class="bgimg" alt="" src="${photo}"><video class="rv" autoplay playsinline muted></video><div class="shade"></div>
+    <div class="top"><button class="tb" data-a="min">${svg('min')}</button><div class="tn">${esc(c.peer.name || 'User')}</div>
+      <button class="tb" data-a="add">${svg('add')}</button><button class="tb" data-a="more">${svg('more')}</button></div>
+    <div class="menu"><button data-a="flip">Switch camera</button><button data-a="min">Minimize call</button></div>
+    <div class="sharebn"><span>You are sharing your screen</span><button data-a="share">Stop</button></div>
+    <div class="stage"><div class="av"><i class="rp"></i><i class="rp"></i><i class="rp"></i><img alt="" src="${photo}"></div>
+      <div class="nm">${esc(c.peer.name || 'User')}</div><div class="st"><span class="stt"></span><span class="d"><i></i><i></i><i></i></span></div></div>
     <div class="pip mir"><video class="lv" autoplay playsinline muted></video></div>
     <div class="bar"><div class="incoming"><div class="lbl"><button class="no" data-a="no">${svg('phone')}</button>Decline</div><div class="lbl"><button class="yes" data-a="yes">${svg('phone')}</button>Accept</div></div>
-      <div class="active"><div class="row"><button class="cb" data-a="mic">${`<span class="on">${svg('mic')}</span><span class="offi">${svg('micoff')}</span>`}</button>
-        <button class="cb vonly" data-a="cam"><span class="on">${svg('cam')}</span><span class="offi">${svg('camoff')}</span></button>
-        <div class="endw"><button class="end" data-a="end">${svg('phone')}</button></div>
-        <button class="cb vonly" data-a="flip">${svg('flip')}</button></div></div></div>`;
-    document.body.appendChild(r); ui = { r, rv: r.querySelector('.rv'), lv: r.querySelector('.lv'), pip: r.querySelector('.pip'), stt: r.querySelector('.stt'), tt: r.querySelector('.tt'), bar: r.querySelector('.bar') };
-    const im = r.querySelector('.av img'); im.onerror = function(){ this.onerror = null; this.src = 'https://ui-avatars.com/api/?background=16a34a&color=fff&name=' + encodeURIComponent(c.peer.name || 'User'); }; if(!c.peer.photo) im.onerror();
-    r.addEventListener('click', onClick); pipDrag(ui.pip);
-    r.addEventListener('pointerdown', (e) => { if(c.type==='video' && r.dataset.state==='live'){ ui.bar.classList.remove('hide'); clearTimeout(c.hideT); c.hideT = setTimeout(() => { if(cur===c) ui.bar.classList.add('hide'); }, 4200); } });
+      <div class="active"><button class="cb" data-a="cam"></button><button class="cb" data-a="mic"></button><button class="cb" data-a="share"></button><button class="cb" data-a="spk"></button><button class="cb end" data-a="end">${svg('phone')}</button></div></div>`;
+    document.body.appendChild(r);
+    const ra = document.createElement('audio'); ra.autoplay = true; ra.setAttribute('playsinline', ''); ra.style.display = 'none'; document.body.appendChild(ra);
+    ui = { r, ra, rv: r.querySelector('.rv'), lv: r.querySelector('.lv'), pip: r.querySelector('.pip'), stt: r.querySelector('.stt'), bar: r.querySelector('.bar'), menu: r.querySelector('.menu') };
+    const im = r.querySelector('.av img'); im.onerror = function(){ this.onerror = null; this.src = 'https://ui-avatars.com/api/?background=16a34a&color=fff&size=256&name=' + encodeURIComponent(c.peer.name || 'User'); }; if(!c.peer.photo) im.onerror();
+    r.addEventListener('click', onClick); pipDrag(ui.pip); theme(c, r); paintBtns(); pushBack(c);
+    r.addEventListener('pointerdown', (e) => {
+      if(r.dataset.rv === 'none' || e.target.closest('button,.pip,.menu')) { ui.menu.classList.remove('show'); return; }
+      ui.menu.classList.remove('show'); r.classList.toggle('hideui'); armHide(c);
+    });
     setState(c.state);
   }
-  const esc = (s) => String(s||'').replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  function armHide(c){ clearTimeout(c.hideT); c.hideT = setTimeout(() => { if(cur === c && ui.r && ui.r.dataset.rv !== 'none') ui.r.classList.add('hideui'); }, 5000); }
   const LABEL = { in: (c) => 'Incoming ' + (c.type==='video' ? 'video call' : 'call'), out: () => 'Calling', conn: () => 'Connecting', live: () => '', ended: () => 'Call ended' };
   function setState(s, txt){ if(!cur || !ui.r) return; cur.state = s; ui.r.dataset.state = s; ui.stt.textContent = txt || LABEL[s](cur); }
+  function paintBtns(){
+    const c = cur; if(!c || !ui.r) return; const b = (a) => ui.r.querySelector('.active [data-a=' + a + ']');
+    const set = (a, on, icon) => { const el = b(a); el.classList.toggle('act', !!on); el.innerHTML = svg(icon); };
+    set('cam', c.cam && !c.sharing, c.cam && !c.sharing ? 'cam' : 'camoff');
+    set('mic', c.muted, c.muted ? 'micoff' : 'mic');
+    set('share', c.sharing, 'screen');
+    set('spk', c.speaker, c.speaker ? 'spk' : 'ear');
+    ui.r.classList.toggle('sharing', !!c.sharing);
+  }
+  function paintLocal(){
+    const c = cur; if(!c || !ui.r) return; const on = c.cam && c.camTrack && !c.sharing;
+    ui.lv.srcObject = on ? new MediaStream([c.camTrack]) : null; if(on) ui.lv.play && ui.lv.play().catch(() => {});
+    ui.pip.classList.toggle('on', !!on); ui.pip.classList.toggle('mir', c.facing === 'user'); paintBtns();
+  }
+  function remoteView(c, m){
+    if(!ui.r) return; c.remote = m || {}; const v = c.remote.screen ? 'screen' : c.remote.cam ? 'cam' : 'none'; ui.r.dataset.rv = v;
+    if(v === 'none'){ ui.r.classList.remove('hideui'); clearTimeout(c.hideT); } else { ui.rv.play && ui.rv.play().catch(() => {}); armHide(c); }
+  }
   function onClick(e){
-    const b = e.target.closest('[data-a]'); if(!b || !cur) return; const a = b.dataset.a;
+    const b = e.target.closest('[data-a]'); if(!b || !cur) return; const a = b.dataset.a; const c = cur;
+    if(a !== 'more') ui.menu.classList.remove('show');
     if(a==='yes') accept(); else if(a==='no') finish('Declined', 'declined'); else if(a==='end') hangup();
-    else if(a==='mic'){ const t = cur.local && cur.local.getAudioTracks()[0]; if(t){ t.enabled = !t.enabled; b.classList.toggle('off', !t.enabled); } }
-    else if(a==='cam'){ const t = cur.local && cur.local.getVideoTracks()[0]; if(t){ t.enabled = !t.enabled; b.classList.toggle('off', !t.enabled); ui.pip.classList.toggle('camoff', !t.enabled); } }
-    else if(a==='flip') flip();
+    else if(a==='mic'){ const t = c.local && c.local.getAudioTracks()[0]; if(t){ t.enabled = !t.enabled; c.muted = !t.enabled; paintBtns(); } }
+    else if(a==='cam') setCam(!(c.cam));
+    else if(a==='share') toggleShare();
+    else if(a==='spk') setSpeaker(!c.speaker);
+    else if(a==='flip'){ if(c.cam && !c.sharing) flip(); else toast('Turn on your camera first'); }
+    else if(a==='min') minimize();
+    else if(a==='add') toast('Group calls are not available yet');
+    else if(a==='more') ui.menu.classList.toggle('show');
   }
   function hangup(){ const c = cur; if(!c) return; if(c.state==='live') finish('Call ended', 'ended'); else finish('Call ended', c.role==='caller' ? 'ended' : 'declined'); }
-  async function flip(){
-    const c = cur; if(!c || !c.local || !c.pc || c.flipping) return; c.flipping = true;
-    const want = c.facing === 'user' ? 'environment' : 'user'; const old = c.local.getVideoTracks()[0]; const was = old ? old.enabled : true;
-    const gum = (v) => navigator.mediaDevices.getUserMedia({ video: v, audio: false });
-    const put = async (ns, face) => {
-      const nt = ns.getVideoTracks()[0]; nt.enabled = was; const sd = c.pc.getSenders().find((s) => s.track && s.track.kind === 'video' || s.track === null);
-      const vs = c.pc.getSenders().find((s) => (s.track && s.track.kind === 'video')); if(vs) await vs.replaceTrack(nt); else if(sd) await sd.replaceTrack(nt);
-      c.local.getVideoTracks().forEach((t) => { c.local.removeTrack(t); t.stop(); }); c.local.addTrack(nt);
-      const real = (nt.getSettings && nt.getSettings().facingMode) || face; c.facing = real === 'environment' ? 'environment' : 'user';
-      ui.lv.srcObject = c.local; ui.lv.play && ui.lv.play().catch(() => {}); ui.pip.classList.toggle('mir', c.facing === 'user');
-    };
+
+  /* ---------- minimize / restore (call keeps running) ---------- */
+  function pushBack(c){ if(window.__mbNative || c.pushed) return; try{ history.pushState({ mbc: 1 }, ''); c.pushed = true; }catch(_){} }
+  function popBack(c){ if(!c.pushed) return; c.pushed = false; popSkip = true; setTimeout(() => { popSkip = false; }, 900); try{ history.back(); }catch(_){ popSkip = false; } }
+  window.addEventListener('popstate', (e) => {
+    if(popSkip){ popSkip = false; e.stopImmediatePropagation(); return; }
+    const c = cur; if(c && c.pushed){ c.pushed = false; e.stopImmediatePropagation(); if(!c.min && c.state !== 'in') minimize(true); else pushBack(c); }
+  }, true);
+  function minimize(viaPop){
+    const c = cur; if(!c || c.min || c.ending || !ui.r) return; if(c.state === 'in'){ toast('Answer or decline the call first'); return; }
+    c.min = true; ui.menu.classList.remove('show'); ui.r.classList.add('min'); showMini(c); if(!viaPop) popBack(c);
+  }
+  function restore(){
+    const c = cur; if(!c || !c.min || !ui.r) return; c.min = false; hideMini(); ui.r.classList.remove('min'); pushBack(c);
+  }
+  function showMini(c){
+    hideMini(); const m = document.createElement('div'); m.className = 'mbmini';
+    m.innerHTML = `<img alt="" src="${esc(c.peer.photo || 'https://ui-avatars.com/api/?background=16a34a&color=fff&size=128&name=' + encodeURIComponent(c.peer.name || 'User'))}"><span class="mt">${c.liveAt ? fmt(Math.floor((Date.now()-c.liveAt)/1000)) : 'Calling'}</span>`;
+    const im = m.querySelector('img'); im.onerror = function(){ this.onerror = null; this.src = 'https://ui-avatars.com/api/?background=16a34a&color=fff&size=128&name=' + encodeURIComponent(c.peer.name || 'User'); };
+    document.body.appendChild(m); ui.mini = m; ui.mt = m.querySelector('.mt');
+    let sx, sy, ox, oy, moved = false, down = false;
+    m.addEventListener('pointerdown', (e) => { down = true; moved = false; sx = e.clientX; sy = e.clientY; const r = m.getBoundingClientRect(); ox = r.left; oy = r.top; m.classList.add('drag'); try{ m.setPointerCapture(e.pointerId); }catch(_){} });
+    m.addEventListener('pointermove', (e) => { if(!down) return; const dx = e.clientX - sx, dy = e.clientY - sy; if(Math.abs(dx) + Math.abs(dy) > 8) moved = true; if(moved){ m.style.left = (ox + dx) + 'px'; m.style.top = (oy + dy) + 'px'; } });
+    m.addEventListener('pointerup', () => {
+      if(!down) return; down = false; m.classList.remove('drag');
+      if(!moved){ restore(); return; }
+      const r = m.getBoundingClientRect(); const left = r.left + r.width/2 < innerWidth/2;
+      m.style.left = (left ? 12 : innerWidth - r.width - 12) + 'px'; m.style.top = Math.max(60, Math.min(innerHeight - 140, r.top)) + 'px';
+    });
+  }
+  function hideMini(){ if(ui.mini){ ui.mini.remove(); ui.mini = null; ui.mt = null; } }
+
+  /* ---------- speaker / earpiece ---------- */
+  async function setSpeaker(on, silent){
+    const c = cur; if(!c || !ui.ra) return false;
+    if(!ui.ra.setSinkId){ if(!silent) toast('Earpiece mode is not supported on this device'); return false; }
     try{
-      if(old) old.stop();                       /* release the camera first (Android can open only one) */
+      const outs = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'audiooutput');
+      const ear = outs.find((o) => /earpiece|handset|receiver/i.test(o.label));
+      const spk = outs.find((o) => /speaker/i.test(o.label) && !/earpiece/i.test(o.label));
+      if(!on && !ear){ if(!silent) toast('Earpiece mode is not supported on this device'); return false; }
+      await ui.ra.setSinkId(on ? (spk ? spk.deviceId : 'default') : ear.deviceId); c.speaker = on; paintBtns(); return true;
+    }catch(_){ if(!silent) toast('Could not switch audio output'); return false; }
+  }
+
+  /* ---------- camera / screen share ---------- */
+  function publishMedia(){
+    const c = cur; if(!c || !c.id || !fb || !me) return;
+    fb.updateDoc(dref(c.id), { ['media.' + me.uid]: { cam: !!(c.cam && !c.sharing), screen: !!c.sharing } }).catch(() => {});
+  }
+  async function setCam(on){
+    const c = cur; if(!c) return; if(c.sharing){ toast('Stop screen sharing first'); return; }
+    if(!c.vtr){ toast('Camera is not available in this call'); return; }
+    try{
+      if(on){
+        let tr = c.camTrack; if(!tr || tr.readyState !== 'live'){
+          const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: c.facing || 'user', width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false }); tr = s.getVideoTracks()[0]; c.camTrack = tr;
+        }
+        tr.enabled = true; await c.vtr.sender.replaceTrack(tr); c.cam = true;
+      }else{
+        c.cam = false; await c.vtr.sender.replaceTrack(null); if(c.camTrack){ c.camTrack.stop(); c.camTrack = null; }
+      }
+    }catch(e){ console.warn(e); toast('Allow camera permission to turn on video'); }
+    paintLocal(); publishMedia();
+  }
+  async function flip(){
+    const c = cur; if(!c || !c.cam || c.sharing || c.flipping || !c.vtr) return; c.flipping = true;
+    const want = c.facing === 'user' ? 'environment' : 'user';
+    const gum = (v) => navigator.mediaDevices.getUserMedia({ video: v, audio: false });
+    try{
+      if(c.camTrack) c.camTrack.stop();
       let ns; try{ ns = await gum({ facingMode: { exact: want } }); }catch(_){
         try{ ns = await gum({ facingMode: want }); }catch(__){
           const ds = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'videoinput');
-          const back = ds.find((d) => /back|rear|environment/i.test(d.label)) || (want === 'environment' ? ds[ds.length-1] : ds[0]);
-          if(!back) throw new Error('nocam'); ns = await gum({ deviceId: { exact: back.deviceId } });
+          const pick = ds.find((d) => /back|rear|environment/i.test(d.label)) || (want === 'environment' ? ds[ds.length-1] : ds[0]);
+          if(!pick) throw new Error('nocam'); ns = await gum({ deviceId: { exact: pick.deviceId } });
         }
       }
-      await put(ns, want);
-      if(ns.getVideoTracks()[0] && c.facing !== want) toast('This device has only one camera');
+      const nt = ns.getVideoTracks()[0]; await c.vtr.sender.replaceTrack(nt); c.camTrack = nt;
+      const real = (nt.getSettings && nt.getSettings().facingMode) || want; c.facing = real === 'environment' ? 'environment' : 'user';
+      paintLocal(); if(c.facing !== want) toast('This device has only one camera');
     }catch(e){
-      try{ await put(await gum({ facingMode: c.facing }), c.facing); }catch(_){}
+      try{ const ns = await gum({ facingMode: c.facing }); c.camTrack = ns.getVideoTracks()[0]; await c.vtr.sender.replaceTrack(c.camTrack); paintLocal(); }catch(_){}
       toast('Could not switch camera');
     }
     c.flipping = false;
+  }
+  async function toggleShare(){
+    const c = cur; if(!c) return; if(c.sharing){ stopShare(); return; }
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia){ toast('Screen sharing is not supported on this browser/device'); return; }
+    if(!c.vtr){ toast('Screen sharing is not available in this call'); return; }
+    try{
+      const s = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 15 }, audio: false }); const tr = s.getVideoTracks()[0];
+      c.screen = s; tr.onended = () => { if(cur === c && c.sharing) stopShare(); };
+      await c.vtr.sender.replaceTrack(tr); c.sharing = true; paintLocal(); publishMedia();
+    }catch(e){ if(e && e.name !== 'NotAllowedError' && e.name !== 'AbortError') toast('Could not start screen sharing'); }
+  }
+  async function stopShare(){
+    const c = cur; if(!c || !c.sharing) return; c.sharing = false;
+    try{ c.screen && c.screen.getTracks().forEach((t) => { t.onended = null; t.stop(); }); }catch(_){} c.screen = null;
+    try{ await c.vtr.sender.replaceTrack(c.cam && c.camTrack && c.camTrack.readyState === 'live' ? c.camTrack : null); }catch(_){}
+    paintLocal(); publishMedia();
   }
   function pipDrag(p){
     let sx, sy, ox = 0, oy = 0, mv = false;
     p.addEventListener('pointerdown', (e) => { sx = e.clientX; sy = e.clientY; mv = true; p.classList.add('dragging'); p.setPointerCapture(e.pointerId); e.stopPropagation(); });
     p.addEventListener('pointermove', (e) => { if(!mv) return; p.style.transform = `translate(${ox + e.clientX - sx}px,${oy + e.clientY - sy}px)`; });
-    p.addEventListener('pointerup', (e) => {
+    p.addEventListener('pointerup', () => {
       if(!mv) return; mv = false; p.classList.remove('dragging'); const r = p.getBoundingClientRect(), W = innerWidth, H = innerHeight, m = 14;
-      const left = r.left + r.width/2 < W/2, top = r.top + r.height/2 < H/2; const tx = left ? m : W - r.width - m, ty = top ? 62 : H - r.height - 150;
+      const left = r.left + r.width/2 < W/2, top = r.top + r.height/2 < H/2; const tx = left ? m : W - r.width - m, ty = top ? 100 : H - r.height - 150;
       ox += tx - r.left; oy += ty - r.top; p.style.transform = `translate(${ox}px,${oy}px)`;
     });
   }
 
+  /* ---------- keep call alive in background ---------- */
+  async function wake(){ try{ if(navigator.wakeLock && !wl){ wl = await navigator.wakeLock.request('screen'); wl.addEventListener('release', () => { wl = null; }); } }catch(_){} }
+  function unwake(){ try{ wl && wl.release(); }catch(_){} wl = null; }
+  document.addEventListener('visibilitychange', () => {
+    if(!cur) return; if(document.visibilityState === 'visible'){ wake(); try{ ui.ra && ui.ra.play && ui.ra.play().catch(() => {}); ui.rv && ui.rv.play && ui.rv.play().catch(() => {}); }catch(_){} }
+  });
+  function session(c){
+    try{
+      if(!('mediaSession' in navigator)) return;
+      navigator.mediaSession.metadata = new MediaMetadata({ title: 'Call with ' + (c.peer.name || 'User'), artist: 'MeBook', artwork: c.peer.photo ? [{ src: c.peer.photo }] : [] });
+      navigator.mediaSession.playbackState = 'playing';
+      try{ navigator.mediaSession.setActionHandler('hangup', () => hangup()); }catch(_){}
+    }catch(_){}
+  }
+
+  /* ---------- WebRTC ---------- */
   async function media(type){
     return navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: type === 'video' ? { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } } : false });
   }
   function makePC(c){
-    const pc = new RTCPeerConnection(ICE); c.pc = pc; c.pending = []; c.hasRemote = false; c.facing = 'user';
-    c.local.getTracks().forEach((t) => pc.addTrack(t, c.local));
-    ui.lv.srcObject = c.local; ui.lv.play && ui.lv.play().catch(() => {});
-    pc.ontrack = (e) => { ui.rv.srcObject = e.streams[0]; ui.rv.play && ui.rv.play().catch(() => {}); };
+    const pc = new RTCPeerConnection(ICE); c.pc = pc; c.pending = []; c.hasRemote = false; c.facing = c.facing || 'user';
+    c.local.getAudioTracks().forEach((t) => pc.addTrack(t, c.local));
+    if(c.role === 'caller'){
+      c.vtr = pc.addTransceiver('video', { direction: 'sendrecv', streams: [c.local] });
+      if(c.camTrack) c.vtr.sender.replaceTrack(c.camTrack).catch(() => {});
+    }
+    paintLocal();
+    pc.ontrack = (e) => { const s = e.streams[0] || new MediaStream([e.track]);
+      if(ui.rv && ui.rv.srcObject !== s){ ui.rv.srcObject = s; ui.ra.srcObject = s; }
+      ui.rv && ui.rv.play && ui.rv.play().catch(() => {}); ui.ra && ui.ra.play && ui.ra.play().catch(() => {}); };
     const side = c.role === 'caller' ? 'callerCandidates' : 'calleeCandidates';
     c.candQ = []; c.docReady = c.role !== 'caller';
     const putCand = (j) => fb.setDoc(fb.doc(col('calls', c.id, side)), j).catch((er) => console.warn('cand write failed', er));
@@ -686,10 +856,15 @@ const MBCall = (() => {
     };
     return pc;
   }
+  async function attachVideo(c){
+    const t = c.pc.getTransceivers().find((x) => x.receiver && x.receiver.track && x.receiver.track.kind === 'video'); if(!t) return;
+    c.vtr = t; try{ t.direction = 'sendrecv'; }catch(_){} try{ t.sender.setStreams(c.local); }catch(_){}
+    if(c.camTrack) try{ await t.sender.replaceTrack(c.camTrack); }catch(_){}
+  }
   function goLive(c){
     if(cur !== c || c.state === 'live' || c.ending) return; stopTone(); setState('live'); c.liveAt = Date.now();
-    c.tick = setInterval(() => { ui.tt.textContent = fmt(Math.floor((Date.now() - c.liveAt)/1000)); }, 500); ui.tt.textContent = '00:00';
-    if(c.type === 'video') c.hideT = setTimeout(() => { if(cur === c) ui.bar.classList.add('hide'); }, 4200);
+    const upd = () => { const t = fmt(Math.floor((Date.now() - c.liveAt)/1000)); if(ui.stt) ui.stt.textContent = t; if(ui.mt) ui.mt.textContent = t; };
+    c.tick = setInterval(upd, 500); upd(); wake(); session(c); setSpeaker(true, true); paintLocal();
   }
   async function flush(c){ c.hasRemote = true; for(const x of c.pending.splice(0)) try{ await c.pc.addIceCandidate(x); }catch(_){} }
   function listenCands(c, side){
@@ -704,6 +879,7 @@ const MBCall = (() => {
         setState('conn'); stopTone(); try{ await c.pc.setRemoteDescription(d.answer); await flush(c); }catch(err){ console.error('setRemote(answer) failed', err); finish('Call failed', 'ended'); }
       }
       if(c.role === 'caller' && d.ringing && c.state === 'out' && !c.ringShown){ c.ringShown = true; setState('out', 'Ringing'); }
+      const pm = d.media && c.peer && d.media[c.peer.uid]; if(pm){ const k = (pm.cam ? 1 : 0) + '' + (pm.screen ? 1 : 0); if(k !== c.rk){ c.rk = k; remoteView(c, pm); } }
       if(['ended','declined','busy','missed'].includes(d.status) && !c.ending){
         const m = { declined: 'Call declined', busy: 'User is busy', missed: 'No answer', ended: 'Call ended' }[d.status]; finish(m, null);
       }
@@ -716,30 +892,30 @@ const MBCall = (() => {
       if(cur){ toast('You are already in a call'); return; }
       fb = fb || await getFirebase(); me = fb.auth.currentUser; if(!me){ toast('Please log in first'); return; }
       if(!window.RTCPeerConnection || !navigator.mediaDevices){ toast('Calls are not supported on this browser'); return; }
-      const c = cur = { role: 'caller', type, peer, chatId, state: 'out', unsubs: [] }; render();
+      const c = cur = { role: 'caller', type, peer, chatId, state: 'out', unsubs: [], speaker: true, facing: 'user' }; render();
       try{ c.local = await media(type); }catch(e){ cleanup(c, true); toast(type==='video' ? 'Allow camera & microphone to call' : 'Allow microphone to call'); return; }
+      c.camTrack = c.local.getVideoTracks()[0] || null; c.cam = !!c.camTrack;
       const id = fb.doc(col('calls')).id; c.id = id; await loadTurn(); const pc = makePC(c);
       const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
       let nm = me.displayName, ph = me.photoURL; try{ const us = await fb.getDoc(fb.doc(fb.db, 'users', me.uid)); const u = (us && us.data && us.data()) || {}; nm = u.name || nm; ph = u.photoURL || u.photo || u.avatar || ph; }catch(_){}
-      await fb.setDoc(dref(id), { from: me.uid, to: peer.uid, fromName: nm || 'User', fromPhoto: ph || '', type, status: 'ringing', offer: { type: offer.type, sdp: offer.sdp }, ts: Date.now() });
-      c.sendCands(); watchDoc(c); listenCands(c, 'calleeCandidates'); tone('out');
+      await fb.setDoc(dref(id), { from: me.uid, to: peer.uid, fromName: nm || 'User', fromPhoto: ph || '', type, status: 'ringing', offer: { type: offer.type, sdp: offer.sdp }, media: { [me.uid]: { cam: c.cam, screen: false } }, ts: Date.now() });
+      c.sendCands(); watchDoc(c); listenCands(c, 'calleeCandidates'); tone('out'); paintBtns();
       c.ringT = setTimeout(() => { if(cur === c && c.state === 'out') finish('No answer', 'missed'); }, 45000);
     }catch(e){ console.error(e); if(cur) cleanup(cur, true); toast('Could not start the call'); }
   }
   function incoming(id, d){
-    const c = cur = { id, role: 'callee', type: d.type || 'audio', peer: { uid: d.from, name: d.fromName || 'User', photo: d.fromPhoto }, offer: d.offer, state: 'in', unsubs: [] };
+    const c = cur = { id, role: 'callee', type: d.type || 'audio', peer: { uid: d.from, name: d.fromName || 'User', photo: d.fromPhoto }, offer: d.offer, state: 'in', unsubs: [], speaker: true, facing: 'user' };
     render(); tone('in'); fb.updateDoc(dref(id), { ringing: true }).catch(() => {}); c.ringT = setTimeout(() => { if(cur === c && c.state === 'in') finish('Missed call', 'missed'); }, 45000);
-    c.unsubs.push(fb.onSnapshot(dref(id), (s) => { if(cur !== c || c.ending) return; const x = s.data(); if(x && ['ended','missed'].includes(x.status)) finish('Missed call', null); }));
+    c.unsubs.push(fb.onSnapshot(dref(id), (s) => { if(cur !== c || c.ending || c.state !== 'in') return; const x = s.data(); if(x && ['ended','missed'].includes(x.status)) finish('Missed call', null); }));
   }
   async function accept(){
     const c = cur; if(!c || c.state !== 'in') return; clearTimeout(c.ringT); stopTone(); setState('conn');
     try{
-      c.local = await media(c.type); await loadTurn(); const pc = makePC(c);
-      await pc.setRemoteDescription(c.offer); await flush(c);
+      c.local = await media(c.type); c.camTrack = c.local.getVideoTracks()[0] || null; c.cam = !!c.camTrack; await loadTurn(); const pc = makePC(c);
+      await pc.setRemoteDescription(c.offer); await flush(c); await attachVideo(c);
       const ans = await pc.createAnswer(); await pc.setLocalDescription(ans);
-      await fb.updateDoc(dref(c.id), { answer: { type: ans.type, sdp: ans.sdp }, status: 'accepted' });
-      listenCands(c, 'callerCandidates');
-      c.unsubs.push(fb.onSnapshot(dref(c.id), (s) => { const x = s.data(); if(x && x.status === 'ended' && !c.ending) finish('Call ended', null); }));
+      await fb.updateDoc(dref(c.id), { answer: { type: ans.type, sdp: ans.sdp }, status: 'accepted', ['media.' + me.uid]: { cam: c.cam, screen: false } });
+      listenCands(c, 'callerCandidates'); watchDoc(c); paintBtns();
     }catch(e){ console.error(e); toast('Allow microphone/camera to answer'); finish('Call failed', 'declined'); }
   }
   async function logCall(c, label){
@@ -757,17 +933,31 @@ const MBCall = (() => {
   function finish(label, status){
     const c = cur; if(!c || c.ending) return; c.ending = true; stopTone(); clearTimeout(c.ringT); logCall(c, label);
     if(status && c.id) fb.updateDoc(dref(c.id), { status, endedAt: Date.now() }).catch(() => {});
-    if(ui.r){ setState('ended', label); }
-    setTimeout(() => cleanup(c), 1100);
+    if(ui.r){ setState('ended', label); } if(c.min) toast(label);
+    setTimeout(() => cleanup(c), c.min ? 200 : 1100);
   }
   function cleanup(c, now){
-    clearInterval(c.tick); clearTimeout(c.ringT); clearTimeout(c.dcT); clearTimeout(c.hideT); stopTone();
+    clearInterval(c.tick); clearTimeout(c.ringT); clearTimeout(c.dcT); clearTimeout(c.hideT); stopTone(); unwake();
     (c.unsubs || []).forEach((u) => { try{ u(); }catch(_){} });
     try{ c.local && c.local.getTracks().forEach((t) => t.stop()); }catch(_){}
+    try{ c.camTrack && c.camTrack.stop(); }catch(_){}
+    try{ c.screen && c.screen.getTracks().forEach((t) => t.stop()); }catch(_){}
     try{ c.pc && c.pc.close(); }catch(_){}
-    const r = ui.r; if(r){ if(now) r.remove(); else { r.classList.add('out'); setTimeout(() => r.remove(), 360); } }
+    try{ if('mediaSession' in navigator){ navigator.mediaSession.playbackState = 'none'; navigator.mediaSession.metadata = null; } }catch(_){}
+    popBack(c); hideMini();
+    const r = ui.r, ra = ui.ra; if(ra){ try{ ra.srcObject = null; }catch(_){} ra.remove(); }
+    if(r){ if(now || c.min) r.remove(); else { r.classList.add('out'); setTimeout(() => r.remove(), 360); } }
     if(cur === c){ cur = null; ui = {}; }
   }
+  /* Android / app back button: minimize the call instead of closing the app or ending the call */
+  (function(){
+    let inner;
+    try{
+      Object.defineProperty(window, '__mebookBack', { configurable: true, enumerable: true,
+        get(){ return function(){ if(cur && !cur.ending){ if(cur.state === 'in') return true; if(!cur.min){ minimize(true); return true; } } return inner ? inner() : false; }; },
+        set(v){ inner = v; } });
+    }catch(_){}
+  })();
   async function init(){
     try{
       fb = await getFirebase();
@@ -782,7 +972,7 @@ const MBCall = (() => {
     }catch(e){ console.warn('MBCall init failed', e); }
   }
   setTimeout(init, 1200);
-  return { start };
+  return { start, minimize: () => minimize(), restore };
 })();
 window.MBCall = MBCall;
 })();
