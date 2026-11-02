@@ -1338,7 +1338,7 @@ animation:avModalIn .5s cubic-bezier(.22,1.1,.36,1) both;
 .mebook-root .av-modal:not(.av-play) .av-art-img{transition:none;}
 .mebook-root .av-art-shade{
 position:absolute;top:0;left:0;right:0;bottom:0;
-background:linear-gradient(180deg,rgba(0,0,0,.45) 0%,rgba(0,0,0,.22) 30%,rgba(0,0,0,.38) 55%,rgba(0,0,0,.86) 100%),linear-gradient(135deg,rgba(var(--glow),.14),transparent 55%);
+background:linear-gradient(180deg,rgba(0,0,0,.12) 0%,rgba(0,0,0,.04) 35%,rgba(0,0,0,.12) 65%,rgba(0,0,0,.38) 100%);
 }
 
 /* ---------- torn paper sheets (form layer) : shudhu transform diye slide kore, tai smooth ---------- */
@@ -10619,8 +10619,8 @@ function SearchPage(props) {
     return /* @__PURE__ */ React.createElement("button", { className: "sr-opt", disabled: blocked, onClick: () => togglePin(sheet.item) }, /* @__PURE__ */ React.createElement("span", { className: "sr-opt-ico" }, /* @__PURE__ */ React.createElement(SrIco, { d: SR_ICON.pin })), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("b", null, isPinned ? "Unpin this search" : "Pin this search"), /* @__PURE__ */ React.createElement("small", null, "You can only pin 3 searches at a time.")));
   })())));
 }
-const AV_POSTER_IN = "https://i.postimg.cc/Bb9bPP1L/8594c22d7b405a0aaeb0462d5adbf5b7.jpg";
-const AV_POSTER_UP = "https://i.postimg.cc/WpghL8Qh/b52c4b0a43f20061562fac08b7dec42d.jpg";
+const AV_POSTER_IN = "https://i.postimg.cc/dQCmzCRq/1cd6ea1daef7fee3de3d5c672906bfa2.jpg";
+const AV_POSTER_UP = "https://i.postimg.cc/4xf67FDZ/4adb8f2a0ec86be6e554d2823cdde074.jpg";
 function FlowAuth(p) {
   const h = React.createElement;
   const [view, setView] = React.useState("main");
@@ -10870,8 +10870,6 @@ function FlowAuth(p) {
         h("div", { className: "av-sheet in" }, h("div", { className: "av-paper" }), h("div", { className: "av-paper-body" })),
         h("div", { className: "av-sheet up" }, h("div", { className: "av-paper" }), h("div", { className: "av-paper-body" }))
       ),
-      h("section", { className: "av-pane av-info av-info-login", "aria-hidden": isUp }, A(1, h("h2", null, infoTitle)), A(2, h("p", null, infoText))),
-      h("section", { className: "av-pane av-info av-info-register", "aria-hidden": !isUp }, A(1, h("h2", null, "Join MeBook")), A(2, h("p", null, "Create your free account and share movies, reels and posts with the community."))),
       p.authBusy ? h("div", { className: "av-loading" }, h("div", { className: "av-orb" }, h("span", null, "M")), h("p", null, isUp ? "Creating your account..." : "Signing you in...")) : null,
       h("section", {
         ref: (el) => {
