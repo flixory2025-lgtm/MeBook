@@ -1011,45 +1011,8 @@ const MBCall = (() => {
   function incoming(id, d){
     const c = cur = { id, role: 'callee', type: d.type || 'audio', peer: { uid: d.from, name: d.fromName || 'User', photo: d.fromPhoto }, offer: d.offer, state: 'in', unsubs: [], speaker: (d.type === 'video'), facing: 'user' };
     render(); tone('in'); fb.updateDoc(dref(id), { ringing: true }).catch(() => {}); c.ringT = setTimeout(() => { if(cur === c && c.state === 'in') finish('Missed call', 'missed'); }, 45000);
-    c.unsubs.push(fb.onSnapshot(dref(id), (s) => { if(cur !== c || c.ending || c.state !== 'in') return; const x = s.data();
-      if(x && ['ended','missed'].includes(x.status)) finish('Missed call', null);
-      else if(x && x.status === 'accepted') finish('Answered on another device', null);
-      else if(x && ['declined','busy'].includes(x.status)) finish('Declined on another device', null); }));
-    applyHeld(id);
+    c.unsubs.push(fb.onSnapshot(dref(id), (s) => { if(cur !== c || c.ending || c.state !== 'in') return; const x = s.data(); if(x && ['ended','missed'].includes(x.status)) finish('Missed call', null); }));
   }
-  /* ---------- native (Android) Accept / Decline bridge ----------
-     The Android incoming-call UI calls window.__mebookAcceptCall(callId) / __mebookDeclineCall(callId).
-     They reuse the normal accept() / finish() above. On a cold start the call document has not reached this
-     page yet, so the action is held for 60 s and applied as soon as incoming() runs for that call. */
-  let held = null;
-  function applyHeld(id){
-    const h = held; if(!h || h.id !== id) return;
-    held = null; if(Date.now() - h.at > 60000) return;
-    const c = cur; if(!c || c.id !== id || c.role !== 'callee' || c.state !== 'in') return;
-    if(h.act === 'accept') accept(); else finish('Declined', 'declined');
-  }
-  async function declineStored(id){
-    try{
-      const f = fb || await getFirebase(); const u = f.auth.currentUser; if(!u) return;
-      const sn = await f.getDoc(dref(id)); const d = sn.exists() ? sn.data() : null;
-      if(d && d.to === u.uid && d.status === 'ringing'){ await f.updateDoc(dref(id), { status: 'declined', endedAt: Date.now() }); if(held && held.id === id) held = null; }
-    }catch(_){}
-  }
-  function nativeAction(id, act){
-    id = (id === null || id === undefined) ? '' : String(id); if(id === 'null' || id === 'undefined') id = '';
-    const c = cur;
-    if(c && c.role === 'callee' && (!id || c.id === id)){
-      if(c.state === 'in'){ if(act === 'accept') accept(); else finish('Declined', 'declined'); }
-      return true;
-    }
-    if(c && id && c.id !== id) return true; /* already in another call: the incoming one is auto-busied by init() */
-    if(!id) return false;
-    held = { id, act, at: Date.now() };
-    if(act === 'decline') declineStored(id);
-    return true;
-  }
-  window.__mebookAcceptCall = (id) => nativeAction(id, 'accept');
-  window.__mebookDeclineCall = (id) => nativeAction(id, 'decline');
   async function accept(){
     const c = cur; if(!c || c.state !== 'in') return; clearTimeout(c.ringT); stopTone(); setState('conn');
     try{
@@ -1122,9 +1085,7 @@ window.MBCall = MBCall;
 const ONESIGNAL_APP_ID = "535f3f99-e550-4fa3-98c6-38e440d51d07";
 const PUSH_WORKER_URL = "https://mvbd-push.flixory2025.workers.dev/";
 const PUSH_ENABLED = !ONESIGNAL_APP_ID.startsWith("PASTE");
-// Push delivery now happens server-side (Firebase Cloud Functions -> OneSignal). Keeping this false prevents duplicate pushes
-// and removes the browser -> Worker path. sendPush()/pushAfterAddDoc() are intentionally left in place but inert.
-const PUSH_SEND_ENABLED = false;
+const PUSH_SEND_ENABLED = PUSH_ENABLED && !PUSH_WORKER_URL.startsWith("PASTE");
 let _pushSenderName = "Someone";
 function setPushSenderName(name) {
   if (name) _pushSenderName = name;
@@ -6712,6 +6673,16 @@ const ICON_TRASH = /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24
 const ICON_REPLY = /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z" }));
 const ICON_COPY = /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" }));
 const ICON_DOTS = /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" }));
+ const viewedSet = new Set();
+async function countView(postId) {
+  if (!postId || viewedSet.has(postId)) return;
+  viewedSet.add(postId);
+  try {
+    const fb = await getFirebase();
+    if (!fb.auth.currentUser) { viewedSet.delete(postId); return; }
+    await fb.updateDoc(fb.doc(fb.db, "posts", postId), { views: fb.increment(1) });
+  } catch (e) { viewedSet.delete(postId); }
+} 
 let ytApiPromise = null;
 function loadYouTubeApi() {
   const w = window;
@@ -6793,7 +6764,8 @@ function YouTubePost({
   videoId,
   isShort,
   thumb,
-  url
+  url,
+  postId
 }) {
   const [active, setActive] = useState(false);
   const [started, setStarted] = useState(false);
@@ -6934,6 +6906,7 @@ function YouTubePost({
             if (cancelled) return;
             const st = e.data;
             if (st === YT.PlayerState.PLAYING) {
+              countView(postId);
               setPlaying(true);
               setStarted(true);
               setMuted(!!player?.isMuted?.());
@@ -7247,6 +7220,7 @@ function ShortItem(props) {
             if (cancelled) return;
             const st = e.data;
             if (st === YT.PlayerState.PLAYING) {
+              countView(post.id);
               setPlaying(true);
               setStarted(true);
               setMutedRef.current(!!player?.isMuted?.());
@@ -9123,23 +9097,6 @@ function StoriesSection(props) {
     } catch {
     }
   });
-  useEffect(() => {
-    if (props.headless) return;
-    window.__mbOpenStory = () => setNow(Date.now());
-    return () => {
-      window.__mbOpenStory = null;
-    };
-  }, []);
-  useEffect(() => {
-    const pid = window.__mbPendingStory;
-    if (!pid || props.headless) return;
-    if (!loadedFlags.o || !loadedFlags.m) return;
-    window.__mbPendingStory = "";
-    const all = [ownGroup, ...otherGroups].filter(Boolean);
-    const gr = all.find((x) => x.stories.some((st) => st.id === pid));
-    if (gr) openGroup(gr, pid);
-    else props.showToast("Story unavailable", "This story has expired or was removed", "info");
-  });
   const toast = props.showToast;
   const storyUrl = (s) => `${location.origin}${location.pathname}#story-${s.id}`;
   const setPrefs = (patch) => {
@@ -9820,25 +9777,6 @@ function mcSavePrefs(uid, p) {
     localStorage.setItem("mebook-chatprefs-" + uid, JSON.stringify(p));
   } catch (e) {
   }
-  try {
-    mcSyncMuted(uid, p);
-  } catch (e) {
-  }
-}
-const _mcMutedSig = {};
-function mcSyncMuted(uid, p) {
-  if (!uid) return;
-  const m = {};
-  const src = p && p.muted || {};
-  Object.keys(src).forEach((k) => {
-    if (src[k]) m[k] = true;
-  });
-  const sig = JSON.stringify(Object.keys(m).sort());
-  if (_mcMutedSig[uid] === sig) return;
-  _mcMutedSig[uid] = sig;
-  getFirebase().then((fb) => fb.updateDoc(fb.doc(fb.db, "users", uid), { mutedChats: m })).catch(() => {
-    delete _mcMutedSig[uid];
-  });
 }
 function mcDropDeleted(arr, del) {
   if (!del) return;
@@ -11359,7 +11297,6 @@ function MeBookPage({ onExit }) {
   const feedHasMore = feed.length >= feedLimit;
   const [notifMenu, setNotifMenu] = useState(null);
   const [notifPrefs, setNotifPrefs] = useState({ less: [], muted: [] });
-  const [pushPrefs, setPushPrefs] = useState({});
   const notifPrefsLoaded = useRef(false);
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
@@ -11428,10 +11365,6 @@ function MeBookPage({ onExit }) {
     const p = mcLoadPrefs(user.uid);
     chatPrefsRef.current = p;
     setChatPrefs(p);
-    try {
-      if (p && p.muted && Object.keys(p.muted).length) mcSyncMuted(user.uid, p);
-    } catch (e) {
-    }
   }, [user?.uid]);
   const updateChatPrefs = (fn) => {
     const next = fn(JSON.parse(JSON.stringify(chatPrefsRef.current)));
@@ -12625,13 +12558,6 @@ function MeBookPage({ onExit }) {
               if (sp.get("mb") === "messages" && chatParam) {
                 const fromU = sp.get("u") || chatParam.split("_").find((x) => x !== u.uid) || "";
                 if (fromU) _pendingPushData = { type: "chat", chatId: chatParam, fromUid: fromU };
-                window.history.replaceState({}, "", window.location.pathname);
-              }
-              if (sp.get("post")) {
-                _pendingPushData = { type: "post", postId: sp.get("post"), mb: "home" };
-                window.history.replaceState({}, "", window.location.pathname);
-              } else if (sp.get("story")) {
-                _pendingPushData = { type: "story", storyId: sp.get("story"), fromUid: sp.get("u") || "", mb: "home" };
                 window.history.replaceState({}, "", window.location.pathname);
               }
               const pu = sp.get("u");
@@ -13884,32 +13810,7 @@ function MeBookPage({ onExit }) {
       try {
         if (!d) return;
         _pendingPushData = null;
-        if (d.type === "friend" && d.subtype === "request") {
-          goTo("friends");
-          return;
-        }
-        if ((d.type === "friend" || d.type === "follow") && d.fromUid) {
-          await openUserProfile(d.fromUid);
-          return;
-        }
-        if ((d.type === "story" || d.type === "story_mention") && d.storyId) {
-          window.__mbPendingStory = String(d.storyId);
-          goTo("home");
-          if (typeof window.__mbOpenStory === "function") window.__mbOpenStory();
-          return;
-        }
-        if (d.postId && !d.chatId) {
-          const fbp = await getFirebase();
-          const ps = await fbp.getDoc(fbp.doc(fbp.db, "posts", d.postId));
-          if (!ps.exists()) {
-            showToast("Not found", "This post is no longer available", "info");
-            return;
-          }
-          setExtraPosts((prev) => [...prev.filter((x) => x.id !== d.postId), { id: ps.id, ...ps.data() }]);
-          pushPage("comments", { postId: d.postId });
-          return;
-        }
-        if (d.type === "chat" || d.type === "missed_call" || d.type === "incoming_call" || d.chatId) {
+        if (d.type === "chat" || d.type === "missed_call" || d.chatId) {
           let other = d.fromUid || (d.chatId || "").split("_").find((x) => x !== user.uid);
           if (!other) {
             goTo("messages");
@@ -14528,35 +14429,6 @@ ${buildShareUrl(post.id)}`;
       const fb = await getFirebase();
       await fb.updateDoc(fb.doc(fb.db, "users", user.uid), { notifPrefs: next });
     } catch {
-    }
-  };
-  useEffect(() => {
-    if (profile && profile.pushPrefs && typeof profile.pushPrefs === "object") setPushPrefs(profile.pushPrefs);
-  }, [profile?.pushPrefs]);
-  const PUSH_PREF_ROWS = [
-    { k: "all", t: "Push notifications", s: "Turn all push notifications on or off" },
-    { k: "messages", t: "Messages", s: "New MeChat messages" },
-    { k: "friendRequests", t: "Friend requests", s: "When someone sends you a request" },
-    { k: "friendAccepts", t: "Friend request accepted", s: "When someone accepts your request" },
-    { k: "voiceCalls", t: "Voice calls", s: "Incoming and missed voice calls" },
-    { k: "videoCalls", t: "Video calls", s: "Incoming and missed video calls" },
-    { k: "posts", t: "Posts", s: "New posts from friends you follow" },
-    { k: "stories", t: "Stories", s: "New stories from friends you follow" },
-    { k: "comments", t: "Comments & replies", s: "Comments on your posts and replies to you" },
-    { k: "shares", t: "Shares", s: "When someone shares your post" },
-    { k: "follows", t: "Follows", s: "When a friend follows you again" },
-    { k: "reactions", t: "Reactions & mentions", s: "Reactions, pokes and story mentions" }
-  ];
-  const pushPrefOn = (k) => k === "follows" ? pushPrefs[k] === true : pushPrefs[k] !== false;
-  const savePushPref = async (k, v) => {
-    const next = { ...pushPrefs, [k]: v };
-    setPushPrefs(next);
-    try {
-      const fb = await getFirebase();
-      await fb.updateDoc(fb.doc(fb.db, "users", user.uid), { pushPrefs: next });
-    } catch (e) {
-      setPushPrefs(pushPrefs);
-      showToast("Error", "Could not save notification setting", "error");
     }
   };
   const visibleNotifications = notifications.filter(
@@ -15411,7 +15283,8 @@ ${buildShareUrl(post.id)}`;
         videoId: post.youtube.videoId,
         isShort: post.youtube.isShort === true,
         thumb: post.image,
-        url: post.youtube.url
+       url: post.youtube.url,
+        postId: post.id
       }
     ) : post.image ? /* @__PURE__ */ React.createElement("div", { className: "mb-post-media" }, /* @__PURE__ */ React.createElement("span", { className: "mb-movie-badge" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z" })), post.movie || "Movie"), /* @__PURE__ */ React.createElement(
       "img",
@@ -18136,7 +18009,7 @@ ${buildShareUrl(post.id)}`;
         checked: theme === "dark",
         onChange: (e) => toggleTheme(e.target.checked)
       }
-    ), /* @__PURE__ */ React.createElement("span", { className: "mb-slider" })))), /* @__PURE__ */ React.createElement("div", { className: "mb-card mb-settings-group" }, /* @__PURE__ */ React.createElement("div", { className: "mb-card-title" }, "Push Notifications"), PUSH_PREF_ROWS.map((r) => /* @__PURE__ */ React.createElement("div", { className: "mb-theme-row", key: r.k }, /* @__PURE__ */ React.createElement("div", { className: "mb-setting-txt" }, /* @__PURE__ */ React.createElement("h4", null, r.t), /* @__PURE__ */ React.createElement("p", null, r.s)), /* @__PURE__ */ React.createElement("label", { className: "mb-switch" }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: pushPrefOn(r.k) && (r.k === "all" || pushPrefs.all !== false), disabled: r.k !== "all" && pushPrefs.all === false, onChange: (e) => savePushPref(r.k, e.target.checked) }), /* @__PURE__ */ React.createElement("span", { className: "mb-slider" }))))), /* @__PURE__ */ React.createElement("div", { className: "mb-card mb-settings-group" }, /* @__PURE__ */ React.createElement("div", { className: "mb-card-title" }, "Support"), /* @__PURE__ */ React.createElement("div", { className: "mb-setting-row", onClick: handleSignOut }, /* @__PURE__ */ React.createElement("span", { className: "mb-setting-ico", style: { background: "#fee2e2" } }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "#dc2626" }, /* @__PURE__ */ React.createElement("path", { d: "M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" }))), /* @__PURE__ */ React.createElement("div", { className: "mb-setting-txt" }, /* @__PURE__ */ React.createElement("h4", { style: { color: "#dc2626" } }, "Log Out"), /* @__PURE__ */ React.createElement("p", null, "Sign out of your MeBook account")), /* @__PURE__ */ React.createElement("svg", { className: "chev", viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z" }))))), currentView === "mebook" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-hero" }, /* @__PURE__ */ React.createElement("h2", null, "\u{1F4D6} Welcome to MeBook"), /* @__PURE__ */ React.createElement("p", null, "Your personal movie library, watchlist, and review hub."), /* @__PURE__ */ React.createElement("span", { className: "mb-mebook-badge" }, "\u{1F3AC} Powered by MeBook Community")), /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-grid" }, /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-stat" }, /* @__PURE__ */ React.createElement("div", { className: "num" }, myPosts.length), /* @__PURE__ */ React.createElement("div", { className: "lbl" }, "My Posts")), /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-stat" }, /* @__PURE__ */ React.createElement("div", { className: "num" }, myFriends.length), /* @__PURE__ */ React.createElement("div", { className: "lbl" }, "Friends")), /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-stat" }, /* @__PURE__ */ React.createElement("div", { className: "num" }, feed.length), /* @__PURE__ */ React.createElement("div", { className: "lbl" }, "Feed Posts")), /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-stat" }, /* @__PURE__ */ React.createElement("div", { className: "num" }, requests.length), /* @__PURE__ */ React.createElement("div", { className: "lbl" }, "Pending Requests"))), /* @__PURE__ */ React.createElement("div", { className: "mb-card", style: { marginBottom: 16 } }, /* @__PURE__ */ React.createElement("div", { className: "mb-card-title" }, "\u{1F3AC} Quick Actions"), /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-list" }, /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-item", onClick: openCreatePost }, /* @__PURE__ */ React.createElement(
+    ), /* @__PURE__ */ React.createElement("span", { className: "mb-slider" })))), /* @__PURE__ */ React.createElement("div", { className: "mb-card mb-settings-group" }, /* @__PURE__ */ React.createElement("div", { className: "mb-card-title" }, "Support"), /* @__PURE__ */ React.createElement("div", { className: "mb-setting-row", onClick: handleSignOut }, /* @__PURE__ */ React.createElement("span", { className: "mb-setting-ico", style: { background: "#fee2e2" } }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "#dc2626" }, /* @__PURE__ */ React.createElement("path", { d: "M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" }))), /* @__PURE__ */ React.createElement("div", { className: "mb-setting-txt" }, /* @__PURE__ */ React.createElement("h4", { style: { color: "#dc2626" } }, "Log Out"), /* @__PURE__ */ React.createElement("p", null, "Sign out of your MeBook account")), /* @__PURE__ */ React.createElement("svg", { className: "chev", viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z" }))))), currentView === "mebook" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-hero" }, /* @__PURE__ */ React.createElement("h2", null, "\u{1F4D6} Welcome to MeBook"), /* @__PURE__ */ React.createElement("p", null, "Your personal movie library, watchlist, and review hub."), /* @__PURE__ */ React.createElement("span", { className: "mb-mebook-badge" }, "\u{1F3AC} Powered by MeBook Community")), /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-grid" }, /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-stat" }, /* @__PURE__ */ React.createElement("div", { className: "num" }, myPosts.length), /* @__PURE__ */ React.createElement("div", { className: "lbl" }, "My Posts")), /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-stat" }, /* @__PURE__ */ React.createElement("div", { className: "num" }, myFriends.length), /* @__PURE__ */ React.createElement("div", { className: "lbl" }, "Friends")), /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-stat" }, /* @__PURE__ */ React.createElement("div", { className: "num" }, feed.length), /* @__PURE__ */ React.createElement("div", { className: "lbl" }, "Feed Posts")), /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-stat" }, /* @__PURE__ */ React.createElement("div", { className: "num" }, requests.length), /* @__PURE__ */ React.createElement("div", { className: "lbl" }, "Pending Requests"))), /* @__PURE__ */ React.createElement("div", { className: "mb-card", style: { marginBottom: 16 } }, /* @__PURE__ */ React.createElement("div", { className: "mb-card-title" }, "\u{1F3AC} Quick Actions"), /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-list" }, /* @__PURE__ */ React.createElement("div", { className: "mb-mebook-item", onClick: openCreatePost }, /* @__PURE__ */ React.createElement(
       "div",
       {
         style: {
