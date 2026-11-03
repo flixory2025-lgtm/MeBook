@@ -5269,6 +5269,23 @@ function normalizeUserData(d, fallbackEmail) {
   if (n && d.name !== n) return { ...d, name: n };
   return d;
 }
+/* ===== CHANNEL FOLLOW (helpers) ===== */
+const MB_DEFAULT_CHANNELS = ["mvbdstudio"];
+function isChannelUser(u) {
+  return !!u && (u.isChannel === true || MB_DEFAULT_CHANNELS.indexOf(u.uid || u.id) >= 0);
+}
+function fmtFollowers(n) {
+  n = Math.max(0, Math.floor(Number(n) || 0));
+  if (n < 1000) return String(n);
+  const units = [[1e9, "B"], [1e6, "M"], [1e3, "k"]];
+  for (const [d, sx] of units) {
+    if (n >= d) {
+      const v = Math.floor(n / d * 10) / 10;
+      return String(v).replace(/\.0$/, "") + sx;
+    }
+  }
+  return String(n);
+}
 const FBP_ICON = {
   back: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z",
   search: "M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z",
@@ -11302,6 +11319,8 @@ function MeBookPage({ onExit }) {
   const [requests, setRequests] = useState([]);
   const [myFriends, setMyFriends] = useState([]);
   const [sentFriendRequests, setSentFriendRequests] = useState([]);
+  const [followedChannels, setFollowedChannels] = useState([]);
+  const [chanRealCount, setChanRealCount] = useState(0);
   const [chats, setChats] = useState([]);
   const [onlineAll, setOnlineList] = useState([]);
   const [presNow, setPresNow] = useState(() => Date.now());
@@ -12408,6 +12427,26 @@ function MeBookPage({ onExit }) {
             }
           }
           setMyFriends(arr);
+        })
+      );
+      const myFollowsQ = fb.query(fb.collection(fb.db, "follows"), fb.where("follower", "==", uid));
+      unsubscribersRef.current.push(
+        fb.onSnapshot(myFollowsQ, async (snap) => {
+          const arr = [];
+          const seenCh = /* @__PURE__ */ new Set();
+          for (const d of snap.docs) {
+            const data = d.data();
+            const cid = data.channel;
+            if (!cid || seenCh.has(cid)) continue;
+            seenCh.add(cid);
+            try {
+              const cs = await fb.getDoc(fb.doc(fb.db, "users", cid));
+              if (cs.exists()) arr.push({ uid: cs.id, ...cs.data(), isChannel: true, friendsSince: data.createdAt || null });
+            } catch {
+            }
+          }
+          setFollowedChannels(arr);
+        }, () => {
         })
       );
       const chatsQ = fb.query(fb.collection(fb.db, "chats"), fb.where("members", "array-contains", uid));
@@ -13801,6 +13840,31 @@ function MeBookPage({ onExit }) {
       setViewingUserFriendsLoading(false);
     }
   };
+  useEffect(() => {
+    setChanRealCount(0);
+    if (!viewingUser || !isChannelUser(viewingUser)) return;
+    let un = null, dead = false;
+    (async () => {
+      try {
+        const fb = await getFirebase();
+        if (dead) return;
+        un = fb.onSnapshot(
+          fb.query(fb.collection(fb.db, "follows"), fb.where("channel", "==", viewingUser.uid)),
+          (sn) => setChanRealCount(sn.size),
+          () => {
+          }
+        );
+      } catch {
+      }
+    })();
+    return () => {
+      dead = true;
+      if (un) try {
+        un();
+      } catch {
+      }
+    };
+  }, [viewingUser && viewingUser.uid, viewingUser && viewingUser.isChannel]);
   const openFriendsList = (uid, name) => {
     pushPage("friends-list", { uid, name });
   };
@@ -14255,8 +14319,36 @@ ${buildShareUrl(post.id)}`;
       setPostBusy(false);
     }
   };
+  const handleToggleFollow = async (chan) => {
+    if (!user || !chan || !chan.uid) return;
+    const cid = chan.uid, fid = user.uid + "_" + cid;
+    const already = followedChannels.some((c) => c.uid === cid);
+    try {
+      const fb = await getFirebase();
+      if (already) {
+        setFollowedChannels((p) => p.filter((c) => c.uid !== cid));
+        await fb.deleteDoc(fb.doc(fb.db, "follows", fid));
+        showToast("Unfollowed", `You unfollowed ${chan.name || "this channel"}`, "info");
+      } else {
+        setFollowedChannels((p) => p.some((c) => c.uid === cid) ? p : [...p, { ...chan, isChannel: true }]);
+        await fb.setDoc(fb.doc(fb.db, "follows", fid), { follower: user.uid, channel: cid, createdAt: fb.serverTimestamp() });
+        showToast("Following", `You are now following ${chan.name || "this channel"}`, "success");
+      }
+    } catch (e) {
+      if (already) setFollowedChannels((p) => p.some((c) => c.uid === cid) ? p : [...p, { ...chan, isChannel: true }]);
+      else setFollowedChannels((p) => p.filter((c) => c.uid !== cid));
+      showToast("Error", e.message, "error");
+    }
+  };
   const handleSendRequest = async (toUid) => {
     if (toUid === user.uid) return;
+    {
+      const _ch = allUsers.find((x) => x.uid === toUid) || (viewingUser && viewingUser.uid === toUid ? viewingUser : null);
+      if (_ch && isChannelUser(_ch)) {
+        handleToggleFollow(_ch);
+        return;
+      }
+    }
     if (sentRequests[toUid]) return;
     setSentRequests((s) => ({ ...s, [toUid]: "sending" }));
     try {
@@ -15987,6 +16079,9 @@ ${buildShareUrl(post.id)}`;
   const renderFbProfileCore = (mode, u, postsIn, theirFriends, friendsLoading) => {
     const isOwnMode = mode === "own";
     const isPreview = mode === "preview";
+    const isChan = !isOwnMode && !isPreview && isChannelUser(u);
+    const isFollowingChan = isChan && followedChannels.some((c) => c.uid === u.uid);
+    const chanTotal = (Number(u.followersBase) || 0) + (viewingUser && viewingUser.uid === u.uid ? chanRealCount : 0);
     const photo = avatarUrl(u);
     const isFriend = myFriends.some((f) => f.uid === u.uid);
     const friendObj = myFriends.find((f) => f.uid === u.uid);
@@ -16055,7 +16150,7 @@ ${buildShareUrl(post.id)}`;
         "aria-label": "Change cover"
       },
       /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.camera, size: 22 })
-    )), /* @__PURE__ */ React.createElement("div", { className: "fbp-body" }, /* @__PURE__ */ React.createElement("div", { className: "fbp-av-wrap" }, /* @__PURE__ */ React.createElement("img", { className: "fbp-av", src: photo, alt: "Profile", onClick: () => isOwnMode ? setPhotoSheet("profile") : openProfilePic() }), isOwnMode && /* @__PURE__ */ React.createElement("button", { className: "fbp-cam fbp-cam-av", onClick: () => setPhotoSheet("profile"), "aria-label": "Change photo" }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.camera, size: 22 }))), /* @__PURE__ */ React.createElement("div", { className: "fbp-name" }, /* @__PURE__ */ React.createElement("span", null, u.name), isVerified(u) && /* @__PURE__ */ React.createElement("svg", { className: "fbp-tick", width: "22", height: "22", viewBox: "0 0 24 24", fill: "url(#mbTickGrad)" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), (!isOwnMode || proOn) && /* @__PURE__ */ React.createElement("div", { className: "fbp-stats" }, /* @__PURE__ */ React.createElement("b", null, friendsLoading ? "\u2026" : theirFriends.length), " friends \xB7 ", /* @__PURE__ */ React.createElement("b", null, visiblePosts.length), " posts"), u.profileStatus ? /* @__PURE__ */ React.createElement("div", { className: "fbp-status" }, u.profileStatus) : null, u.bio ? /* @__PURE__ */ React.createElement("div", { className: "fbp-bio" }, u.bio) : null, isOwnMode ? /* @__PURE__ */ React.createElement("div", { className: "mb-profile-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mb-btn mb-btn-primary", onClick: openCreatePost }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" })), "Create Post"), /* @__PURE__ */ React.createElement("button", { className: "mb-btn mb-btn-secondary", onClick: openEditProfile }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" })), "Edit Profile")) : /* @__PURE__ */ React.createElement("div", { className: "fbp-actions" }, isFriend ? /* @__PURE__ */ React.createElement("button", { className: "fbp-btn fbp-btn-friends", onClick: () => isPreview ? noop() : setFbSheetUser(friendObj || u) }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.personCheck, size: 22 }), " Friends") : sending ? /* @__PURE__ */ React.createElement("button", { className: "fbp-btn fbp-btn-friends", disabled: true }, "Sending...") : pending ? /* @__PURE__ */ React.createElement("button", { className: "fbp-btn fbp-btn-friends", onClick: () => isPreview ? noop() : handleCancelRequest(u.uid) }, "Cancel Request") : /* @__PURE__ */ React.createElement("button", { className: "fbp-btn fbp-btn-friends", onClick: () => isPreview ? noop() : handleSendRequest(u.uid) }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.invite, size: 22 }), " Add friend"), /* @__PURE__ */ React.createElement("button", { className: "fbp-btn fbp-btn-msg", onClick: () => isPreview ? noop() : startChat(u.uid, u.name, photo) }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", width: "22", height: "22", fill: "currentColor" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.5 2 2 6.14 2 11.25c0 2.88 1.41 5.45 3.62 7.16.12 1.1-.28 2.62-1.05 3.59-.13.16-.02.4.18.38 2.34-.19 4.05-1.25 4.85-1.85.77.16 1.58.25 2.4.25 5.5 0 10-4.14 10-9.25S17.5 2 12 2z" })), "Message"), /* @__PURE__ */ React.createElement("button", { className: "fbp-btn fbp-btn-poke", onClick: () => isPreview ? noop() : fbPoke(u), "aria-label": "Poke" }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.poke, size: 22 }))), u.actionButton && FB_ACTION_LABELS[u.actionButton] && !isOwnMode && /* @__PURE__ */ React.createElement(
+    )), /* @__PURE__ */ React.createElement("div", { className: "fbp-body" }, /* @__PURE__ */ React.createElement("div", { className: "fbp-av-wrap" }, /* @__PURE__ */ React.createElement("img", { className: "fbp-av", src: photo, alt: "Profile", onClick: () => isOwnMode ? setPhotoSheet("profile") : openProfilePic() }), isOwnMode && /* @__PURE__ */ React.createElement("button", { className: "fbp-cam fbp-cam-av", onClick: () => setPhotoSheet("profile"), "aria-label": "Change photo" }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.camera, size: 22 }))), /* @__PURE__ */ React.createElement("div", { className: "fbp-name" }, /* @__PURE__ */ React.createElement("span", null, u.name), isVerified(u) && /* @__PURE__ */ React.createElement("svg", { className: "fbp-tick", width: "22", height: "22", viewBox: "0 0 24 24", fill: "url(#mbTickGrad)" }, /* @__PURE__ */ React.createElement("path", { d: "M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69l-3.61.82.34 3.69L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z" }))), (!isOwnMode || proOn) && /* @__PURE__ */ React.createElement("div", { className: "fbp-stats" }, /* @__PURE__ */ React.createElement("b", null, isChan ? fmtFollowers(chanTotal) : friendsLoading ? "\u2026" : theirFriends.length), isChan ? " followers \xB7 " : " friends \xB7 ", /* @__PURE__ */ React.createElement("b", null, visiblePosts.length), " posts"), u.profileStatus ? /* @__PURE__ */ React.createElement("div", { className: "fbp-status" }, u.profileStatus) : null, u.bio ? /* @__PURE__ */ React.createElement("div", { className: "fbp-bio" }, u.bio) : null, isOwnMode ? /* @__PURE__ */ React.createElement("div", { className: "mb-profile-actions" }, /* @__PURE__ */ React.createElement("button", { className: "mb-btn mb-btn-primary", onClick: openCreatePost }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" })), "Create Post"), /* @__PURE__ */ React.createElement("button", { className: "mb-btn mb-btn-secondary", onClick: openEditProfile }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" })), "Edit Profile")) : isChan ? /* @__PURE__ */ React.createElement("div", { className: "fbp-actions" }, /* @__PURE__ */ React.createElement("button", { className: "fbp-btn fbp-btn-friends", onClick: () => handleToggleFollow(u) }, /* @__PURE__ */ React.createElement(FbIco, { d: isFollowingChan ? FBP_ICON.personCheck : FBP_ICON.invite, size: 22 }), isFollowingChan ? " Following" : " Follow")) : /* @__PURE__ */ React.createElement("div", { className: "fbp-actions" }, isFriend ? /* @__PURE__ */ React.createElement("button", { className: "fbp-btn fbp-btn-friends", onClick: () => isPreview ? noop() : setFbSheetUser(friendObj || u) }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.personCheck, size: 22 }), " Friends") : sending ? /* @__PURE__ */ React.createElement("button", { className: "fbp-btn fbp-btn-friends", disabled: true }, "Sending...") : pending ? /* @__PURE__ */ React.createElement("button", { className: "fbp-btn fbp-btn-friends", onClick: () => isPreview ? noop() : handleCancelRequest(u.uid) }, "Cancel Request") : /* @__PURE__ */ React.createElement("button", { className: "fbp-btn fbp-btn-friends", onClick: () => isPreview ? noop() : handleSendRequest(u.uid) }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.invite, size: 22 }), " Add friend"), /* @__PURE__ */ React.createElement("button", { className: "fbp-btn fbp-btn-msg", onClick: () => isPreview ? noop() : startChat(u.uid, u.name, photo) }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", width: "22", height: "22", fill: "currentColor" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2C6.5 2 2 6.14 2 11.25c0 2.88 1.41 5.45 3.62 7.16.12 1.1-.28 2.62-1.05 3.59-.13.16-.02.4.18.38 2.34-.19 4.05-1.25 4.85-1.85.77.16 1.58.25 2.4.25 5.5 0 10-4.14 10-9.25S17.5 2 12 2z" })), "Message"), /* @__PURE__ */ React.createElement("button", { className: "fbp-btn fbp-btn-poke", onClick: () => isPreview ? noop() : fbPoke(u), "aria-label": "Poke" }, /* @__PURE__ */ React.createElement(FbIco, { d: FBP_ICON.poke, size: 22 }))), u.actionButton && FB_ACTION_LABELS[u.actionButton] && !isOwnMode && !isChan && /* @__PURE__ */ React.createElement(
       "button",
       {
         className: "fbp-btn fbp-btn-action",
@@ -16381,7 +16476,7 @@ ${buildShareUrl(post.id)}`;
           title: `Help ${first}`,
           subtitle: "Check in with them or let us know if something is wrong.",
           actions: [
-            { label: `Message ${first}`, onClick: () => startChat(u.uid, u.name, avatarUrl(u)) },
+            ...isChannelUser(u) ? [] : [{ label: `Message ${first}`, onClick: () => startChat(u.uid, u.name, avatarUrl(u)) }],
             { label: "Report a problem", danger: true, onClick: () => fbReportProfile(u, "Needs help") }
           ]
         })
@@ -16413,9 +16508,9 @@ ${buildShareUrl(post.id)}`;
       Item,
       {
         icon: FBP_ICON.following,
-        label: following ? "Following" : "Follow",
-        blue: following,
-        onClick: () => handleUnfollow(u.uid)
+        label: (isChannelUser(u) ? followedChannels.some((c) => c.uid === u.uid) : following) ? "Following" : "Follow",
+        blue: isChannelUser(u) ? followedChannels.some((c) => c.uid === u.uid) : following,
+        onClick: () => isChannelUser(u) ? handleToggleFollow(u) : handleUnfollow(u.uid)
       }
     ), /* @__PURE__ */ React.createElement(
       Item,
@@ -17279,7 +17374,7 @@ ${buildShareUrl(post.id)}`;
       const targetUid = currentParams.uid || user.uid;
       const targetName = currentParams.name || profile.name;
       const isOwnList = targetUid === user.uid;
-      const listFriends = isOwnList ? myFriends : viewingUserFriends;
+      const listFriends = isOwnList ? [...myFriends, ...followedChannels.filter((c) => !myFriends.some((f) => f.uid === c.uid))] : viewingUserFriends;
       const listLoading = !isOwnList && viewingUserFriendsLoading;
       return /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, /* @__PURE__ */ React.createElement("div", { className: "fl-page" }, /* @__PURE__ */ React.createElement("div", { className: "fl-head" }, /* @__PURE__ */ React.createElement("button", { className: "fl-head-back", onClick: goBack }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" }))), /* @__PURE__ */ React.createElement("div", { className: "fl-head-title" }, isOwnList ? "Your friends" : `${targetName}'s friends`), /* @__PURE__ */ React.createElement("button", { className: "fl-head-icon", title: "Search" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" })))), /* @__PURE__ */ React.createElement("div", { className: "fl-search" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24" }, /* @__PURE__ */ React.createElement("path", { d: "M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" })), /* @__PURE__ */ React.createElement(
         "input",
@@ -17298,6 +17393,7 @@ ${buildShareUrl(post.id)}`;
         const isOnline = isUserOnline(allUsers.find((x) => x.uid === f.uid), presNow);
         const showRing = false;
         const isOwnFriend = myFriends.some((mf) => mf.uid === f.uid);
+        const isChanItem = isChannelUser(f) && !isOwnFriend;
         return /* @__PURE__ */ React.createElement(
           "div",
           {
@@ -17306,11 +17402,11 @@ ${buildShareUrl(post.id)}`;
             onClick: () => openUserProfile(f.uid)
           },
           /* @__PURE__ */ React.createElement("div", { className: "fl-avatar-wrap" }, /* @__PURE__ */ React.createElement("img", { src: fPhoto, alt: f.name }), showRing && /* @__PURE__ */ React.createElement("div", { className: "fl-avatar-ring" }), isOnline && /* @__PURE__ */ React.createElement("span", { className: "fl-online-dot" })),
-          /* @__PURE__ */ React.createElement("div", { className: "fl-info" }, /* @__PURE__ */ React.createElement("div", { className: "fl-name" }, f.name, isVerified(f) ? " \u2713" : ""), /* @__PURE__ */ React.createElement("div", { className: "fl-mutual" }, Math.max(1, idx * 7 % 50 + 1), " mutual friends")),
+          /* @__PURE__ */ React.createElement("div", { className: "fl-info" }, /* @__PURE__ */ React.createElement("div", { className: "fl-name" }, f.name, isVerified(f) ? " \u2713" : ""), /* @__PURE__ */ React.createElement("div", { className: "fl-mutual" }, isChanItem ? "Channel \xB7 Following" : Math.max(1, idx * 7 % 50 + 1) + " mutual friends")),
           /* @__PURE__ */ React.createElement(
             "button",
             {
-              className: "fl-more",
+              className: "fl-more", style: isChanItem ? { display: "none" } : void 0,
               onClick: (e) => {
                 e.stopPropagation();
                 if (isOwnFriend) {
@@ -17924,7 +18020,7 @@ ${buildShareUrl(post.id)}`;
           onChange: (e) => setShareCaption(e.target.value)
         }
       ), /* @__PURE__ */ React.createElement("div", { className: "share-options" }, /* @__PURE__ */ React.createElement("button", { className: "share-option", onClick: () => shareToProfile(post), disabled: shareBusy }, /* @__PURE__ */ React.createElement("span", { className: "share-option-icon profile" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React.createElement("path", { d: "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" }))), /* @__PURE__ */ React.createElement("div", { className: "share-option-text" }, "Your Profile", /* @__PURE__ */ React.createElement("small", null, shareBusy ? "Sharing..." : "Share to MeBook"))), /* @__PURE__ */ React.createElement("button", { className: "share-option", onClick: () => shareToFacebook(post) }, /* @__PURE__ */ React.createElement("span", { className: "share-option-icon fb" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React.createElement("path", { d: "M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.96h-1.51c-1.49 0-1.95.93-1.95 1.88v2.27h3.32l-.53 3.49h-2.79V24C19.61 23.1 24 18.1 24 12.07z" }))), /* @__PURE__ */ React.createElement("div", { className: "share-option-text" }, "Facebook", /* @__PURE__ */ React.createElement("small", null, "Share to feed"))), /* @__PURE__ */ React.createElement("button", { className: "share-option", onClick: () => shareToWhatsApp(post) }, /* @__PURE__ */ React.createElement("span", { className: "share-option-icon wa" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React.createElement("path", { d: "M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.48-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.65-1.58-.9-2.16-.24-.57-.48-.5-.66-.5-.17 0-.37-.02-.56-.02-.2 0-.5.07-.77.37-.27.3-1.02 1-1.02 2.42 0 1.43 1.04 2.81 1.19 3 .15.2 2.05 3.13 4.97 4.38.7.3 1.24.48 1.66.62.7.22 1.33.19 1.83.11.56-.08 1.75-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.56-.35zM12 0C5.4 0 0 5.4 0 12c0 2.11.55 4.11 1.51 5.84L0 24l6.32-1.66C8.02 23.15 9.96 24 12 24c6.6 0 12-5.4 12-12S18.6 0 12 0z" }))), /* @__PURE__ */ React.createElement("div", { className: "share-option-text" }, "WhatsApp", /* @__PURE__ */ React.createElement("small", null, "Send to chat"))), /* @__PURE__ */ React.createElement("button", { className: "share-option", onClick: () => shareToTelegram(post) }, /* @__PURE__ */ React.createElement("span", { className: "share-option-icon tg" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React.createElement("path", { d: "M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z" }))), /* @__PURE__ */ React.createElement("div", { className: "share-option-text" }, "Telegram", /* @__PURE__ */ React.createElement("small", null, "Share to chat"))), /* @__PURE__ */ React.createElement("button", { className: "share-option", onClick: () => copyLink(post) }, /* @__PURE__ */ React.createElement("span", { className: "share-option-icon link" }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React.createElement("path", { d: "M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z" }))), /* @__PURE__ */ React.createElement("div", { className: "share-option-text" }, "Copy Link", /* @__PURE__ */ React.createElement("small", null, "Share anywhere"))))));
-    })(), currentView === "profile" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, renderFbProfileCore("own", profile, myPosts, myFriends, false), profileTab === "all" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "mb-card", style: { marginBottom: 16 } }, /* @__PURE__ */ React.createElement("div", { className: "mb-card-title" }, "Privacy"), /* @__PURE__ */ React.createElement("div", { className: "mb-privacy-toggle" }, /* @__PURE__ */ React.createElement("span", null, "Personal information visible to others"), /* @__PURE__ */ React.createElement("label", { className: "mb-switch" }, /* @__PURE__ */ React.createElement(
+    })(), currentView === "profile" && /* @__PURE__ */ React.createElement("div", { className: "mb-view active" }, renderFbProfileCore("own", profile, myPosts, [...myFriends, ...followedChannels.filter((c) => !myFriends.some((f) => f.uid === c.uid))], false), profileTab === "all" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "mb-card", style: { marginBottom: 16 } }, /* @__PURE__ */ React.createElement("div", { className: "mb-card-title" }, "Privacy"), /* @__PURE__ */ React.createElement("div", { className: "mb-privacy-toggle" }, /* @__PURE__ */ React.createElement("span", null, "Personal information visible to others"), /* @__PURE__ */ React.createElement("label", { className: "mb-switch" }, /* @__PURE__ */ React.createElement(
       "input",
       {
         type: "checkbox",
