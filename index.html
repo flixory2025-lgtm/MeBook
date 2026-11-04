@@ -37,6 +37,8 @@ html,body{margin:0;padding:0;background:#000;}
     C=window.Capacitor||{};
     if(!native)return;
     window.__mbNative=true;
+    /* MBFIX: call opened from a push notification (Answer button) -> auto answer */
+    try{var __q=new URLSearchParams(location.search); if(__q.get("answer")==="1"&&__q.get("callId")) window.__mbAutoAnswerId=__q.get("callId");}catch(e){}
     window.__mbBootDone=function(){
       var b=document.getElementById("boot"); if(!b)return;
       b.style.opacity="0"; setTimeout(function(){var x=document.getElementById("boot"); if(x&&x.parentNode)x.parentNode.removeChild(x);},280);
@@ -107,6 +109,27 @@ html,body{margin:0;padding:0;background:#000;}
         if(!ok){ try{ P.App.exitApp(); }catch(e){} }
       });
     }catch(e){}
+    /* MBFIX: keyboard keep-alive - if an input loses focus right after typing (not because the user tapped elsewhere), take focus back + re-open keyboard */
+    (function(){
+      var lastInp=0,lastEl=null,lastTap=0,lastTapEl=null,lastEnter=0;
+      document.addEventListener("pointerdown",function(e){lastTap=Date.now();lastTapEl=e.target;},true);
+      document.addEventListener("keydown",function(e){if(e.key==="Enter")lastEnter=Date.now();},true);
+      document.addEventListener("input",function(e){lastInp=Date.now();lastEl=e.target;},true);
+      document.addEventListener("focusout",function(e){
+        var t=e.target;
+        if(!t||t!==lastEl||e.relatedTarget)return;
+        var now=Date.now();
+        if(now-lastInp>400||now-lastEnter<600)return;
+        if(now-lastTap<600&&lastTapEl&&lastTapEl!==t&&!(t.contains&&t.contains(lastTapEl)))return;
+        setTimeout(function(){
+          var a=document.activeElement;
+          if((!a||a===document.body)&&document.contains(t)){
+            try{t.focus({preventScroll:true});}catch(_){}
+            try{if(window.MeBookNative&&window.MeBookNative.showKeyboard)window.MeBookNative.showKeyboard();}catch(_){}
+          }
+        },50);
+      },true);
+    })();
     /* keep focused inputs visible above the keyboard */
     document.addEventListener("focusin",function(ev){
       var t=ev.target;
@@ -1064,8 +1087,11 @@ const MBCall = (() => {
 
   /* ---------- speaker / earpiece ---------- */
   async function setSpeaker(on, silent){
-    const c = cur; if(!c || !ui.ra) return false;
+    const c = cur; if(!c) return false;
     const done = () => { c.speaker = on; paintBtns(); return true; };
+    /* 0) MBFIX: real Android native audio routing (earpiece by default, loud speaker only when the user taps it) */
+    try{ const NB = window.MeBookNative; if(NB && typeof NB.setSpeakerphone === 'function'){ NB.setSpeakerphone(!!on); return done(); } }catch(_){}
+    if(!ui.ra) return false;
     /* 1) native Cordova/Capacitor AudioToggle plugin (if the app wrapper has it) */
     try{ const AT = window.AudioToggle; if(AT && AT.setAudioMode){ AT.setAudioMode(on ? AT.SPEAKER : AT.EARPIECE); return done(); } }catch(_){}
     /* 2) browser: pick the earpiece / speaker output device */
@@ -1240,13 +1266,17 @@ const MBCall = (() => {
       const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
       let nm = me.displayName, ph = me.photoURL; try{ const us = await fb.getDoc(fb.doc(fb.db, 'users', me.uid)); const u = (us && us.data && us.data()) || {}; nm = u.name || nm; ph = u.photoURL || u.photo || u.avatar || ph; }catch(_){}
       await fb.setDoc(dref(id), { from: me.uid, to: peer.uid, fromName: nm || 'User', fromPhoto: ph || '', type, status: 'ringing', offer: { type: offer.type, sdp: offer.sdp }, media: { [me.uid]: { cam: c.cam, screen: false } }, ts: Date.now() });
+      /* MBFIX: ring the callee's phone even when the app is closed (push -> native full-screen call notification) */
+      try{ sendPush({ uid: peer.uid, title: nm || 'MeBook', message: type === 'video' ? '\u{1F4F9} Incoming video call' : '\u{1F4DE} Incoming voice call', type: 'call', url: pushBaseUrl() + '?mb=messages' + (chatId ? '&chat=' + encodeURIComponent(chatId) : '') + '&u=' + encodeURIComponent(me.uid) + '&callId=' + encodeURIComponent(id), data: { type: 'call', callId: id, callType: type, chatId: chatId || '', fromName: nm || 'User', mb: 'messages' }, channel: 'mebook_calls', priority: 10 }); }catch(_){}
       c.sendCands(); watchDoc(c); listenCands(c, 'calleeCandidates'); tone('out'); paintBtns();
       c.ringT = setTimeout(() => { if(cur === c && c.state === 'out') finish('No answer', 'missed'); }, 45000);
     }catch(e){ console.error(e); if(cur) cleanup(cur, true); toast('Could not start the call'); }
   }
   function incoming(id, d){
     const c = cur = { id, role: 'callee', type: d.type || 'audio', peer: { uid: d.from, name: d.fromName || 'User', photo: d.fromPhoto }, offer: d.offer, state: 'in', unsubs: [], speaker: (d.type === 'video'), facing: 'user' };
-    render(); tone('in'); fb.updateDoc(dref(id), { ringing: true }).catch(() => {}); c.ringT = setTimeout(() => { if(cur === c && c.state === 'in') finish('Missed call', 'missed'); }, 45000);
+    render(); tone('in'); fb.updateDoc(dref(id), { ringing: true }).catch(() => {});
+    try{ if(window.__mbAutoAnswerId && window.__mbAutoAnswerId === id){ window.__mbAutoAnswerId = null; setTimeout(() => { if(cur === c && c.state === 'in') accept(); }, 500); } }catch(_){}
+     c.ringT = setTimeout(() => { if(cur === c && c.state === 'in') finish('Missed call', 'missed'); }, 45000);
     c.unsubs.push(fb.onSnapshot(dref(id), (s) => { if(cur !== c || c.ending || c.state !== 'in') return; const x = s.data(); if(x && ['ended','missed'].includes(x.status)) finish('Missed call', null); }));
   }
   async function accept(){
@@ -1279,6 +1309,7 @@ const MBCall = (() => {
   }
   function cleanup(c, now){
     clearInterval(c.tick); clearTimeout(c.ringT); clearTimeout(c.dcT); clearTimeout(c.hideT); stopTone(); unwake();
+    try{ const NB = window.MeBookNative; if(NB && typeof NB.resetCallAudio === 'function') NB.resetCallAudio(); }catch(_){}
     (c.unsubs || []).forEach((u) => { try{ u(); }catch(_){} });
     try{ c.local && c.local.getTracks().forEach((t) => t.stop()); }catch(_){}
     try{ c.camTrack && c.camTrack.stop(); }catch(_){}
@@ -1419,8 +1450,36 @@ function loadOneSignal() {
   });
   return _osPromise;
 }
+function _nbCall(name, ...a) {
+  try {
+    const nb = window.MeBookNative;
+    if (nb && typeof nb[name] === "function") { nb[name](...a); return true; }
+  } catch (e) {
+  }
+  return false;
+}
+function _nbOS(name, ...a) {
+  try {
+    const nb = window.OneSignalNative;
+    if (nb && typeof nb[name] === "function") { nb[name](...a); return true; }
+  } catch (e) {
+  }
+  return false;
+}
+let _nbPermsDone = false;
+function _nbAfterLogin() {
+  if (_nbPermsDone) return;
+  _nbPermsDone = true;
+  try { if (localStorage.getItem("mb_perm_v1")) return; } catch (e) {}
+  setTimeout(() => _nbCall("checkFullScreenIntentPermission"), 6000);
+  setTimeout(() => {
+    _nbCall("requestDisableBatteryOptimization");
+    try { localStorage.setItem("mb_perm_v1", "1"); } catch (e) {}
+  }, 16000);
+}
 async function oneSignalLogin(uid) {
   try {
+    if (_nbCall("setUser", uid) || _nbOS("login", uid)) { _nbAfterLogin(); return; }
     if (isNativeApp()) {
       const nos = initNativeOneSignal();
       if (nos) nos.login(uid);
@@ -1434,6 +1493,7 @@ async function oneSignalLogin(uid) {
 }
 async function oneSignalLogout() {
   try {
+    if (_nbCall("clearUser") || _nbOS("logout")) return;
     if (isNativeApp()) {
       const nos = initNativeOneSignal();
       if (nos) nos.logout();
@@ -1446,6 +1506,11 @@ async function oneSignalLogout() {
 }
 async function getPushPermissionAsync() {
   if (!PUSH_ENABLED) return "disabled";
+  try {
+    const nb = window.MeBookNative;
+    if (nb && typeof nb.hasNotificationPermission === "function") return nb.hasNotificationPermission() ? "granted" : "default";
+  } catch (e) {
+  }
   if (isNativeApp()) {
     try {
       const nos = initNativeOneSignal();
@@ -1465,6 +1530,7 @@ function getPushPermission() {
   return Notification.permission;
 }
 async function requestPush() {
+  if (_nbCall("requestNotificationPermission")) return "default";
   if (isNativeApp()) {
     try {
       const nos = initNativeOneSignal();
@@ -1495,7 +1561,7 @@ function pushUrlFor(data) {
   return `${base}?mb=notifications`;
 }
 async function sendPush(payload) {
-  if (!PUSH_SEND_ENABLED || !payload.uid) return;
+  if (!PUSH_SEND_ENABLED || (!payload.uid && !(payload.uids && payload.uids.length))) return;
   try {
     const fb = await getFirebase();
     const token = await fb.auth.currentUser?.getIdToken();
@@ -9801,6 +9867,11 @@ ${storyUrl(s)}`, "\u{1F4D6} Shared a story");
         onPosted: (id, wa) => {
           setCreating(null);
           toast("Story shared", "Visible for 24 hours", "success");
+          try {
+            const _fu = (props.myFriends || []).map((f) => f.uid).filter(Boolean).slice(0, 100);
+            if (_fu.length) sendPush({ uids: _fu, title: me.name || "MeBook", message: "added a new story", type: "story", url: pushBaseUrl() + "?mb=home", data: { type: "story", mb: "home", storyId: id }, channel: "mebook_default", priority: 10 });
+          } catch (e) {
+          }
           if (wa) {
             try {
               window.open(
@@ -11270,7 +11341,7 @@ function FlowAuth(p) {
       required: true,
       value: val,
       onChange: (e) => set(e.target.value)
-    }, extra || {})),
+    }, extra || {}, window.__mbNative ? { autoComplete: "off", "data-lpignore": "true", "data-form-type": "other" } : null)),
     h("label", { className: "av-label", htmlFor: id }, label),
     right || null
   );
@@ -11563,6 +11634,9 @@ function MeBookPage({ onExit }) {
   const [presNow, setPresNow] = useState(() => Date.now());
   const onlineList = onlineAll.filter((u) => isUserOnline(u, presNow)).slice(0, 12);
   const [activeChat, setActiveChat] = useState(null);
+  useEffect(() => {
+    try { const nb = window.MeBookNative; if (nb && typeof nb.setCurrentChatId === "function") nb.setCurrentChatId(activeChat || ""); } catch (e) {}
+  }, [activeChat]);
   const [chatMessages, setChatMessages] = useState([]);
   const [chatPartner, setChatPartner] = useState(null);
   const [mobileChatWindow, setMobileChatWindow] = useState(false);
