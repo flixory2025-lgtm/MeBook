@@ -526,7 +526,7 @@ async function getFirebase() {
       addDoc: async (ref, data) => {
         const res = await fsMod.addDoc(ref, data);
         try {
-          void pushAfterAddDoc(ref, data, fsMod);
+          void pushAfterAddDoc(ref, data, fsMod, res.id);
         } catch {
         }
         return res;
@@ -1352,7 +1352,7 @@ window.MBCall = MBCall;
 const ONESIGNAL_APP_ID = "535f3f99-e550-4fa3-98c6-38e440d51d07";
 const PUSH_WORKER_URL = "https://mvbd-push.flixory2025.workers.dev/";
 const PUSH_ENABLED = !ONESIGNAL_APP_ID.startsWith("PASTE");
-const PUSH_SEND_ENABLED = PUSH_ENABLED && !PUSH_WORKER_URL.startsWith("PASTE");
+const PUSH_SEND_ENABLED = true;
 let _pushSenderName = "Someone";
 function setPushSenderName(name) {
   if (name) _pushSenderName = name;
@@ -1561,63 +1561,52 @@ function pushUrlFor(data) {
   return `${base}?mb=notifications`;
 }
 async function sendPush(payload) {
-  if (!PUSH_SEND_ENABLED || (!payload.uid && !(payload.uids && payload.uids.length))) return;
+  if (
+    !PUSH_SEND_ENABLED ||
+    !payload.chatId ||
+    !payload.messageId
+  ) return;
+
   try {
     const fb = await getFirebase();
     const token = await fb.auth.currentUser?.getIdToken();
+
     if (!token) return;
-    await fetch(PUSH_WORKER_URL, {
+
+    const response = await fetch(PUSH_WORKER_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        chatId: payload.chatId,
+        messageId: payload.messageId
+      }),
       keepalive: true
     });
-  } catch (e) {
-    console.warn("Push send failed:", e);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.warn("MeBook push rejected:", response.status, errorText);
+    }
+  } catch (error) {
+    console.warn("MeBook push failed:", error);
   }
 }
-async function pushAfterAddDoc(ref, data, fsMod) {
-  if (!PUSH_SEND_ENABLED || !data) return;
+
+async function pushAfterAddDoc(ref, data, fsMod, messageId) {
+  if (!PUSH_SEND_ENABLED || !data || !messageId) return;
+
   const path = ref?.path || "";
-  if (path === "notifications") {
-    if (!data.uid) return;
-    await sendPush({
-      uid: data.uid,
-      title: data.title || "MoviesVerseBD",
-      message: data.message || "",
-      type: data.type,
-      url: pushUrlFor(data),
-      data: { type: data.type || "notification", fromUid: data.fromUid || data.from || "", postId: data.postId || "", mb: data.type === "friend" ? "friends" : "notifications" },
-      channel: "mebook_default",
-      priority: 10
-    });
-    return;
-  }
-  const m = path.match(/^chats\/([^/]+)\/messages$/);
-  if (m && _fb) {
-    const chatSnap = await fsMod.getDoc(fsMod.doc(_fb.db, "chats", m[1]));
-    const members = chatSnap.exists() ? chatSnap.data()?.members || [] : [];
-    const tos = members.filter((x) => x !== data.from);
-    if (!tos.length) return;
-    const isCall = data.type === "call";
-    if (isCall && data.callStatus !== "missed") return;
-    const message = isCall ? (data.callType === "video" ? "\u{1F4F9} Missed video call" : "\u{1F4DE} Missed voice call") : data.type === "image" ? "\u{1F4F7} Photo" : data.type === "voice" ? "\u{1F3A4} Voice message" : data.text || "\u{1F44D}";
-    for (const to of tos) {
-      await sendPush({
-        uid: to,
-        title: _pushSenderName,
-        message,
-        type: isCall ? "missed_call" : "chat",
-        url: `${pushBaseUrl()}?mb=messages&chat=${encodeURIComponent(m[1])}&u=${encodeURIComponent(data.from || "")}`,
-        data: { type: isCall ? "missed_call" : "chat", chatId: m[1], fromUid: data.from || "", fromName: _pushSenderName, mb: "messages" },
-        channel: isCall ? "mebook_calls" : "mebook_chat",
-        priority: 10
-      });
-    }
-  }
+  const match = path.match(/^chats\/([^/]+)\/messages$/);
+
+  if (!match) return;
+
+  await sendPush({
+    chatId: match[1],
+    messageId
+  });
 }
 const CLOUD_NAME = "xtbkyhrl";
 const UPLOAD_PRESET = "MeBook";
