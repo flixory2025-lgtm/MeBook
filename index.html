@@ -1561,34 +1561,45 @@ function pushUrlFor(data) {
   return `${base}?mb=notifications`;
 }
 async function sendPush(payload) {
-  if (
-    !PUSH_SEND_ENABLED ||
-    !payload.chatId ||
-    !payload.messageId
-  ) return;
+  if (!PUSH_SEND_ENABLED || !payload) return;
 
   try {
     const fb = await getFirebase();
     const token = await fb.auth.currentUser?.getIdToken();
-
     if (!token) return;
 
-    const response = await fetch(PUSH_WORKER_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        chatId: payload.chatId,
-        messageId: payload.messageId
-      }),
-      keepalive: true
-    });
+    const postToWorker = async (body) => {
+      const response = await fetch(PUSH_WORKER_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(body),
+        keepalive: true
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.warn("MeBook push rejected:", response.status, errorText);
+      }
+    };
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.warn("MeBook push rejected:", response.status, errorText);
+    // Existing MeChat delivery path remains unchanged.
+    if (payload.chatId && payload.messageId) {
+      await postToWorker({ chatId: payload.chatId, messageId: payload.messageId });
+      return;
+    }
+
+    if (payload.kind === "social" && payload.notification) {
+      await postToWorker({ kind: "social", notification: payload.notification });
+      return;
+    }
+
+    if (payload.kind === "broadcast" && payload.collection && payload.docId) {
+      const ids = [...new Set((payload.uids || []).filter((x) => typeof x === "string" && x && x !== fb.auth.currentUser?.uid))];
+      for (let i = 0; i < ids.length; i += 100) {
+        await postToWorker({ kind: "broadcast", collection: payload.collection, docId: payload.docId, uids: ids.slice(i, i + 100) });
+      }
     }
   } catch (error) {
     console.warn("MeBook push failed:", error);
@@ -1597,16 +1608,30 @@ async function sendPush(payload) {
 
 async function pushAfterAddDoc(ref, data, fsMod, messageId) {
   if (!PUSH_SEND_ENABLED || !data || !messageId) return;
-
   const path = ref?.path || "";
-  const match = path.match(/^chats\/([^/]+)\/messages$/);
-
-  if (!match) return;
-
-  await sendPush({
-    chatId: match[1],
-    messageId
-  });
+  const chatMatch = path.match(/^chats\/([^/]+)\/messages$/);
+  if (chatMatch) {
+    await sendPush({ chatId: chatMatch[1], messageId });
+    return;
+  }
+  if (path === "notifications") {
+    const n = {
+      uid: data.uid || "",
+      fromUid: data.fromUid || "",
+      fromName: data.fromName || "",
+      title: data.title || "MeBook",
+      message: data.message || "You have a new notification.",
+      type: data.type || "",
+      postId: data.postId || "",
+      storyId: data.storyId || "",
+      commentId: data.commentId || "",
+      parentCommentId: data.parentCommentId || "",
+      requestId: data.requestId || "",
+      action: data.action || "",
+      sharePostId: data.sharePostId || ""
+    };
+    void sendPush({ kind: "social", notification: n });
+  }
 }
 const CLOUD_NAME = "xtbkyhrl";
 const UPLOAD_PRESET = "MeBook";
@@ -8644,6 +8669,7 @@ function StoryCreator(props) {
         try {
           await fb.addDoc(fb.collection(fb.db, "notifications"), {
             uid: mu,
+            storyId: ref.id,
             fromUid: me.uid,
             fromName: me.name || "",
             fromAvatar: me.photoURL || "",
@@ -9475,6 +9501,20 @@ function StoriesSection(props) {
       try {
         const { fb, ref } = await refOf(s);
         await fb.updateDoc(ref, { ["reactions." + uidNow]: had ? "" : key });
+        if (!had && s.uid && s.uid !== uidNow) {
+          await fb.addDoc(fb.collection(fb.db, "notifications"), {
+            uid: s.uid,
+            fromUid: uidNow,
+            fromName: me.name || "Someone",
+            fromAvatar: me.photoURL || "",
+            storyId: s.id,
+            title: "Story Reaction",
+            message: `${me.name || "Someone"} reacted to your story.`,
+            type: "story_reaction",
+            read: false,
+            createdAt: fb.serverTimestamp()
+          });
+        }
       } catch (e) {
         toast("Couldn't react", e && e.message ? e.message : "", "error");
       }
@@ -9605,6 +9645,7 @@ ${storyUrl(s)}`, "\u{1F4D6} Shared a story");
           try {
             await fb.addDoc(fb.collection(fb.db, "notifications"), {
               uid: u.uid,
+              storyId: s.id,
               fromUid: uidNow,
               fromName: me.name,
               fromAvatar: me.photoURL,
@@ -9857,8 +9898,8 @@ ${storyUrl(s)}`, "\u{1F4D6} Shared a story");
           setCreating(null);
           toast("Story shared", "Visible for 24 hours", "success");
           try {
-            const _fu = (props.myFriends || []).map((f) => f.uid).filter(Boolean).slice(0, 100);
-            if (_fu.length) sendPush({ uids: _fu, title: me.name || "MeBook", message: "added a new story", type: "story", url: pushBaseUrl() + "?mb=home", data: { type: "story", mb: "home", storyId: id }, channel: "mebook_default", priority: 10 });
+            const _fu = (props.myFriends || []).map((f) => f.uid).filter(Boolean);
+            if (_fu.length) sendPush({ kind: "broadcast", collection: "stories", docId: id, uids: _fu });
           } catch (e) {
           }
           if (wa) {
@@ -13256,6 +13297,8 @@ function MeBookPage({ onExit }) {
       if (post.authorId && post.authorId !== user.uid && post.authorId !== "admin" && !post.muteNotifs) {
         await fb.addDoc(fb.collection(fb.db, "notifications"), {
           postId,
+          commentId: newComment.id,
+          parentCommentId: newComment.parentId || "",
           fromUid: user.uid,
           fromName: profile?.name || "",
           fromAvatar: profile?.photoURL || "",
@@ -13270,6 +13313,8 @@ function MeBookPage({ onExit }) {
       if (replyTo && replyTo.uid && replyTo.uid !== user.uid && replyTo.uid !== post.authorId) {
         await fb.addDoc(fb.collection(fb.db, "notifications"), {
           postId,
+          commentId: newComment.id,
+          parentCommentId: newComment.parentId || "",
           fromUid: user.uid,
           fromName: profile?.name || "",
           fromAvatar: profile?.photoURL || "",
@@ -13325,6 +13370,8 @@ function MeBookPage({ onExit }) {
       if (post.authorId && post.authorId !== user.uid && post.authorId !== "admin" && !post.muteNotifs) {
         await fb.addDoc(fb.collection(fb.db, "notifications"), {
           postId,
+          commentId: newComment.id,
+          parentCommentId: newComment.parentId || "",
           fromUid: user.uid,
           fromName: profile?.name || "",
           fromAvatar: profile?.photoURL || "",
@@ -13377,6 +13424,7 @@ function MeBookPage({ onExit }) {
       if (targetComment && targetComment.uid && targetComment.uid !== user.uid) {
         await fb.addDoc(fb.collection(fb.db, "notifications"), {
           postId,
+          commentId: targetComment.id,
           fromUid: user.uid,
           fromName: profile?.name || "",
           fromAvatar: profile?.photoURL || "",
@@ -14436,7 +14484,7 @@ function MeBookPage({ onExit }) {
         youtube: post.youtube || null,
         createdMs: post.createdAt?.toMillis ? post.createdAt.toMillis() : post.createdAt?.seconds ? post.createdAt.seconds * 1e3 : Date.now()
       };
-      await fb.addDoc(fb.collection(fb.db, "posts"), {
+      const sharedPostRef = await fb.addDoc(fb.collection(fb.db, "posts"), {
         authorId: user.uid,
         authorName: profile.name,
         authorAvatar: profile.photoURL || "",
@@ -14464,6 +14512,7 @@ function MeBookPage({ onExit }) {
       if (post.authorId && post.authorId !== user.uid && post.authorId !== "admin" && !post.muteNotifs) {
         await fb.addDoc(fb.collection(fb.db, "notifications"), {
           postId: post.id,
+          sharePostId: sharedPostRef.id,
           fromUid: user.uid,
           fromName: profile?.name || "",
           fromAvatar: profile?.photoURL || "",
@@ -14582,7 +14631,7 @@ ${buildShareUrl(post.id)}`;
         if (postMusic.file) mu = await cloudinaryUpload(postMusic.file, void 0, "video");
         musicData = { title: postMusic.title || "", artist: postMusic.artist || "", cover: postMusic.cover || "", url: mu };
       }
-      await fb.addDoc(fb.collection(fb.db, "posts"), {
+      const newPostRef = await fb.addDoc(fb.collection(fb.db, "posts"), {
         authorId: user.uid,
         authorName: profile.name,
         authorAvatar: profile.photoURL || "",
@@ -14601,6 +14650,10 @@ ${buildShareUrl(post.id)}`;
         shares: 0,
         createdAt: fb.serverTimestamp()
       });
+      if (/@everyone\b|@highlight\b/i.test(text)) {
+        const friendIds = (myFriends || []).map((f) => f.uid).filter(Boolean);
+        if (friendIds.length) void sendPush({ kind: "broadcast", collection: "posts", docId: newPostRef.id, uids: friendIds });
+      }
       setPostText("");
       setPostMovie("");
       removePreview();
@@ -14674,7 +14727,7 @@ ${buildShareUrl(post.id)}`;
         });
         return;
       }
-      await fb.addDoc(fb.collection(fb.db, "friendRequests"), {
+      const requestRef = await fb.addDoc(fb.collection(fb.db, "friendRequests"), {
         from: user.uid,
         to: toUid,
         status: "pending",
@@ -14688,7 +14741,8 @@ ${buildShareUrl(post.id)}`;
         fromUid: user.uid,
         fromName: profile.name,
         fromAvatar: profile.photoURL || "",
-        requestId: toUid + "_" + user.uid,
+        requestId: requestRef.id,
+        action: "pending",
         read: false,
         createdAt: fb.serverTimestamp()
       });
@@ -14767,6 +14821,8 @@ ${buildShareUrl(post.id)}`;
           fromName: profile?.name || "",
           fromAvatar: profile?.photoURL || "",
           uid: fromUid,
+          requestId: reqId,
+          action: "accepted",
           title: "Friend Request Accepted",
           message: `${profile?.name || "Someone"} accepted your friend request.`,
           type: "friend",
@@ -15486,7 +15542,7 @@ ${buildShareUrl(post.id)}`;
     try {
       const fb = await getFirebase();
       const caption = shareCaption.trim();
-      await fb.addDoc(fb.collection(fb.db, "posts"), {
+      const sharedPostRef = await fb.addDoc(fb.collection(fb.db, "posts"), {
         authorId: user.uid,
         authorName: profile.name,
         authorAvatar: profile.photoURL || "",
@@ -15508,6 +15564,7 @@ ${buildShareUrl(post.id)}`;
       if (post.authorId && post.authorId !== "admin") {
         await fb.addDoc(fb.collection(fb.db, "notifications"), {
           postId: post.id,
+          sharePostId: sharedPostRef.id,
           fromUid: user.uid,
           fromName: profile?.name || "",
           fromAvatar: profile?.photoURL || "",
